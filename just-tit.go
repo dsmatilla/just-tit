@@ -32,7 +32,7 @@ var AllowedDomains = []string{
 type searchResult struct {
 	Pornhub pornhub.PornhubSearchResult
 	Redtube redtube.RedtubeSearchResult
-	Tube8 tube8.Tube8SearchResult
+	Tube8   tube8.Tube8SearchResult
 	Youporn youporn.YoupornSearchResult
 }
 
@@ -56,10 +56,10 @@ func searchTube8(search string, c chan tube8.Tube8SearchResult) {
 	close(c)
 }
 
-func singlevideo(provider string, videoID string) (events.APIGatewayProxyResponse) {
+func singlevideo(provider string, videoID string) events.APIGatewayProxyResponse {
 	headers := map[string]string{
-		"Content-Type":"text/html; charset=utf-8",
-		"Cache-Control":"max-age=31536000",
+		"Content-Type":  "text/html; charset=utf-8",
+		"Cache-Control": "max-age=31536000",
 	}
 
 	pre, _ := template.ParseFiles("html/single/singlevideo_pre.html")
@@ -70,12 +70,12 @@ func singlevideo(provider string, videoID string) (events.APIGatewayProxyRespons
 	var embed string
 
 	replace := struct {
-		PageTitle string
-		Search string
+		PageTitle    string
+		Search       string
 		PageMetaDesc string
 	}{
-		PageTitle: "",
-		Search: "",
+		PageTitle:    "",
+		Search:       "",
 		PageMetaDesc: "",
 	}
 
@@ -115,8 +115,8 @@ func singlevideo(provider string, videoID string) (events.APIGatewayProxyRespons
 	default:
 		return events.APIGatewayProxyResponse{
 			StatusCode: 301,
-			Headers: map[string]string{"Location":"/"},
-			Body: "",
+			Headers:    map[string]string{"Location": "/"},
+			Body:       "",
 		}
 	}
 
@@ -137,8 +137,8 @@ func singlevideo(provider string, videoID string) (events.APIGatewayProxyRespons
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
-		Headers: headers,
-		Body: body,
+		Headers:    headers,
+		Body:       body,
 	}
 }
 
@@ -153,7 +153,7 @@ func doSearch(search string) searchResult {
 
 	PornhubChannel := make(chan pornhub.PornhubSearchResult)
 	RedtubeChannel := make(chan redtube.RedtubeSearchResult)
-	Tube8Channel :=	make(chan tube8.Tube8SearchResult)
+	Tube8Channel := make(chan tube8.Tube8SearchResult)
 	YoupornChannel := make(chan youporn.YoupornSearchResult)
 
 	go searchPornhub(search, PornhubChannel)
@@ -161,7 +161,7 @@ func doSearch(search string) searchResult {
 	go searchTube8(search, Tube8Channel)
 	go searchYouporn(search, YoupornChannel)
 
-	result := searchResult{<-PornhubChannel, <-RedtubeChannel, <-Tube8Channel, <-YoupornChannel }
+	result := searchResult{<-PornhubChannel, <-RedtubeChannel, <-Tube8Channel, <-YoupornChannel}
 
 	waitGroup.Wait()
 
@@ -170,8 +170,8 @@ func doSearch(search string) searchResult {
 
 func search(search string) events.APIGatewayProxyResponse {
 	headers := map[string]string{
-		"Content-Type":"text/html; charset=utf-8",
-		"Cache-Control":"max-age=31536000",
+		"Content-Type":  "text/html; charset=utf-8",
+		"Cache-Control": "max-age=31536000",
 	}
 
 	search = strings.Replace(search, ".html", "", -1)
@@ -190,12 +190,12 @@ func search(search string) events.APIGatewayProxyResponse {
 	// Build result divs
 	var buff bytes.Buffer
 	replace := struct {
-		PageTitle string
-		Search string
+		PageTitle    string
+		Search       string
 		PageMetaDesc string
 	}{
-		PageTitle: fmt.Sprintf("Search results for %s", search),
-		Search: search,
+		PageTitle:    fmt.Sprintf("Search results for %s", search),
+		Search:       search,
 		PageMetaDesc: fmt.Sprintf("Search results for %s", search),
 	}
 	pre.Execute(&buff, replace)
@@ -208,12 +208,12 @@ func search(search string) events.APIGatewayProxyResponse {
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
-		Headers: headers,
-		Body: body,
+		Headers:    headers,
+		Body:       body,
 	}
 }
 
-func frontpage() (events.APIGatewayProxyResponse) {
+func frontpage() events.APIGatewayProxyResponse {
 	headers := map[string]string{
 		"Content-Type":  "text/html; charset=utf-8",
 		"Cache-Control": "max-age=31536000",
@@ -265,14 +265,14 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 	if len(request.QueryStringParameters["s"]) > 0 {
 		querystring := request.QueryStringParameters["s"]
-		querystring = strings.Replace(querystring,"%20","_",-1)
-		querystring = strings.Replace(querystring," ","_",-1)
+		querystring = strings.Replace(querystring, "%20", "_", -1)
+		querystring = strings.Replace(querystring, " ", "_", -1)
 		location := fmt.Sprintf("/%s.html", querystring)
 		querystring = url.PathEscape(querystring)
 		response.StatusCode = 301
 		response.Headers = map[string]string{
-			"Content-Type":"text/html",
-			"Location":location,
+			"Content-Type": "text/html",
+			"Location":     location,
 		}
 		return response, nil
 	}

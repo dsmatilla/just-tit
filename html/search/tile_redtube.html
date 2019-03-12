@@ -1,7 +1,13 @@
 {{ range . }}
     <div id="{{.Video.ID}}" class="col-md-4">
         <div class="card mb-4 shadow-sm">
-            <svgc class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect fill="#55595c" width="100%" height="100%"/><text fill="#eceeef" dy=".3em" x="50%" y="50%"><img src="{{.Video.DefaultThumb}}" style="width:100%"></text></svgc>
+            <svgc class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail">
+                <title>Placeholder</title>
+                <rect fill="#55595c" width="100%" height="100%"/>
+                <text fill="#eceeef" dy=".3em" x="50%" y="50%"><img src="{{.Video.DefaultThumb}}" style="width:100%">
+                </text>
+            </svgc>
             <div class="card-body">
                 <p class="card-text"><b><a href="/redtube/{{.Video.ID}}.html">{{.Video.Title}}</a></b></p>
                 {{ range .Video.Tags }}

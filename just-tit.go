@@ -292,6 +292,13 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 		contentType := http.DetectContentType(fileContentBuffer)
 
+		// Javascript
+		aux := strings.Split(request.Path, ".")
+		if(aux[len(aux) - 1]) == "js" {
+			contentType = "application/javascript"
+		}
+
+
 		response.StatusCode = 200
 		response.Headers = map[string]string{
 			"Content-Type": contentType,

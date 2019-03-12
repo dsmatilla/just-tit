@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -10,6 +11,7 @@ import (
 	"github.com/dsmatilla/redtube"
 	"github.com/dsmatilla/tube8"
 	"github.com/dsmatilla/youporn"
+	"html"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -52,6 +54,92 @@ func searchTube8(search string, c chan tube8.Tube8SearchResult) {
 	defer waitGroup.Done()
 	c <- tube8.SearchVideos(search)
 	close(c)
+}
+
+func singlevideo(provider string, videoID string) (events.APIGatewayProxyResponse) {
+	headers := map[string]string{
+		"Content-Type":"text/html; charset=utf-8",
+		"Cache-Control":"max-age=31536000",
+	}
+
+	pre, _ := template.ParseFiles("html/single/singlevideo_pre.html")
+	post, _ := template.ParseFiles("html/single/singlevideo_post.html")
+
+	// Build result divs
+	var buff bytes.Buffer
+	var embed string
+
+	replace := struct {
+		PageTitle string
+		Search string
+		PageMetaDesc string
+	}{
+		PageTitle: "",
+		Search: "",
+		PageMetaDesc: "",
+	}
+
+	switch provider {
+	case "pornhub":
+		video := pornhub.GetVideoByID(videoID)
+		embed = pornhub.GetVideoEmbedCode(videoID).Embed.Code
+		embed = fmt.Sprintf("%+v", html.UnescapeString(embed))
+		replace.PageTitle = fmt.Sprintf("%s", video.Video.Title)
+		replace.PageMetaDesc = fmt.Sprintf("%s", video.Video.Title)
+		pre.Execute(&buff, replace)
+	case "redtube":
+		video := redtube.GetVideoByID(videoID)
+		embed = redtube.GetVideoEmbedCode(videoID).Embed.Code
+		str, _ := base64.StdEncoding.DecodeString(embed)
+		embed = fmt.Sprintf("<object><embed src=\"%+v\" /></object>", html.UnescapeString(string(str)))
+		replace.PageTitle = fmt.Sprintf("%s", video.Video.Title)
+		replace.PageMetaDesc = fmt.Sprintf("%s", video.Video.Title)
+		pre.Execute(&buff, replace)
+	case "tube8":
+		video := tube8.GetVideoByID(videoID)
+		embed = tube8.GetVideoEmbedCode(videoID).EmbedCode.Code
+		embed = strings.Replace(embed, "![CDATA[", "", -1)
+		embed = strings.Replace(embed, "]]", "", -1)
+		str, _ := base64.StdEncoding.DecodeString(embed)
+		embed = fmt.Sprintf("%+v", html.UnescapeString(string(str)))
+		replace.PageTitle = fmt.Sprintf("%s", video.Videos.Title)
+		replace.PageMetaDesc = fmt.Sprintf("%s", video.Videos.Title)
+		pre.Execute(&buff, replace)
+	case "youporn":
+		video := youporn.GetVideoByID(videoID)
+		embed = youporn.GetVideoEmbedCode(videoID).Embed.Code
+		embed = fmt.Sprintf("%+v", html.UnescapeString(embed))
+		replace.PageTitle = fmt.Sprintf("%s", video.Video.Title)
+		replace.PageMetaDesc = fmt.Sprintf("%s", video.Video.Title)
+		pre.Execute(&buff, replace)
+	default:
+		return events.APIGatewayProxyResponse{
+			StatusCode: 301,
+			Headers: map[string]string{"Location":"/"},
+			Body: "",
+		}
+	}
+
+	buff.WriteString(embed)
+	post.Execute(&buff, nil)
+	body := buff.String()
+
+	if len(embed) == 0 {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 301,
+			Headers: map[string]string{
+				"Content-Type": "text/html",
+				"Location":     BaseDomain,
+			},
+			Body: "",
+		}
+	}
+
+	return events.APIGatewayProxyResponse{
+		StatusCode: 200,
+		Headers: headers,
+		Body: body,
+	}
 }
 
 func searchYouporn(search string, c chan youporn.YoupornSearchResult) {
@@ -216,6 +304,12 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 	if len(str) == 2 {
 		return search(str[1]), nil
+	}
+
+	if len(str) == 3 {
+		provider := str[1]
+		videoID := strings.Replace(str[2], ".html", "", -1)
+		return singlevideo(provider, videoID), nil
 	}
 
 	response.StatusCode = 404

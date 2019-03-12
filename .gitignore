@@ -12,3 +12,6 @@
 *.out
 
 .idea
+*.sh
+*.zip
+just-tit

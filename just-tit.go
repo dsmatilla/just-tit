@@ -56,6 +56,12 @@ func searchTube8(search string, c chan tube8.Tube8SearchResult) {
 	close(c)
 }
 
+func searchYouporn(search string, c chan youporn.YoupornSearchResult) {
+	defer waitGroup.Done()
+	c <- youporn.SearchVideos(search)
+	close(c)
+}
+
 func singlevideo(provider string, videoID string) events.APIGatewayProxyResponse {
 	headers := map[string]string{
 		"Content-Type":  "text/html; charset=utf-8",
@@ -73,10 +79,16 @@ func singlevideo(provider string, videoID string) events.APIGatewayProxyResponse
 		PageTitle    string
 		Search       string
 		PageMetaDesc string
+		Url 		 string
+		Thumb		 string
+		Domain		 string
 	}{
 		PageTitle:    "",
 		Search:       "",
 		PageMetaDesc: "",
+		Url:		  "",
+		Thumb:		  "",
+		Domain:		  BaseDomain,
 	}
 
 	switch provider {
@@ -86,6 +98,8 @@ func singlevideo(provider string, videoID string) events.APIGatewayProxyResponse
 		embed = fmt.Sprintf("%+v", html.UnescapeString(embed))
 		replace.PageTitle = fmt.Sprintf("%s", video.Video.Title)
 		replace.PageMetaDesc = fmt.Sprintf("%s", video.Video.Title)
+		replace.Thumb = fmt.Sprintf("%s", video.Video.Thumb)
+		replace.Url = fmt.Sprintf(BaseDomain+"/pornhub/%s.html", videoID)
 		pre.Execute(&buff, replace)
 	case "redtube":
 		video := redtube.GetVideoByID(videoID)
@@ -94,6 +108,8 @@ func singlevideo(provider string, videoID string) events.APIGatewayProxyResponse
 		embed = fmt.Sprintf("<object><embed src=\"%+v\" /></object>", html.UnescapeString(string(str)))
 		replace.PageTitle = fmt.Sprintf("%s", video.Video.Title)
 		replace.PageMetaDesc = fmt.Sprintf("%s", video.Video.Title)
+		replace.Thumb = fmt.Sprintf("%s", video.Video.Thumb)
+		replace.Url = fmt.Sprintf(BaseDomain+"/redtube/%s.html", videoID)
 		pre.Execute(&buff, replace)
 	case "tube8":
 		video := tube8.GetVideoByID(videoID)
@@ -104,6 +120,8 @@ func singlevideo(provider string, videoID string) events.APIGatewayProxyResponse
 		embed = fmt.Sprintf("%+v", html.UnescapeString(string(str)))
 		replace.PageTitle = fmt.Sprintf("%s", video.Videos.Title)
 		replace.PageMetaDesc = fmt.Sprintf("%s", video.Videos.Title)
+		replace.Thumb = fmt.Sprintf("%s", video.Videos.Thumbs.Thumb[0].Thumb)
+		replace.Url = fmt.Sprintf(BaseDomain+"/tube8/%s.html", videoID)
 		pre.Execute(&buff, replace)
 	case "youporn":
 		video := youporn.GetVideoByID(videoID)
@@ -111,6 +129,8 @@ func singlevideo(provider string, videoID string) events.APIGatewayProxyResponse
 		embed = fmt.Sprintf("%+v", html.UnescapeString(embed))
 		replace.PageTitle = fmt.Sprintf("%s", video.Video.Title)
 		replace.PageMetaDesc = fmt.Sprintf("%s", video.Video.Title)
+		replace.Thumb = fmt.Sprintf("%s", video.Video.Thumb)
+		replace.Url = fmt.Sprintf(BaseDomain+"/youporn/%s.html", videoID)
 		pre.Execute(&buff, replace)
 	default:
 		return events.APIGatewayProxyResponse{
@@ -140,12 +160,6 @@ func singlevideo(provider string, videoID string) events.APIGatewayProxyResponse
 		Headers:    headers,
 		Body:       body,
 	}
-}
-
-func searchYouporn(search string, c chan youporn.YoupornSearchResult) {
-	defer waitGroup.Done()
-	c <- youporn.SearchVideos(search)
-	close(c)
 }
 
 func doSearch(search string) searchResult {

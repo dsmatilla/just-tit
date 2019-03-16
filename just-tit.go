@@ -62,7 +62,7 @@ func searchYouporn(search string, c chan youporn.YoupornSearchResult) {
 	close(c)
 }
 
-func singlevideo(provider string, videoID string) events.APIGatewayProxyResponse {
+func singlevideo(provider string, videoID string, tp string) events.APIGatewayProxyResponse {
 	headers := map[string]string{
 		"Content-Type":  "text/html; charset=utf-8",
 		"Cache-Control": "max-age=31536000",
@@ -70,6 +70,9 @@ func singlevideo(provider string, videoID string) events.APIGatewayProxyResponse
 
 	pre, _ := template.ParseFiles("html/single/singlevideo_pre.html")
 	post, _ := template.ParseFiles("html/single/singlevideo_post.html")
+
+	playerpre, _ := template.ParseFiles("html/single/player_pre.html")
+	playerpost, _ := template.ParseFiles("html/single/player_post.html")
 
 	// Build result divs
 	var buff bytes.Buffer
@@ -82,6 +85,8 @@ func singlevideo(provider string, videoID string) events.APIGatewayProxyResponse
 		Url 		 string
 		Thumb		 string
 		Domain		 string
+		Width 		 string
+		Height       string
 	}{
 		PageTitle:    "",
 		Search:       "",
@@ -89,6 +94,8 @@ func singlevideo(provider string, videoID string) events.APIGatewayProxyResponse
 		Url:		  "",
 		Thumb:		  "",
 		Domain:		  BaseDomain,
+		Width: 		  "",
+		Height:       "",
 	}
 
 	switch provider {
@@ -100,7 +107,8 @@ func singlevideo(provider string, videoID string) events.APIGatewayProxyResponse
 		replace.PageMetaDesc = fmt.Sprintf("%s", video.Video.Title)
 		replace.Thumb = fmt.Sprintf("%s", video.Video.Thumb)
 		replace.Url = fmt.Sprintf(BaseDomain+"/pornhub/%s.html", videoID)
-		pre.Execute(&buff, replace)
+		replace.Width = "580"
+		replace.Height = "360"
 	case "redtube":
 		video := redtube.GetVideoByID(videoID)
 		embed = redtube.GetVideoEmbedCode(videoID).Embed.Code
@@ -110,7 +118,8 @@ func singlevideo(provider string, videoID string) events.APIGatewayProxyResponse
 		replace.PageMetaDesc = fmt.Sprintf("%s", video.Video.Title)
 		replace.Thumb = fmt.Sprintf("%s", video.Video.Thumb)
 		replace.Url = fmt.Sprintf(BaseDomain+"/redtube/%s.html", videoID)
-		pre.Execute(&buff, replace)
+		replace.Width = "320"
+		replace.Height = "180"
 	case "tube8":
 		video := tube8.GetVideoByID(videoID)
 		embed = tube8.GetVideoEmbedCode(videoID).EmbedCode.Code
@@ -122,7 +131,8 @@ func singlevideo(provider string, videoID string) events.APIGatewayProxyResponse
 		replace.PageMetaDesc = fmt.Sprintf("%s", video.Videos.Title)
 		replace.Thumb = fmt.Sprintf("%s", video.Videos.Thumbs.Thumb[0].Thumb)
 		replace.Url = fmt.Sprintf(BaseDomain+"/tube8/%s.html", videoID)
-		pre.Execute(&buff, replace)
+		replace.Width = "628"
+		replace.Height = "362"
 	case "youporn":
 		video := youporn.GetVideoByID(videoID)
 		embed = youporn.GetVideoEmbedCode(videoID).Embed.Code
@@ -131,7 +141,8 @@ func singlevideo(provider string, videoID string) events.APIGatewayProxyResponse
 		replace.PageMetaDesc = fmt.Sprintf("%s", video.Video.Title)
 		replace.Thumb = fmt.Sprintf("%s", video.Video.Thumb)
 		replace.Url = fmt.Sprintf(BaseDomain+"/youporn/%s.html", videoID)
-		pre.Execute(&buff, replace)
+		replace.Width = "628"
+		replace.Height = "501"
 	default:
 		return events.APIGatewayProxyResponse{
 			StatusCode: 301,
@@ -140,8 +151,15 @@ func singlevideo(provider string, videoID string) events.APIGatewayProxyResponse
 		}
 	}
 
-	buff.WriteString(embed)
-	post.Execute(&buff, nil)
+	if tp == "true" {
+		playerpre.Execute(&buff, replace)
+		buff.WriteString(embed)
+		playerpost.Execute(&buff, nil)
+	} else {
+		pre.Execute(&buff, replace)
+		buff.WriteString(embed)
+		post.Execute(&buff, nil)
+	}
 	body := buff.String()
 
 	if len(embed) == 0 {
@@ -330,7 +348,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	if len(str) == 3 {
 		provider := str[1]
 		videoID := strings.Replace(str[2], ".html", "", -1)
-		return singlevideo(provider, videoID), nil
+		return singlevideo(provider, videoID, request.QueryStringParameters["tp"]), nil
 	}
 
 	response.StatusCode = 404

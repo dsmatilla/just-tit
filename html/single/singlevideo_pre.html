@@ -5,15 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="{{.PageMetaDesc}}">
     <meta name="theme-color" content="#FFFFFF"/>
+    <meta property="og:type" content="video">
     <meta property="og:title" content="{{.PageTitle}}" />
-    <meta property="og:type" content="video.movie" />
-    <meta property="og:url" content="{{.Url}}" />
     <meta property="og:image" content="{{.Thumb}}" />
-    <meta name="twitter:card" content="photo" />
+    <meta property="og:url" content="{{.Url}}" />
+    <meta name="twitter:card" content="player" />
     <meta name="twitter:site" content="@Just_Tit" />
     <meta name="twitter:title" content="{{.PageTitle}}" />
-    <meta name="twitter:image:src" content="{{.Thumb}}" />
+    <meta name="twitter:image" content="{{.Thumb}}" />
     <meta name="twitter:domain" content="{{.Domain}}" />
+    <meta name="twitter:player" content="{{.Url}}?tp=true" />
+    <meta name="twitter:player:width" content="{{.Width}}" />
+    <meta name="twitter:player:height" content="{{.Height}}" />
     <link rel="manifest" href="/manifest.json">
     <link rel="shortcut icon" type="image/png" href="https://s3-us-west-1.amazonaws.com/just-tit-s3/favicon.png" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">

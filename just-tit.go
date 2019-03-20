@@ -4,9 +4,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/dsmatilla/pornhub"
 	"github.com/dsmatilla/redtube"
 	"github.com/dsmatilla/tube8"
@@ -20,9 +25,20 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 )
 
 const BaseDomain = "https://just-tit.com"
+
+const dynamodbRegion = "eu-west-1"
+const dynamodbTable = "JustTit"
+const secondsToCache = 3600
+
+type JustTitCache struct {
+	ID         string  `json:"id"`
+	Result	   string  `json:"result"`
+	Timestamp  int64 `json:"timestamp"`
+}
 
 var AllowedDomains = []string{
 	"just-tit.com",
@@ -37,6 +53,157 @@ type searchResult struct {
 }
 
 var waitGroup sync.WaitGroup
+
+func getFromDB(ID string) JustTitCache {
+	sess, _ := session.NewSession(&aws.Config{
+		Region: aws.String(dynamodbRegion)},
+	)
+	svc := dynamodb.New(sess)
+
+	result, _ := svc.GetItem(&dynamodb.GetItemInput{
+		TableName: aws.String(dynamodbTable),
+		Key: map[string]*dynamodb.AttributeValue{
+			"id": {
+				S: aws.String(ID),
+			},
+		},
+	})
+
+	cache := JustTitCache{}
+	if result != nil {
+		dynamodbattribute.UnmarshalMap(result.Item, &cache)
+	}
+
+	return cache
+}
+
+func putToDB(ID string, Result string) {
+	sess, _ := session.NewSession(&aws.Config{
+		Region: aws.String(dynamodbRegion)},
+	)
+	svc := dynamodb.New(sess)
+
+	cache := JustTitCache{ID, Result, time.Now().Unix()}
+	item, _ := dynamodbattribute.MarshalMap(cache)
+	input := &dynamodb.PutItemInput{
+		Item:      item,
+		TableName: aws.String(dynamodbTable),
+	}
+	_, _ = svc.PutItem(input)
+}
+
+func pornhubGetVideoByID(videoID string) pornhub.PornhubSingleVideo {
+	cachedElement := getFromDB("pornhub-video-"+videoID)
+	if cachedElement.Timestamp >= time.Now().Unix() - secondsToCache  {
+		var result pornhub.PornhubSingleVideo
+		json.Unmarshal([]byte(cachedElement.Result), &result)
+		return result
+	} else {
+		video := pornhub.GetVideoByID(videoID)
+		json, _ := json.Marshal(video)
+		putToDB("pornhub-video-"+videoID, string(json))
+		return video
+	}
+}
+
+func pornhubGetVideoEmbedCode(videoID string) pornhub.PornhubEmbedCode {
+	cachedElement := getFromDB("pornhub-embed-"+videoID)
+	if cachedElement.Timestamp >= time.Now().Unix() - secondsToCache  {
+		var result pornhub.PornhubEmbedCode
+		json.Unmarshal([]byte(cachedElement.Result), &result)
+		return result
+	} else {
+		embed := pornhub.GetVideoEmbedCode(videoID)
+		json, _ := json.Marshal(embed)
+		putToDB("pornhub-embed-"+videoID, string(json))
+		return embed
+	}
+}
+
+func redtubeGetVideoByID(videoID string) redtube.RedtubeSingleVideo {
+	cachedElement := getFromDB("redtube-video-"+videoID)
+	if cachedElement.Timestamp >= time.Now().Unix() - secondsToCache  {
+		var result redtube.RedtubeSingleVideo
+		json.Unmarshal([]byte(cachedElement.Result), &result)
+		return result
+	} else {
+		video := redtube.GetVideoByID(videoID)
+		json, _ := json.Marshal(video)
+		putToDB("redtube-video-"+videoID, string(json))
+		return video
+	}
+}
+
+func redtubeGetVideoEmbedCode(videoID string) redtube.RedtubeEmbedCode {
+	cachedElement := getFromDB("redtube-embed-"+videoID)
+	if cachedElement.Timestamp >= time.Now().Unix() - secondsToCache  {
+		var result redtube.RedtubeEmbedCode
+		json.Unmarshal([]byte(cachedElement.Result), &result)
+		return result
+	} else {
+		embed := redtube.GetVideoEmbedCode(videoID)
+		json, _ := json.Marshal(embed)
+		putToDB("redtube-embed-"+videoID, string(json))
+		return embed
+	}
+}
+
+func tube8GetVideoByID(videoID string) tube8.Tube8SingleVideo {
+	cachedElement := getFromDB("tube8-video-"+videoID)
+	if cachedElement.Timestamp >= time.Now().Unix() - secondsToCache  {
+		var result tube8.Tube8SingleVideo
+		json.Unmarshal([]byte(cachedElement.Result), &result)
+		return result
+	} else {
+		video := tube8.GetVideoByID(videoID)
+		json, _ := json.Marshal(video)
+		putToDB("tube8-video-"+videoID, string(json))
+		return video
+	}
+}
+
+func tube8GetVideoEmbedCode(videoID string) tube8.Tube8EmbedCode {
+	cachedElement := getFromDB("tube8-embed-"+videoID)
+	if cachedElement.Timestamp >= time.Now().Unix() - secondsToCache  {
+		var result tube8.Tube8EmbedCode
+		json.Unmarshal([]byte(cachedElement.Result), &result)
+		return result
+	} else {
+		embed := tube8.GetVideoEmbedCode(videoID)
+		json, _ := json.Marshal(embed)
+		putToDB("tube8-embed-"+videoID, string(json))
+		return embed
+	}
+}
+
+func youpornGetVideoByID(videoID string) youporn.YoupornSingleVideo {
+	cachedElement := getFromDB("youporn-video-"+videoID)
+	if cachedElement.Timestamp >= time.Now().Unix() - secondsToCache  {
+		var result youporn.YoupornSingleVideo
+		json.Unmarshal([]byte(cachedElement.Result), &result)
+		return result
+	} else {
+		video := youporn.GetVideoByID(videoID)
+		json, _ := json.Marshal(video)
+		putToDB("youporn-video-"+videoID, string(json))
+		return video
+	}
+}
+
+func youpornGetVideoEmbedCode(videoID string) youporn.YoupornEmbedCode {
+	cachedElement := getFromDB("youporn-embed-"+videoID)
+	if cachedElement.Timestamp >= time.Now().Unix() - secondsToCache  {
+		var result youporn.YoupornEmbedCode
+		json.Unmarshal([]byte(cachedElement.Result), &result)
+		return result
+	} else {
+		embed := youporn.GetVideoEmbedCode(videoID)
+		json, _ := json.Marshal(embed)
+		putToDB("youporn-embed-"+videoID, string(json))
+		return embed
+	}
+}
+
 
 func searchPornhub(search string, c chan pornhub.PornhubSearchResult) {
 	defer waitGroup.Done()
@@ -100,8 +267,8 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 
 	switch provider {
 	case "pornhub":
-		video := pornhub.GetVideoByID(videoID)
-		embed = pornhub.GetVideoEmbedCode(videoID).Embed.Code
+		video := pornhubGetVideoByID(videoID)
+		embed = pornhubGetVideoEmbedCode(videoID).Embed.Code
 		embed = fmt.Sprintf("%+v", html.UnescapeString(embed))
 		replace.PageTitle = fmt.Sprintf("%s", video.Video.Title)
 		replace.PageMetaDesc = fmt.Sprintf("%s", video.Video.Title)
@@ -110,8 +277,8 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 		replace.Width = "580"
 		replace.Height = "360"
 	case "redtube":
-		video := redtube.GetVideoByID(videoID)
-		embed = redtube.GetVideoEmbedCode(videoID).Embed.Code
+		video := redtubeGetVideoByID(videoID)
+		embed = redtubeGetVideoEmbedCode(videoID).Embed.Code
 		str, _ := base64.StdEncoding.DecodeString(embed)
 		embed = fmt.Sprintf("<object><embed src=\"%+v\" /></object>", html.UnescapeString(string(str)))
 		replace.PageTitle = fmt.Sprintf("%s", video.Video.Title)
@@ -121,8 +288,8 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 		replace.Width = "320"
 		replace.Height = "180"
 	case "tube8":
-		video := tube8.GetVideoByID(videoID)
-		embed = tube8.GetVideoEmbedCode(videoID).EmbedCode.Code
+		video := tube8GetVideoByID(videoID)
+		embed = tube8GetVideoEmbedCode(videoID).EmbedCode.Code
 		embed = strings.Replace(embed, "![CDATA[", "", -1)
 		embed = strings.Replace(embed, "]]", "", -1)
 		str, _ := base64.StdEncoding.DecodeString(embed)
@@ -134,8 +301,8 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 		replace.Width = "628"
 		replace.Height = "362"
 	case "youporn":
-		video := youporn.GetVideoByID(videoID)
-		embed = youporn.GetVideoEmbedCode(videoID).Embed.Code
+		video := youpornGetVideoByID(videoID)
+		embed = youpornGetVideoEmbedCode(videoID).Embed.Code
 		embed = fmt.Sprintf("%+v", html.UnescapeString(embed))
 		replace.PageTitle = fmt.Sprintf("%s", video.Video.Title)
 		replace.PageMetaDesc = fmt.Sprintf("%s", video.Video.Title)
@@ -181,23 +348,23 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 }
 
 func doSearch(search string) searchResult {
-	waitGroup.Add(4)
+		waitGroup.Add(4)
 
-	PornhubChannel := make(chan pornhub.PornhubSearchResult)
-	RedtubeChannel := make(chan redtube.RedtubeSearchResult)
-	Tube8Channel := make(chan tube8.Tube8SearchResult)
-	YoupornChannel := make(chan youporn.YoupornSearchResult)
+		PornhubChannel := make(chan pornhub.PornhubSearchResult)
+		RedtubeChannel := make(chan redtube.RedtubeSearchResult)
+		Tube8Channel := make(chan tube8.Tube8SearchResult)
+		YoupornChannel := make(chan youporn.YoupornSearchResult)
 
-	go searchPornhub(search, PornhubChannel)
-	go searchRedtube(search, RedtubeChannel)
-	go searchTube8(search, Tube8Channel)
-	go searchYouporn(search, YoupornChannel)
+		go searchPornhub(search, PornhubChannel)
+		go searchRedtube(search, RedtubeChannel)
+		go searchTube8(search, Tube8Channel)
+		go searchYouporn(search, YoupornChannel)
 
-	result := searchResult{<-PornhubChannel, <-RedtubeChannel, <-Tube8Channel, <-YoupornChannel}
+		result := searchResult{<-PornhubChannel, <-RedtubeChannel, <-Tube8Channel, <-YoupornChannel}
 
-	waitGroup.Wait()
+		waitGroup.Wait()
 
-	return result
+		return result
 }
 
 func search(search string) events.APIGatewayProxyResponse {
@@ -319,7 +486,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	if _, err := os.Stat("./files" + request.Path); err == nil {
 		fileContentBuffer, err := ioutil.ReadFile("./files" + request.Path)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 
 		contentType := http.DetectContentType(fileContentBuffer)

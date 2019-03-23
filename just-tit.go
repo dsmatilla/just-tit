@@ -32,7 +32,7 @@ const BaseDomain = "https://just-tit.com"
 
 const dynamodbRegion = "eu-west-1"
 const dynamodbTable = "JustTit"
-const secondsToCache = 3600
+const secondsToCache = 60 * 60 * 24
 
 type JustTitCache struct {
 	ID         string  `json:"id"`
@@ -83,7 +83,7 @@ func putToDB(ID string, Result string) {
 	)
 	svc := dynamodb.New(sess)
 
-	cache := JustTitCache{ID, Result, time.Now().Unix()}
+	cache := JustTitCache{ID, Result, time.Now().Unix() + secondsToCache}
 	item, _ := dynamodbattribute.MarshalMap(cache)
 	input := &dynamodb.PutItemInput{
 		Item:      item,
@@ -94,7 +94,7 @@ func putToDB(ID string, Result string) {
 
 func pornhubGetVideoByID(videoID string) pornhub.PornhubSingleVideo {
 	cachedElement := getFromDB("pornhub-video-"+videoID)
-	if cachedElement.Timestamp >= time.Now().Unix() - secondsToCache  {
+	if (JustTitCache{}) != cachedElement {
 		var result pornhub.PornhubSingleVideo
 		json.Unmarshal([]byte(cachedElement.Result), &result)
 		return result
@@ -108,7 +108,7 @@ func pornhubGetVideoByID(videoID string) pornhub.PornhubSingleVideo {
 
 func pornhubGetVideoEmbedCode(videoID string) pornhub.PornhubEmbedCode {
 	cachedElement := getFromDB("pornhub-embed-"+videoID)
-	if cachedElement.Timestamp >= time.Now().Unix() - secondsToCache  {
+	if (JustTitCache{}) != cachedElement {
 		var result pornhub.PornhubEmbedCode
 		json.Unmarshal([]byte(cachedElement.Result), &result)
 		return result
@@ -122,7 +122,7 @@ func pornhubGetVideoEmbedCode(videoID string) pornhub.PornhubEmbedCode {
 
 func redtubeGetVideoByID(videoID string) redtube.RedtubeSingleVideo {
 	cachedElement := getFromDB("redtube-video-"+videoID)
-	if cachedElement.Timestamp >= time.Now().Unix() - secondsToCache  {
+	if (JustTitCache{}) != cachedElement {
 		var result redtube.RedtubeSingleVideo
 		json.Unmarshal([]byte(cachedElement.Result), &result)
 		return result
@@ -136,7 +136,7 @@ func redtubeGetVideoByID(videoID string) redtube.RedtubeSingleVideo {
 
 func redtubeGetVideoEmbedCode(videoID string) redtube.RedtubeEmbedCode {
 	cachedElement := getFromDB("redtube-embed-"+videoID)
-	if cachedElement.Timestamp >= time.Now().Unix() - secondsToCache  {
+	if (JustTitCache{}) != cachedElement {
 		var result redtube.RedtubeEmbedCode
 		json.Unmarshal([]byte(cachedElement.Result), &result)
 		return result
@@ -150,7 +150,7 @@ func redtubeGetVideoEmbedCode(videoID string) redtube.RedtubeEmbedCode {
 
 func tube8GetVideoByID(videoID string) tube8.Tube8SingleVideo {
 	cachedElement := getFromDB("tube8-video-"+videoID)
-	if cachedElement.Timestamp >= time.Now().Unix() - secondsToCache  {
+	if (JustTitCache{}) != cachedElement {
 		var result tube8.Tube8SingleVideo
 		json.Unmarshal([]byte(cachedElement.Result), &result)
 		return result
@@ -164,7 +164,7 @@ func tube8GetVideoByID(videoID string) tube8.Tube8SingleVideo {
 
 func tube8GetVideoEmbedCode(videoID string) tube8.Tube8EmbedCode {
 	cachedElement := getFromDB("tube8-embed-"+videoID)
-	if cachedElement.Timestamp >= time.Now().Unix() - secondsToCache  {
+	if (JustTitCache{}) != cachedElement {
 		var result tube8.Tube8EmbedCode
 		json.Unmarshal([]byte(cachedElement.Result), &result)
 		return result
@@ -178,7 +178,7 @@ func tube8GetVideoEmbedCode(videoID string) tube8.Tube8EmbedCode {
 
 func youpornGetVideoByID(videoID string) youporn.YoupornSingleVideo {
 	cachedElement := getFromDB("youporn-video-"+videoID)
-	if cachedElement.Timestamp >= time.Now().Unix() - secondsToCache  {
+	if (JustTitCache{}) != cachedElement {
 		var result youporn.YoupornSingleVideo
 		json.Unmarshal([]byte(cachedElement.Result), &result)
 		return result
@@ -192,7 +192,7 @@ func youpornGetVideoByID(videoID string) youporn.YoupornSingleVideo {
 
 func youpornGetVideoEmbedCode(videoID string) youporn.YoupornEmbedCode {
 	cachedElement := getFromDB("youporn-embed-"+videoID)
-	if cachedElement.Timestamp >= time.Now().Unix() - secondsToCache  {
+	if (JustTitCache{}) != cachedElement {
 		var result youporn.YoupornEmbedCode
 		json.Unmarshal([]byte(cachedElement.Result), &result)
 		return result

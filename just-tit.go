@@ -14,7 +14,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/dsmatilla/pornhub"
 	"github.com/dsmatilla/redtube"
+	"github.com/dsmatilla/spankwire"
 	"github.com/dsmatilla/tube8"
+	"github.com/dsmatilla/xtube"
 	"github.com/dsmatilla/youporn"
 	"html"
 	"html/template"
@@ -204,6 +206,47 @@ func youpornGetVideoEmbedCode(videoID string) youporn.YoupornEmbedCode {
 	}
 }
 
+func xtubeGetVideoByID(videoID string) xtube.XtubeVideo {
+	cachedElement := getFromDB("xtube-video-"+videoID)
+	if (JustTitCache{}) != cachedElement {
+		var result xtube.XtubeVideo
+		json.Unmarshal([]byte(cachedElement.Result), &result)
+		return result
+	} else {
+		video := xtube.GetVideoByID(videoID)
+		json, _ := json.Marshal(video)
+		putToDB("xtube-video-"+videoID, string(json))
+		return video
+	}
+}
+
+func spankwireGetVideoByID(videoID string) spankwire.SpankwireSingleVideo {
+	cachedElement := getFromDB("spankwire-video-"+videoID)
+	if (JustTitCache{}) != cachedElement {
+		var result spankwire.SpankwireSingleVideo
+		json.Unmarshal([]byte(cachedElement.Result), &result)
+		return result
+	} else {
+		video := spankwire.GetVideoByID(videoID)
+		json, _ := json.Marshal(video)
+		putToDB("spankwire-video-"+videoID, string(json))
+		return video
+	}
+}
+
+func spankwireGetVideoEmbedCode(videoID string) spankwire.SpankwireEmbedCode {
+	cachedElement := getFromDB("spankwire-embed-"+videoID)
+	if (JustTitCache{}) != cachedElement {
+		var result spankwire.SpankwireEmbedCode
+		json.Unmarshal([]byte(cachedElement.Result), &result)
+		return result
+	} else {
+		embed := spankwire.GetVideoEmbedCode(videoID)
+		json, _ := json.Marshal(embed)
+		putToDB("spankwire-embed-"+videoID, string(json))
+		return embed
+	}
+}
 
 func searchPornhub(search string, c chan pornhub.PornhubSearchResult) {
 	defer waitGroup.Done()
@@ -310,6 +353,27 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 		replace.Url = fmt.Sprintf(BaseDomain+"/youporn/%s.html", videoID)
 		replace.Width = "628"
 		replace.Height = "501"
+	case "xtube":
+		video := xtubeGetVideoByID(videoID)
+		embed = video.EmbedCode
+		embed = fmt.Sprintf("<object><embed src=\"%+v\" /></object>", video.EmbedCode)
+		replace.PageTitle = fmt.Sprintf("%s", video.Title)
+		replace.PageMetaDesc = fmt.Sprintf("%s", video.Description)
+		replace.Thumb = fmt.Sprintf("%s", video.Thumb)
+		replace.Url = fmt.Sprintf(BaseDomain+"/xtube/%s.html", videoID)
+		replace.Width = "628"
+		replace.Height = "501"
+	case "spankwire":
+		video := spankwireGetVideoByID(videoID)
+		embed = spankwireGetVideoEmbedCode(videoID).Embed.Code
+		str, _ := base64.StdEncoding.DecodeString(embed)
+		embed = fmt.Sprintf("%+v", html.UnescapeString(string(str)))
+		replace.PageTitle = fmt.Sprintf("%s", video.Video.Title)
+		replace.PageMetaDesc = fmt.Sprintf("%s", video.Video.Title)
+		replace.Thumb = fmt.Sprintf("%s", video.Video.Thumb)
+		replace.Url = fmt.Sprintf(BaseDomain+"/spankwire/%s.html", videoID)
+		replace.Width = "650"
+		replace.Height = "550"
 	default:
 		return events.APIGatewayProxyResponse{
 			StatusCode: 301,

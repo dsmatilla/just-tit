@@ -12,6 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/dsmatilla/extremetube"
+	"github.com/dsmatilla/keezmovies"
 	"github.com/dsmatilla/pornhub"
 	"github.com/dsmatilla/redtube"
 	"github.com/dsmatilla/spankwire"
@@ -37,9 +39,9 @@ const dynamodbTable = "JustTit"
 const secondsToCache = 60 * 60 * 24
 
 type JustTitCache struct {
-	ID         string  `json:"id"`
-	Result	   string  `json:"result"`
-	Timestamp  int64 `json:"timestamp"`
+	ID        string `json:"id"`
+	Result    string `json:"result"`
+	Timestamp int64  `json:"timestamp"`
 }
 
 var AllowedDomains = []string{
@@ -95,7 +97,7 @@ func putToDB(ID string, Result string) {
 }
 
 func pornhubGetVideoByID(videoID string) pornhub.PornhubSingleVideo {
-	cachedElement := getFromDB("pornhub-video-"+videoID)
+	cachedElement := getFromDB("pornhub-video-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result pornhub.PornhubSingleVideo
 		json.Unmarshal([]byte(cachedElement.Result), &result)
@@ -109,7 +111,7 @@ func pornhubGetVideoByID(videoID string) pornhub.PornhubSingleVideo {
 }
 
 func pornhubGetVideoEmbedCode(videoID string) pornhub.PornhubEmbedCode {
-	cachedElement := getFromDB("pornhub-embed-"+videoID)
+	cachedElement := getFromDB("pornhub-embed-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result pornhub.PornhubEmbedCode
 		json.Unmarshal([]byte(cachedElement.Result), &result)
@@ -123,7 +125,7 @@ func pornhubGetVideoEmbedCode(videoID string) pornhub.PornhubEmbedCode {
 }
 
 func redtubeGetVideoByID(videoID string) redtube.RedtubeSingleVideo {
-	cachedElement := getFromDB("redtube-video-"+videoID)
+	cachedElement := getFromDB("redtube-video-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result redtube.RedtubeSingleVideo
 		json.Unmarshal([]byte(cachedElement.Result), &result)
@@ -137,7 +139,7 @@ func redtubeGetVideoByID(videoID string) redtube.RedtubeSingleVideo {
 }
 
 func redtubeGetVideoEmbedCode(videoID string) redtube.RedtubeEmbedCode {
-	cachedElement := getFromDB("redtube-embed-"+videoID)
+	cachedElement := getFromDB("redtube-embed-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result redtube.RedtubeEmbedCode
 		json.Unmarshal([]byte(cachedElement.Result), &result)
@@ -151,7 +153,7 @@ func redtubeGetVideoEmbedCode(videoID string) redtube.RedtubeEmbedCode {
 }
 
 func tube8GetVideoByID(videoID string) tube8.Tube8SingleVideo {
-	cachedElement := getFromDB("tube8-video-"+videoID)
+	cachedElement := getFromDB("tube8-video-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result tube8.Tube8SingleVideo
 		json.Unmarshal([]byte(cachedElement.Result), &result)
@@ -165,7 +167,7 @@ func tube8GetVideoByID(videoID string) tube8.Tube8SingleVideo {
 }
 
 func tube8GetVideoEmbedCode(videoID string) tube8.Tube8EmbedCode {
-	cachedElement := getFromDB("tube8-embed-"+videoID)
+	cachedElement := getFromDB("tube8-embed-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result tube8.Tube8EmbedCode
 		json.Unmarshal([]byte(cachedElement.Result), &result)
@@ -179,7 +181,7 @@ func tube8GetVideoEmbedCode(videoID string) tube8.Tube8EmbedCode {
 }
 
 func youpornGetVideoByID(videoID string) youporn.YoupornSingleVideo {
-	cachedElement := getFromDB("youporn-video-"+videoID)
+	cachedElement := getFromDB("youporn-video-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result youporn.YoupornSingleVideo
 		json.Unmarshal([]byte(cachedElement.Result), &result)
@@ -193,7 +195,7 @@ func youpornGetVideoByID(videoID string) youporn.YoupornSingleVideo {
 }
 
 func youpornGetVideoEmbedCode(videoID string) youporn.YoupornEmbedCode {
-	cachedElement := getFromDB("youporn-embed-"+videoID)
+	cachedElement := getFromDB("youporn-embed-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result youporn.YoupornEmbedCode
 		json.Unmarshal([]byte(cachedElement.Result), &result)
@@ -207,7 +209,7 @@ func youpornGetVideoEmbedCode(videoID string) youporn.YoupornEmbedCode {
 }
 
 func xtubeGetVideoByID(videoID string) xtube.XtubeVideo {
-	cachedElement := getFromDB("xtube-video-"+videoID)
+	cachedElement := getFromDB("xtube-video-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result xtube.XtubeVideo
 		json.Unmarshal([]byte(cachedElement.Result), &result)
@@ -221,7 +223,7 @@ func xtubeGetVideoByID(videoID string) xtube.XtubeVideo {
 }
 
 func spankwireGetVideoByID(videoID string) spankwire.SpankwireSingleVideo {
-	cachedElement := getFromDB("spankwire-video-"+videoID)
+	cachedElement := getFromDB("spankwire-video-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result spankwire.SpankwireSingleVideo
 		json.Unmarshal([]byte(cachedElement.Result), &result)
@@ -235,7 +237,7 @@ func spankwireGetVideoByID(videoID string) spankwire.SpankwireSingleVideo {
 }
 
 func spankwireGetVideoEmbedCode(videoID string) spankwire.SpankwireEmbedCode {
-	cachedElement := getFromDB("spankwire-embed-"+videoID)
+	cachedElement := getFromDB("spankwire-embed-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result spankwire.SpankwireEmbedCode
 		json.Unmarshal([]byte(cachedElement.Result), &result)
@@ -244,6 +246,62 @@ func spankwireGetVideoEmbedCode(videoID string) spankwire.SpankwireEmbedCode {
 		embed := spankwire.GetVideoEmbedCode(videoID)
 		json, _ := json.Marshal(embed)
 		putToDB("spankwire-embed-"+videoID, string(json))
+		return embed
+	}
+}
+
+func keezmoviesGetVideoByID(videoID string) keezmovies.KeezmoviesSingleVideo {
+	cachedElement := getFromDB("keezmovies-video-" + videoID)
+	if (JustTitCache{}) != cachedElement {
+		var result keezmovies.KeezmoviesSingleVideo
+		json.Unmarshal([]byte(cachedElement.Result), &result)
+		return result
+	} else {
+		video := keezmovies.GetVideoByID(videoID)
+		json, _ := json.Marshal(video)
+		putToDB("keezmovies-video-"+videoID, string(json))
+		return video
+	}
+}
+
+func keezmoviesGetVideoEmbedCode(videoID string) keezmovies.KeezmoviesEmbedCode {
+	cachedElement := getFromDB("keezmovies-embed-" + videoID)
+	if (JustTitCache{}) != cachedElement {
+		var result keezmovies.KeezmoviesEmbedCode
+		json.Unmarshal([]byte(cachedElement.Result), &result)
+		return result
+	} else {
+		embed := keezmovies.GetVideoEmbedCode(videoID)
+		json, _ := json.Marshal(embed)
+		putToDB("keezmovies-embed-"+videoID, string(json))
+		return embed
+	}
+}
+
+func extremetubeGetVideoByID(videoID string) extremetube.ExtremetubeSingleVideo {
+	cachedElement := getFromDB("extremetube-video-" + videoID)
+	if (JustTitCache{}) != cachedElement {
+		var result extremetube.ExtremetubeSingleVideo
+		json.Unmarshal([]byte(cachedElement.Result), &result)
+		return result
+	} else {
+		video := extremetube.GetVideoByID(videoID)
+		json, _ := json.Marshal(video)
+		putToDB("extremetube-video-"+videoID, string(json))
+		return video
+	}
+}
+
+func extremetubeGetVideoEmbedCode(videoID string) extremetube.ExtremetubeEmbedCode {
+	cachedElement := getFromDB("extremetube-embed-" + videoID)
+	if (JustTitCache{}) != cachedElement {
+		var result extremetube.ExtremetubeEmbedCode
+		json.Unmarshal([]byte(cachedElement.Result), &result)
+		return result
+	} else {
+		embed := extremetube.GetVideoEmbedCode(videoID)
+		json, _ := json.Marshal(embed)
+		putToDB("extremetube-embed-"+videoID, string(json))
 		return embed
 	}
 }
@@ -292,19 +350,19 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 		PageTitle    string
 		Search       string
 		PageMetaDesc string
-		Url 		 string
-		Thumb		 string
-		Domain		 string
-		Width 		 string
+		Url          string
+		Thumb        string
+		Domain       string
+		Width        string
 		Height       string
 	}{
 		PageTitle:    "",
 		Search:       "",
 		PageMetaDesc: "",
-		Url:		  "",
-		Thumb:		  "",
-		Domain:		  BaseDomain,
-		Width: 		  "",
+		Url:          "",
+		Thumb:        "",
+		Domain:       BaseDomain,
+		Width:        "",
 		Height:       "",
 	}
 
@@ -374,6 +432,28 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 		replace.Url = fmt.Sprintf(BaseDomain+"/spankwire/%s.html", videoID)
 		replace.Width = "650"
 		replace.Height = "550"
+	case "keezmovies":
+		video := keezmoviesGetVideoByID(videoID)
+		embed = keezmoviesGetVideoEmbedCode(videoID).Embed.Code
+		str, _ := base64.StdEncoding.DecodeString(embed)
+		embed = fmt.Sprintf("%+v", html.UnescapeString(string(str)))
+		replace.PageTitle = fmt.Sprintf("%s", video.Video.Title)
+		replace.PageMetaDesc = fmt.Sprintf("%s", video.Video.Title)
+		replace.Thumb = fmt.Sprintf("%s", video.Video.Thumb)
+		replace.Url = fmt.Sprintf(BaseDomain+"/keezmovies/%s.html", videoID)
+		replace.Width = "650"
+		replace.Height = "550"
+	case "extremetube":
+		video := extremetubeGetVideoByID(videoID)
+		embed = extremetubeGetVideoEmbedCode(videoID).Embed.Code
+		str, _ := base64.StdEncoding.DecodeString(embed)
+		embed = fmt.Sprintf("%+v", html.UnescapeString(string(str)))
+		replace.PageTitle = fmt.Sprintf("%s", video.Video.Title)
+		replace.PageMetaDesc = fmt.Sprintf("%s", video.Video.Title)
+		replace.Thumb = fmt.Sprintf("%s", video.Video.Thumb)
+		replace.Url = fmt.Sprintf(BaseDomain+"/extremetube/%s.html", videoID)
+		replace.Width = "650"
+		replace.Height = "550"
 	default:
 		return events.APIGatewayProxyResponse{
 			StatusCode: 301,
@@ -412,23 +492,23 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 }
 
 func doSearch(search string) searchResult {
-		waitGroup.Add(4)
+	waitGroup.Add(4)
 
-		PornhubChannel := make(chan pornhub.PornhubSearchResult)
-		RedtubeChannel := make(chan redtube.RedtubeSearchResult)
-		Tube8Channel := make(chan tube8.Tube8SearchResult)
-		YoupornChannel := make(chan youporn.YoupornSearchResult)
+	PornhubChannel := make(chan pornhub.PornhubSearchResult)
+	RedtubeChannel := make(chan redtube.RedtubeSearchResult)
+	Tube8Channel := make(chan tube8.Tube8SearchResult)
+	YoupornChannel := make(chan youporn.YoupornSearchResult)
 
-		go searchPornhub(search, PornhubChannel)
-		go searchRedtube(search, RedtubeChannel)
-		go searchTube8(search, Tube8Channel)
-		go searchYouporn(search, YoupornChannel)
+	go searchPornhub(search, PornhubChannel)
+	go searchRedtube(search, RedtubeChannel)
+	go searchTube8(search, Tube8Channel)
+	go searchYouporn(search, YoupornChannel)
 
-		result := searchResult{<-PornhubChannel, <-RedtubeChannel, <-Tube8Channel, <-YoupornChannel}
+	result := searchResult{<-PornhubChannel, <-RedtubeChannel, <-Tube8Channel, <-YoupornChannel}
 
-		waitGroup.Wait()
+	waitGroup.Wait()
 
-		return result
+	return result
 }
 
 func search(search string) events.APIGatewayProxyResponse {
@@ -557,10 +637,9 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 		// Javascript
 		aux := strings.Split(request.Path, ".")
-		if(aux[len(aux) - 1]) == "js" {
+		if (aux[len(aux)-1]) == "js" {
 			contentType = "application/javascript"
 		}
-
 
 		response.StatusCode = 200
 		response.Headers = map[string]string{

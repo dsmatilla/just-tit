@@ -13,7 +13,10 @@ func frontpage() events.APIGatewayProxyResponse {
 	}
 
 	// Build HTML from template
-	web, _ := template.ParseFiles("html/" + Theme + "/template.html")
+	web, _ := template.ParseFiles(
+		"html/" + Theme + "/template.html",
+		"html/"+Theme+"/video/container.html",
+		)
 
 	replace := TemplateData {
 		PageTitle:    "Just Tit",

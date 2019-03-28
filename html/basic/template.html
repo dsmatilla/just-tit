@@ -1,3 +1,4 @@
+{{ define "layout" }}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="{{.PageMetaDesc}}">
     <meta name="theme-color" content="#FFFFFF"/>
+    {{ if .Thumb }}
     <meta property="og:type" content="video">
     <meta property="og:title" content="{{.PageTitle}}"/>
     <meta property="og:image" content="{{.Thumb}}"/>
@@ -17,10 +19,12 @@
     <meta name="twitter:player" content="{{.Url}}?tp=true"/>
     <meta name="twitter:player:width" content="{{.Width}}"/>
     <meta name="twitter:player:height" content="{{.Height}}"/>
+    {{ end }}
     <link rel="manifest" href="/manifest.json">
     <link rel="shortcut icon" type="image/png" href="https://s3-us-west-1.amazonaws.com/just-tit-s3/favicon.png"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+          crossorigin="anonymous">
     <title>{{.PageTitle}}</title>
 </head>
 <body>
@@ -30,13 +34,15 @@
             <div class="row">
                 <div class="col-sm-8 col-md-7 py-4">
                     <h4 class="text-dark">About just-tit.com</h4>
-                    <p class="text-muted">This is a personal project, developed in Go and running at AWS Lambda. I hope
+                    <p class="text-muted">This is a personal project, developed in Go and running at AWS Lambda. I
+                        hope
                         you enjoy it!</p>
                 </div>
                 <div class="col-sm-4 offset-md-1 py-4">
                     <h4 class="text-dark">Contact</h4>
                     <ul class="list-unstyled">
-                        <li><a href="https://twitter.com/dsmatilla" class="text-dark">Follow author on Twitter</a></li>
+                        <li><a href="https://twitter.com/dsmatilla" class="text-dark">Follow author on Twitter</a>
+                        </li>
                         <li><a href="https://github.com/dsmatilla" class="text-dark">My github</a></li>
                         <li><a href="mailto:just-tit@esdis.es" class="text-dark">Email me</a></li>
                     </ul>
@@ -57,19 +63,63 @@
 </header>
 
 <main role="main">
-
     <section class="jumbotron text-center bg-white">
         <div class="container">
             <p>
             <form action="/" method="get">
-                <input title="Search" id="search" type="text" name="s" value="{{.Search}}">
+                <input title="Search" id="search" type="text" name="s">
                 <button type="submit" value="Search">Search</button>
             </form>
             </p>
         </div>
     </section>
+    {{ if .Result.Flag }}
+        {{ template "container" .Result }}
+    {{ end }}
+    {{ if .Embed }}
+        {{ template "container" .Embed }}
+    {{ end }}
+</main>
 
-    <div class="album py-5 bg-white">
-        <div class="container">
-            <div class="row">
+<footer class="d-flex justify-content-center mt-auto bg-dark text-center">
+    <div class="d-flex justify-content-between col-md-8 col-md-offset-2 mb-3 mt-5">
+    <span class="text-muted">
+        <img src="https://s3-us-west-1.amazonaws.com/just-tit-s3/pornhub.png" alt="Pornhub logo"/>
+        <img src="https://s3-us-west-1.amazonaws.com/just-tit-s3/redtube.png" alt="Redtube logo"/>
+        <img src="https://s3-us-west-1.amazonaws.com/just-tit-s3/youporn.png" alt="Youporn logo"/>
+        <img src="https://s3-us-west-1.amazonaws.com/just-tit-s3/tube8.png" alt="Tube8 logo"/>
+        <img src="https://s3-us-west-1.amazonaws.com/just-tit-s3/spankwire.png" alt="Spankwire logo"/>
+        <img src="https://s3-us-west-1.amazonaws.com/just-tit-s3/xtube.png" alt="Xtubelogo"/>
+    </span>
+    </div>
+</footer>
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106943798-2"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'UA-106943798-2');
+</script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js');
+    }
+</script>
+</body>
+</html>
+{{ end }}

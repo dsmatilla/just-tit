@@ -1,0 +1,12 @@
+{{ define "container" }}
+<div class="album py-5 bg-white">
+    <div class="container">
+        <div class="row">
+            {{ template "pornhub" .Pornhub.Videos }}
+            {{ template "redtube" .Redtube.Videos }}
+            {{ template "tube8" .Tube8.Videos.Video }}
+            {{ template "youporn" .Youporn.Videos }}
+        </div>
+    </div>
+</div>
+{{ end }}

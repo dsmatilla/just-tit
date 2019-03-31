@@ -106,9 +106,14 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	}
 
 	if len(str) == 3 {
-		provider := str[1]
-		videoID := strings.Replace(str[2], ".html", "", -1)
-		return singlevideo(provider, videoID, request.QueryStringParameters["tp"]), nil
+		if str[1] == "images" {
+			aux := strings.Split(str[2],".")
+			return imageProxy(aux[len(aux)-2]), nil
+		} else {
+			provider := str[1]
+			videoID := strings.Replace(str[2], ".html", "", -1)
+			return singlevideo(provider, videoID, request.QueryStringParameters["tp"]), nil
+		}
 	}
 
 	response.StatusCode = 404

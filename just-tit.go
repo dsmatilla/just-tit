@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -33,6 +34,12 @@ type TemplateData struct {
 	Height       string
 	Embed        template.HTML
 	Result       searchResult
+}
+
+var TemplateFunctions = template.FuncMap{
+	"ToImageProxy": func(url string) string {
+		return BaseDomain + "/images/" + base64.StdEncoding.EncodeToString([]byte(url))
+	},
 }
 
 func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -107,7 +114,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 	if len(str) == 3 {
 		if str[1] == "images" {
-			aux := strings.Split(str[2],".")
+			aux := strings.Split(str[2], ".")
 			return imageProxy(aux[len(aux)-2]), nil
 		} else {
 			provider := str[1]

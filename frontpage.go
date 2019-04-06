@@ -13,12 +13,12 @@ func frontpage() events.APIGatewayProxyResponse {
 	}
 
 	// Build HTML from template
-	web, _ := template.ParseFiles(
-		"html/" + Theme + "/template.html",
+	web := template.Must(template.New("frontpage").Funcs(TemplateFunctions).ParseFiles(
+		"html/"+Theme+"/template.html",
 		"html/"+Theme+"/video/container.html",
-		)
+	))
 
-	replace := TemplateData {
+	replace := TemplateData{
 		PageTitle:    "Just Tit",
 		PageMetaDesc: "The most optimized adult video search engine",
 	}

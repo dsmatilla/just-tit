@@ -20,21 +20,22 @@ func search(search string) events.APIGatewayProxyResponse {
 	result := doSearch(search)
 
 	// Build HTML from template
-	web, _ := template.ParseFiles(
-		"html/" + Theme + "/template.html",
-		"html/" + Theme + "/search/container.html",
-		"html/" + Theme + "/search/pornhub.html",
-		"html/" + Theme + "/search/redtube.html",
-		"html/" + Theme + "/search/tube8.html",
-		"html/" + Theme + "/search/youporn.html",
-	)
+	web := template.Must(template.New("search").Funcs(TemplateFunctions).ParseFiles(
+		"html/"+Theme+"/template.html",
+		"html/"+Theme+"/search/container.html",
+		"html/"+Theme+"/search/pornhub.html",
+		"html/"+Theme+"/search/redtube.html",
+		"html/"+Theme+"/search/tube8.html",
+		"html/"+Theme+"/search/youporn.html",
+	))
+
 	// Build result divs
 	var buff bytes.Buffer
-	replace := TemplateData {
+	replace := TemplateData{
 		PageTitle:    fmt.Sprintf("Search results for %s", search),
 		Search:       search,
 		PageMetaDesc: fmt.Sprintf("Search results for %s", search),
-		Result:	      result,
+		Result:       result,
 	}
 
 	web.ExecuteTemplate(&buff, "layout", replace)

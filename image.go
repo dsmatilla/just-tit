@@ -18,10 +18,10 @@ func imageProxy(image string) events.APIGatewayProxyResponse {
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
-		Headers:    map[string]string{
+		Headers: map[string]string{
 			"Content-Type": "image/jpeg",
 		},
-		Body: c,
+		Body:            c,
 		IsBase64Encoded: true,
 	}
 }

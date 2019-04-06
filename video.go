@@ -18,7 +18,7 @@ type searchResult struct {
 	Redtube redtube.RedtubeSearchResult
 	Tube8   tube8.Tube8SearchResult
 	Youporn youporn.YoupornSearchResult
-	Flag 	bool
+	Flag    bool
 }
 
 var waitGroup sync.WaitGroup

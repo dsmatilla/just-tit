@@ -18,18 +18,19 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 
 	var templateFile string
 	if tp == "true" {
-		templateFile = "html/"+Theme+"/player.html"
+		templateFile = "html/" + Theme + "/player.html"
 	} else {
-		templateFile = "html/"+Theme+"/template.html"
+		templateFile = "html/" + Theme + "/template.html"
 	}
 
-	web, _ := template.ParseFiles(
+	// Build HTML from template
+	web := template.Must(template.New("singlevideo").Funcs(TemplateFunctions).ParseFiles(
 		templateFile,
 		"html/"+Theme+"/video/container.html",
-	)
+	))
 
 	replace := TemplateData{
-		Domain:       BaseDomain,
+		Domain: BaseDomain,
 	}
 
 	switch provider {

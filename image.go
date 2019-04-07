@@ -6,11 +6,12 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 func imageProxy(image string) events.APIGatewayProxyResponse {
-
-	str, _ := base64.StdEncoding.DecodeString(image)
+	aux := strings.Split(image, ".")
+	str, _ := base64.StdEncoding.DecodeString(aux[0])
 
 	response, _ := http.Get(fmt.Sprintf("%s", str))
 	body, _ := ioutil.ReadAll(response.Body)

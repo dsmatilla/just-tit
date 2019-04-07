@@ -15,13 +15,8 @@ import (
 	"strings"
 )
 
-const BaseDomain = "https://just-tit.com"
-const Theme = "basic"
-
-var AllowedDomains = []string{
-	"just-tit.com",
-	"dev.just-tit.com",
-}
+var BaseDomain = os.Getenv("BaseDomain")
+var Theme = os.Getenv("Theme")
 
 type TemplateData struct {
 	PageTitle    string
@@ -38,7 +33,13 @@ type TemplateData struct {
 
 var TemplateFunctions = template.FuncMap{
 	"ToImageProxy": func(url string) string {
-		return BaseDomain + "/images/" + base64.StdEncoding.EncodeToString([]byte(url))
+		aux := strings.Split(url, ".")
+		ext := aux[len(aux)-1]
+		if ext == "jpg" {
+			return BaseDomain + "/images/" + base64.StdEncoding.EncodeToString([]byte(url)) + "." + ext
+		} else {
+			return url
+		}
 	},
 }
 
@@ -46,14 +47,12 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 	response := events.APIGatewayProxyResponse{}
 
-	// Check if domains is allowed, redirect to base domain otherwise
-	mustRedirect := true
-	for _, domain := range AllowedDomains {
-		if domain == request.Headers["Host"] {
-			mustRedirect = false
-		}
+	u, err := url.Parse(BaseDomain)
+	if err != nil {
+		log.Println("[JUST-TIT][URL_PARSE]", err)
 	}
-	if mustRedirect {
+
+	if u.Host != request.Headers["Host"] {
 		response.StatusCode = 301
 		response.Headers = map[string]string{
 			"Content-Type": "text/html",
@@ -114,8 +113,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 	if len(str) == 3 {
 		if str[1] == "images" {
-			aux := strings.Split(str[2], ".")
-			return imageProxy(aux[len(aux)-2]), nil
+			return imageProxy(str[2]), nil
 		} else {
 			provider := str[1]
 			videoID := strings.Replace(str[2], ".html", "", -1)

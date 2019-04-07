@@ -33,10 +33,14 @@ type TemplateData struct {
 
 var TemplateFunctions = template.FuncMap{
 	"ToImageProxy": func(url string) string {
-		aux := strings.Split(url, ".")
-		ext := aux[len(aux)-1]
-		if ext == "jpg" {
-			return BaseDomain + "/images/" + base64.StdEncoding.EncodeToString([]byte(url)) + "." + ext
+		if os.Getenv("ImageProxy") == "yes" {
+			aux := strings.Split(url, ".")
+			ext := aux[len(aux)-1]
+			if ext == "jpg" {
+				return BaseDomain + "/images/" + base64.StdEncoding.EncodeToString([]byte(url)) + "." + ext
+			} else {
+				return url
+			}
 		} else {
 			return url
 		}

@@ -9,12 +9,12 @@
     {{ if .Thumb }}
     <meta property="og:type" content="video">
     <meta property="og:title" content="{{.PageTitle}}"/>
-    <meta property="og:image" content="{{.Thumb}}"/>
+    <meta property="og:image" content="{{ToImageProxy .Thumb}}"/>
     <meta property="og:url" content="{{.Url}}"/>
     <meta name="twitter:card" content="player"/>
     <meta name="twitter:site" content="@Just_Tit"/>
     <meta name="twitter:title" content="{{.PageTitle}}"/>
-    <meta name="twitter:image" content="{{.Thumb}}"/>
+    <meta name="twitter:image" content="{{ToImageProxy .Thumb}}"/>
     <meta name="twitter:domain" content="{{.Domain}}"/>
     <meta name="twitter:player" content="{{.Url}}?tp=true"/>
     <meta name="twitter:player:width" content="{{.Width}}"/>

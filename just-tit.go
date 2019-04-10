@@ -36,7 +36,7 @@ var TemplateFunctions = template.FuncMap{
 		if os.Getenv("ImageProxy") == "yes" {
 			aux := strings.Split(url, ".")
 			ext := aux[len(aux)-1]
-			if ext == "jpg" {
+			if ext == "jpg" || ext == "png"{
 				return BaseDomain + "/images/" + base64.StdEncoding.EncodeToString([]byte(url)) + "." + ext
 			} else {
 				return url

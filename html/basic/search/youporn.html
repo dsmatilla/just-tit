@@ -2,12 +2,14 @@
 {{ range . }}
 <div id="{{.ID}}" class="col-md-4">
     <div class="card mb-4 shadow-sm">
+        <a class="text-dark" href="/youporn/{{.ID}}.html">
         <svgc class="bd-placeholder-img card-img-top p-2" width="100%" height="225" xmlns="http://www.w3.org/2000/svg"
               preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail">
             <title>{{.Title}}</title>
             <rect fill="#55595c" width="100%" height="100%"/>
             <text fill="#eceeef" dy=".3em" x="50%" y="50%"><img loading="lazy" class="rounded" src="{{ToImageProxy .DefaultThumb}}" style="width:100%" alt="{{.Title}}"></text>
         </svgc>
+        </a>
         <div class="card-body">
             <p class="card-text"><b><a class="text-dark" href="/youporn/{{.ID}}.html">{{.Title}}</a></b></p>
             {{ range .Tags }}

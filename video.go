@@ -10,6 +10,7 @@ import (
 	"github.com/dsmatilla/tube8"
 	"github.com/dsmatilla/xtube"
 	"github.com/dsmatilla/youporn"
+	"log"
 	"sync"
 )
 
@@ -27,12 +28,15 @@ func pornhubGetVideoByID(videoID string) pornhub.PornhubSingleVideo {
 	cachedElement := getFromDB("pornhub-video-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result pornhub.PornhubSingleVideo
-		json.Unmarshal([]byte(cachedElement.Result), &result)
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][PORNHUB_GET]", err)
+		}
 		return result
 	} else {
 		video := pornhub.GetVideoByID(videoID)
-		json, _ := json.Marshal(video)
-		putToDB("pornhub-video-"+videoID, string(json))
+		jsonResult, _ := json.Marshal(video)
+		putToDB("pornhub-video-"+videoID, string(jsonResult))
 		return video
 	}
 }
@@ -41,12 +45,15 @@ func pornhubGetVideoEmbedCode(videoID string) pornhub.PornhubEmbedCode {
 	cachedElement := getFromDB("pornhub-embed-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result pornhub.PornhubEmbedCode
-		json.Unmarshal([]byte(cachedElement.Result), &result)
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][PORNHUB_EMBED]", err)
+		}
 		return result
 	} else {
 		embed := pornhub.GetVideoEmbedCode(videoID)
-		json, _ := json.Marshal(embed)
-		putToDB("pornhub-embed-"+videoID, string(json))
+		jsonResult, _ := json.Marshal(embed)
+		putToDB("pornhub-embed-"+videoID, string(jsonResult))
 		return embed
 	}
 }
@@ -55,12 +62,15 @@ func redtubeGetVideoByID(videoID string) redtube.RedtubeSingleVideo {
 	cachedElement := getFromDB("redtube-video-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result redtube.RedtubeSingleVideo
-		json.Unmarshal([]byte(cachedElement.Result), &result)
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][REDTUBE_GET]", err)
+		}
 		return result
 	} else {
 		video := redtube.GetVideoByID(videoID)
-		json, _ := json.Marshal(video)
-		putToDB("redtube-video-"+videoID, string(json))
+		jsonResult, _ := json.Marshal(video)
+		putToDB("redtube-video-"+videoID, string(jsonResult))
 		return video
 	}
 }
@@ -69,12 +79,15 @@ func redtubeGetVideoEmbedCode(videoID string) redtube.RedtubeEmbedCode {
 	cachedElement := getFromDB("redtube-embed-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result redtube.RedtubeEmbedCode
-		json.Unmarshal([]byte(cachedElement.Result), &result)
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][REDTUBE_EMBED]", err)
+		}
 		return result
 	} else {
 		embed := redtube.GetVideoEmbedCode(videoID)
-		json, _ := json.Marshal(embed)
-		putToDB("redtube-embed-"+videoID, string(json))
+		jsonResult, _ := json.Marshal(embed)
+		putToDB("redtube-embed-"+videoID, string(jsonResult))
 		return embed
 	}
 }
@@ -83,12 +96,15 @@ func tube8GetVideoByID(videoID string) tube8.Tube8SingleVideo {
 	cachedElement := getFromDB("tube8-video-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result tube8.Tube8SingleVideo
-		json.Unmarshal([]byte(cachedElement.Result), &result)
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][TUBE8_GET]", err)
+		}
 		return result
 	} else {
 		video := tube8.GetVideoByID(videoID)
-		json, _ := json.Marshal(video)
-		putToDB("tube8-video-"+videoID, string(json))
+		jsonResult, _ := json.Marshal(video)
+		putToDB("tube8-video-"+videoID, string(jsonResult))
 		return video
 	}
 }
@@ -97,12 +113,15 @@ func tube8GetVideoEmbedCode(videoID string) tube8.Tube8EmbedCode {
 	cachedElement := getFromDB("tube8-embed-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result tube8.Tube8EmbedCode
-		json.Unmarshal([]byte(cachedElement.Result), &result)
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][TUBE8_EMBED]", err)
+		}
 		return result
 	} else {
 		embed := tube8.GetVideoEmbedCode(videoID)
-		json, _ := json.Marshal(embed)
-		putToDB("tube8-embed-"+videoID, string(json))
+		jsonResult, _ := json.Marshal(embed)
+		putToDB("tube8-embed-"+videoID, string(jsonResult))
 		return embed
 	}
 }
@@ -111,12 +130,15 @@ func youpornGetVideoByID(videoID string) youporn.YoupornSingleVideo {
 	cachedElement := getFromDB("youporn-video-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result youporn.YoupornSingleVideo
-		json.Unmarshal([]byte(cachedElement.Result), &result)
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][YOUPORN_GET]", err)
+		}
 		return result
 	} else {
 		video := youporn.GetVideoByID(videoID)
-		json, _ := json.Marshal(video)
-		putToDB("youporn-video-"+videoID, string(json))
+		jsonResult, _ := json.Marshal(video)
+		putToDB("youporn-video-"+videoID, string(jsonResult))
 		return video
 	}
 }
@@ -125,12 +147,15 @@ func youpornGetVideoEmbedCode(videoID string) youporn.YoupornEmbedCode {
 	cachedElement := getFromDB("youporn-embed-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result youporn.YoupornEmbedCode
-		json.Unmarshal([]byte(cachedElement.Result), &result)
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][YOUPORN_EMBED]", err)
+		}
 		return result
 	} else {
 		embed := youporn.GetVideoEmbedCode(videoID)
-		json, _ := json.Marshal(embed)
-		putToDB("youporn-embed-"+videoID, string(json))
+		jsonResult, _ := json.Marshal(embed)
+		putToDB("youporn-embed-"+videoID, string(jsonResult))
 		return embed
 	}
 }
@@ -139,12 +164,15 @@ func xtubeGetVideoByID(videoID string) xtube.XtubeVideo {
 	cachedElement := getFromDB("xtube-video-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result xtube.XtubeVideo
-		json.Unmarshal([]byte(cachedElement.Result), &result)
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][XTUBE_GET]", err)
+		}
 		return result
 	} else {
 		video := xtube.GetVideoByID(videoID)
-		json, _ := json.Marshal(video)
-		putToDB("xtube-video-"+videoID, string(json))
+		jsonResult, _ := json.Marshal(video)
+		putToDB("xtube-video-"+videoID, string(jsonResult))
 		return video
 	}
 }
@@ -153,12 +181,15 @@ func spankwireGetVideoByID(videoID string) spankwire.SpankwireSingleVideo {
 	cachedElement := getFromDB("spankwire-video-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result spankwire.SpankwireSingleVideo
-		json.Unmarshal([]byte(cachedElement.Result), &result)
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][SPANKWIRE_GET]", err)
+		}
 		return result
 	} else {
 		video := spankwire.GetVideoByID(videoID)
-		json, _ := json.Marshal(video)
-		putToDB("spankwire-video-"+videoID, string(json))
+		jsonResult, _ := json.Marshal(video)
+		putToDB("spankwire-video-"+videoID, string(jsonResult))
 		return video
 	}
 }
@@ -167,12 +198,15 @@ func spankwireGetVideoEmbedCode(videoID string) spankwire.SpankwireEmbedCode {
 	cachedElement := getFromDB("spankwire-embed-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result spankwire.SpankwireEmbedCode
-		json.Unmarshal([]byte(cachedElement.Result), &result)
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][SPANKWIRE_EMBED]", err)
+		}
 		return result
 	} else {
 		embed := spankwire.GetVideoEmbedCode(videoID)
-		json, _ := json.Marshal(embed)
-		putToDB("spankwire-embed-"+videoID, string(json))
+		jsonResult, _ := json.Marshal(embed)
+		putToDB("spankwire-embed-"+videoID, string(jsonResult))
 		return embed
 	}
 }
@@ -181,12 +215,15 @@ func keezmoviesGetVideoByID(videoID string) keezmovies.KeezmoviesSingleVideo {
 	cachedElement := getFromDB("keezmovies-video-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result keezmovies.KeezmoviesSingleVideo
-		json.Unmarshal([]byte(cachedElement.Result), &result)
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][KEEZMOVIES_GET]", err)
+		}
 		return result
 	} else {
 		video := keezmovies.GetVideoByID(videoID)
-		json, _ := json.Marshal(video)
-		putToDB("keezmovies-video-"+videoID, string(json))
+		jsonResult, _ := json.Marshal(video)
+		putToDB("keezmovies-video-"+videoID, string(jsonResult))
 		return video
 	}
 }
@@ -195,12 +232,15 @@ func keezmoviesGetVideoEmbedCode(videoID string) keezmovies.KeezmoviesEmbedCode 
 	cachedElement := getFromDB("keezmovies-embed-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result keezmovies.KeezmoviesEmbedCode
-		json.Unmarshal([]byte(cachedElement.Result), &result)
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][KEEZMOVIES_EMBED]", err)
+		}
 		return result
 	} else {
 		embed := keezmovies.GetVideoEmbedCode(videoID)
-		json, _ := json.Marshal(embed)
-		putToDB("keezmovies-embed-"+videoID, string(json))
+		jsonResult, _ := json.Marshal(embed)
+		putToDB("keezmovies-embed-"+videoID, string(jsonResult))
 		return embed
 	}
 }
@@ -209,12 +249,15 @@ func extremetubeGetVideoByID(videoID string) extremetube.ExtremetubeSingleVideo 
 	cachedElement := getFromDB("extremetube-video-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result extremetube.ExtremetubeSingleVideo
-		json.Unmarshal([]byte(cachedElement.Result), &result)
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][EXTREMETUBE_GET]", err)
+		}
 		return result
 	} else {
 		video := extremetube.GetVideoByID(videoID)
-		json, _ := json.Marshal(video)
-		putToDB("extremetube-video-"+videoID, string(json))
+		jsonResult, _ := json.Marshal(video)
+		putToDB("extremetube-video-"+videoID, string(jsonResult))
 		return video
 	}
 }
@@ -223,37 +266,100 @@ func extremetubeGetVideoEmbedCode(videoID string) extremetube.ExtremetubeEmbedCo
 	cachedElement := getFromDB("extremetube-embed-" + videoID)
 	if (JustTitCache{}) != cachedElement {
 		var result extremetube.ExtremetubeEmbedCode
-		json.Unmarshal([]byte(cachedElement.Result), &result)
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][EXTREMETUBE_EMBED]", err)
+		}
 		return result
 	} else {
 		embed := extremetube.GetVideoEmbedCode(videoID)
-		json, _ := json.Marshal(embed)
-		putToDB("extremetube-embed-"+videoID, string(json))
+		jsonResult, _ := json.Marshal(embed)
+		putToDB("extremetube-embed-"+videoID, string(jsonResult))
 		return embed
 	}
 }
 
 func searchPornhub(search string, c chan pornhub.PornhubSearchResult) {
 	defer waitGroup.Done()
-	c <- pornhub.SearchVideos(search)
+
+	var result pornhub.PornhubSearchResult
+	cachedElement := getFromDB("pornhub-search-" + search)
+	if (JustTitCache{}) != cachedElement {
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][SEARCH_PORNHUB]", err)
+		}
+		c <- result
+	} else {
+		result = pornhub.SearchVideos(search)
+		jsonResult, _ := json.Marshal(result)
+		putToDB("pornhub-search-"+search, string(jsonResult))
+		c <- result
+	}
+
 	close(c)
 }
 
 func searchRedtube(search string, c chan redtube.RedtubeSearchResult) {
 	defer waitGroup.Done()
-	c <- redtube.SearchVideos(search)
+
+	var result redtube.RedtubeSearchResult
+	cachedElement := getFromDB("redtube-search-" + search)
+	if (JustTitCache{}) != cachedElement {
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][SEARCH_REDTUBE]", err)
+		}
+		c <- result
+	} else {
+		result = redtube.SearchVideos(search)
+		jsonResult, _ := json.Marshal(result)
+		putToDB("redtube-search-"+search, string(jsonResult))
+		c <- result
+	}
+
 	close(c)
 }
 
 func searchTube8(search string, c chan tube8.Tube8SearchResult) {
 	defer waitGroup.Done()
-	c <- tube8.SearchVideos(search)
+
+	var result tube8.Tube8SearchResult
+	cachedElement := getFromDB("tube8-search-" + search)
+	if (JustTitCache{}) != cachedElement {
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][SEARCH_TUBE8]", err)
+		}
+		c <- result
+	} else {
+		result = tube8.SearchVideos(search)
+		jsonResult, _ := json.Marshal(result)
+		putToDB("tube8-search-"+search, string(jsonResult))
+		c <- result
+	}
+
 	close(c)
 }
 
 func searchYouporn(search string, c chan youporn.YoupornSearchResult) {
 	defer waitGroup.Done()
-	c <- youporn.SearchVideos(search)
+
+	var result youporn.YoupornSearchResult
+	cachedElement := getFromDB("youporn-search-" + search)
+	if (JustTitCache{}) != cachedElement {
+		err := json.Unmarshal([]byte(cachedElement.Result), &result)
+		if err != nil {
+			log.Println("[JUST-TIT][SEARCH_YOUPORN]", err)
+		}
+		c <- result
+	} else {
+		result = youporn.SearchVideos(search)
+		jsonResult, _ := json.Marshal(result)
+		putToDB("youporn-search-"+search, string(jsonResult))
+		c <- result
+	}
+
 	close(c)
 }
 

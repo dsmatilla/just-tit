@@ -64,7 +64,9 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 		replace.Embed = template.HTML(fmt.Sprintf("%+v", html.UnescapeString(string(str))))
 		replace.PageTitle = fmt.Sprintf("%s", video.Videos.Title)
 		replace.PageMetaDesc = fmt.Sprintf("%s", video.Videos.Title)
-		replace.Thumb = fmt.Sprintf("%s", video.Videos.Thumbs.Thumb[0].Thumb)
+		if len(video.Videos.Thumbs.Thumb) > 0 {
+			replace.Thumb = fmt.Sprintf("%s", video.Videos.Thumbs.Thumb[0].Thumb)
+		}
 		replace.Url = fmt.Sprintf(BaseDomain+"/tube8/%s.html", videoID)
 		replace.Width = "628"
 		replace.Height = "362"

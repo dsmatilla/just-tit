@@ -283,7 +283,7 @@ func searchPornhub(search string, c chan pornhub.PornhubSearchResult) {
 	defer waitGroup.Done()
 
 	var result pornhub.PornhubSearchResult
-	cachedElement := getFromDB("pornhub-search-" + search)
+	/*cachedElement := getFromDB("pornhub-search-" + search)
 	if (JustTitCache{}) != cachedElement {
 		err := json.Unmarshal([]byte(cachedElement.Result), &result)
 		if err != nil {
@@ -295,7 +295,10 @@ func searchPornhub(search string, c chan pornhub.PornhubSearchResult) {
 		jsonResult, _ := json.Marshal(result)
 		putToDB("pornhub-search-"+search, string(jsonResult))
 		c <- result
-	}
+	}*/
+
+	result = pornhub.SearchVideos(search)
+	c <- result
 
 	close(c)
 }
@@ -304,7 +307,7 @@ func searchRedtube(search string, c chan redtube.RedtubeSearchResult) {
 	defer waitGroup.Done()
 
 	var result redtube.RedtubeSearchResult
-	cachedElement := getFromDB("redtube-search-" + search)
+	/*cachedElement := getFromDB("redtube-search-" + search)
 	if (JustTitCache{}) != cachedElement {
 		err := json.Unmarshal([]byte(cachedElement.Result), &result)
 		if err != nil {
@@ -316,7 +319,11 @@ func searchRedtube(search string, c chan redtube.RedtubeSearchResult) {
 		jsonResult, _ := json.Marshal(result)
 		putToDB("redtube-search-"+search, string(jsonResult))
 		c <- result
-	}
+	}*/
+
+
+	result = redtube.SearchVideos(search)
+	c <- result
 
 	close(c)
 }
@@ -325,7 +332,7 @@ func searchTube8(search string, c chan tube8.Tube8SearchResult) {
 	defer waitGroup.Done()
 
 	var result tube8.Tube8SearchResult
-	cachedElement := getFromDB("tube8-search-" + search)
+	/*cachedElement := getFromDB("tube8-search-" + search)
 	if (JustTitCache{}) != cachedElement {
 		err := json.Unmarshal([]byte(cachedElement.Result), &result)
 		if err != nil {
@@ -337,7 +344,10 @@ func searchTube8(search string, c chan tube8.Tube8SearchResult) {
 		jsonResult, _ := json.Marshal(result)
 		putToDB("tube8-search-"+search, string(jsonResult))
 		c <- result
-	}
+	}*/
+
+	result = tube8.SearchVideos(search)
+	c <- result
 
 	close(c)
 }
@@ -346,7 +356,7 @@ func searchYouporn(search string, c chan youporn.YoupornSearchResult) {
 	defer waitGroup.Done()
 
 	var result youporn.YoupornSearchResult
-	cachedElement := getFromDB("youporn-search-" + search)
+	/*cachedElement := getFromDB("youporn-search-" + search)
 	if (JustTitCache{}) != cachedElement {
 		err := json.Unmarshal([]byte(cachedElement.Result), &result)
 		if err != nil {
@@ -358,7 +368,10 @@ func searchYouporn(search string, c chan youporn.YoupornSearchResult) {
 		jsonResult, _ := json.Marshal(result)
 		putToDB("youporn-search-"+search, string(jsonResult))
 		c <- result
-	}
+	}*/
+
+	result = youporn.SearchVideos(search)
+	c <- result
 
 	close(c)
 }

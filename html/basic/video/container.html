@@ -1,13 +1,24 @@
-{{ define "container" }}
+{{ define "container_video" }}
 <div class="album py-5 bg-white w-100 mx-auto">
     <div class="embed-responsive d-flex justify-content-center">
         <a onclick="setUtmSource(event, this)" href="http://www.pornhub.com?utm_medium=banner-paid&utm_campaign=hubtraffic_dsmatilla" id="rt_aff_banner_518" border="0" target="_blank"><img alt="Free porn videos" border="0" src="{{ToImageProxy "https://www.hubtraffic.com/_affiliate/banners/1543860092.png"}}"/></a>
     </div>
     <div class="container embed-responsive embed-responsive-16by9">
-        {{ . }}
+        {{ .Embed }}
     </div>
     <div class="embed-responsive d-flex justify-content-center">
         <a onclick="setUtmSource(event, this)" href="http://www.pornhub.com?utm_medium=banner-paid&utm_campaign=hubtraffic_dsmatilla" id="rt_aff_banner_518" border="0" target="_blank"><img alt="Free porn videos" border="0" src="{{ToImageProxy "https://www.hubtraffic.com/_affiliate/banners/1543860092.png"}}"/></a>
+    </div>
+</div>
+
+<div class="album py-5 bg-white">
+    <div class="container">
+        <div class="row">
+            {{ template "pornhub" .Result.Pornhub.Videos }}
+            {{ template "redtube" .Result.Redtube.Videos }}
+            {{ template "tube8" .Result.Tube8.Videos.Video }}
+            {{ template "youporn" .Result.Youporn.Videos }}
+        </div>
     </div>
 </div>
 {{ end }}

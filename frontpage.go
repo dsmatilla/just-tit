@@ -16,6 +16,11 @@ func frontpage() events.APIGatewayProxyResponse {
 	web := template.Must(template.New("frontpage").Funcs(TemplateFunctions).ParseFiles(
 		"html/"+Theme+"/template.html",
 		"html/"+Theme+"/video/container.html",
+		"html/"+Theme+"/search/container.html",
+		"html/"+Theme+"/search/pornhub.html",
+		"html/"+Theme+"/search/redtube.html",
+		"html/"+Theme+"/search/tube8.html",
+		"html/"+Theme+"/search/youporn.html",
 	))
 
 	replace := TemplateData{

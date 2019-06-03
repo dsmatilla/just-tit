@@ -19,6 +19,7 @@ var BaseDomain = os.Getenv("BaseDomain")
 var Theme = os.Getenv("Theme")
 
 type TemplateData struct {
+	ID 			 string
 	PageTitle    string
 	Search       string
 	PageMetaDesc string

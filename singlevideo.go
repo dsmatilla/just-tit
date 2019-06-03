@@ -27,9 +27,15 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 	web := template.Must(template.New("singlevideo").Funcs(TemplateFunctions).ParseFiles(
 		templateFile,
 		"html/"+Theme+"/video/container.html",
+		"html/"+Theme+"/search/container.html",
+		"html/"+Theme+"/search/pornhub.html",
+		"html/"+Theme+"/search/redtube.html",
+		"html/"+Theme+"/search/tube8.html",
+		"html/"+Theme+"/search/youporn.html",
 	))
 
 	replace := TemplateData{
+		ID:		videoID,
 		Domain: BaseDomain,
 	}
 
@@ -127,6 +133,34 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 			StatusCode: 301,
 			Headers:    map[string]string{"Location": "/"},
 			Body:       "",
+		}
+	}
+
+	replace.Result = doSearch(replace.PageTitle)
+	replace.Result.Flag = false
+
+
+	for index, element := range replace.Result.Pornhub.Videos {
+		if element.ID == videoID {
+			replace.Result.Pornhub.Videos = append(replace.Result.Pornhub.Videos[:index], replace.Result.Pornhub.Videos[index+1:]...)
+		}
+	}
+
+	for index, element := range replace.Result.Redtube.Videos {
+		if element.Video.ID == videoID {
+			replace.Result.Redtube.Videos = append(replace.Result.Redtube.Videos[:index], replace.Result.Redtube.Videos[index+1:]...)
+		}
+	}
+
+	for index, element := range replace.Result.Tube8.Videos.Video {
+		if element.ID == videoID {
+			replace.Result.Tube8.Videos.Video = append(replace.Result.Tube8.Videos.Video[:index], replace.Result.Tube8.Videos.Video[index+1:]...)
+		}
+	}
+
+	for index, element := range replace.Result.Youporn.Videos {
+		if element.ID == videoID {
+			replace.Result.Youporn.Videos = append(replace.Result.Youporn.Videos[:index], replace.Result.Youporn.Videos[index+1:]...)
 		}
 	}
 

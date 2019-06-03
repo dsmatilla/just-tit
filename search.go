@@ -22,6 +22,7 @@ func search(search string) events.APIGatewayProxyResponse {
 	// Build HTML from template
 	web := template.Must(template.New("search").Funcs(TemplateFunctions).ParseFiles(
 		"html/"+Theme+"/template.html",
+		"html/"+Theme+"/video/container.html",
 		"html/"+Theme+"/search/container.html",
 		"html/"+Theme+"/search/pornhub.html",
 		"html/"+Theme+"/search/redtube.html",

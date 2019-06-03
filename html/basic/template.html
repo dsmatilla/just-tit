@@ -74,10 +74,10 @@
         </div>
     </section>
     {{ if .Result.Flag }}
-        {{ template "container" .Result }}
+        {{ template "container_search" .Result }}
     {{ end }}
     {{ if .Embed }}
-        {{ template "container" .Embed }}
+        {{ template "container_video" . }}
     {{ end }}
 </main>
 

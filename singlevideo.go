@@ -135,7 +135,7 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 		replace.Url = fmt.Sprintf(BaseDomain+"/extremetube/%s.html", videoID)
 		replace.Width = "650"
 		replace.Height = "550"
-		replace.ExtretubeVideo = video
+		replace.ExtremetubeVideo = video
 	default:
 		return events.APIGatewayProxyResponse{
 			StatusCode: 301,

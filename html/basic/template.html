@@ -129,6 +129,41 @@
     }
 </script>
 <script type="text/javascript" src="https://www.hubtraffic.com/js/external/helpers.js"></script>
+{{ if .Embed }}
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "VideoObject",
+        "name": "{{.PageTitle}}",
+        "description": "{{.PageTitle}}",
+        "thumbnailUrl": [
+            "{{ToImageProxy .Thumb}}"
+        ],
+        {{ if .PornhubVideo.Video.PublishDate }}"uploadDate": "{{ .PornhubVideo.Video.PublishDate }}",{{ end -}}
+        {{ if .RedtubeVideo.Video.PublishDate }}"uploadDate": "{{ .RedtubeVideo.Video.PublishDate }}",{{ end -}}
+        {{ if .Tube8Video.Videos.PublishDate }}"uploadDate": "{{ .Tube8Video.Videos.PublishDate }}",{{ end -}}
+        {{ if .YoupornVideo.Video.PublishDate }}"uploadDate": "{{ .YoupornVideo.Video.PublishDate }}",{{ end -}}
+        {{ if .XtubeVideo.PublishDate }}"uploadDate": "{{ .XtubeVideo.PublishDate }}",{{ end -}}
+        {{ if .SpankwireVideo.Video.PublishDate }}"uploadDate": "{{ .SpankwireVideo.Video.PublishDate }}",{{ end -}}
+        {{ if .KeezmoviesVideo.Video.PublishDate }}"uploadDate": "{{ .KeezmoviesVideo.Video.PublishDate }}",{{ end -}}
+        {{ if .ExtremetubeVideo.Video.PublishDate }}"uploadDate": "{{ .ExtremetubeVideo.Video.PublishDate }}",{{ end }}
+        "embedUrl": "{{.Url}}?tp=true"
+    }
+</script>
+{{ else }}
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "url": "https://just-tit.com/",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://just-tit.com/{search_term_string}.html",
+            "query-input": "required name=search_term_string"
+        }
+    }
+</script>
+{{ end }}
 </body>
 </html>
 {{ end }}

@@ -45,7 +45,7 @@ type TemplateData struct {
 	XtubeVideo      xtube.XtubeVideo
 	SpankwireVideo  spankwire.SpankwireSingleVideo
 	KeezmoviesVideo keezmovies.KeezmoviesSingleVideo
-	ExtretubeVideo  extremetube.ExtremetubeSingleVideo
+	ExtremetubeVideo  extremetube.ExtremetubeSingleVideo
 }
 
 var TemplateFunctions = template.FuncMap{

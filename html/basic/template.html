@@ -1,12 +1,16 @@
-{{ define "layout" }}
+{{- define "layout" -}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="{{.PageMetaDesc}}">
+    {{ if .PornhubVideo.Video.Tags }}<meta name="keywords" content="{{ range .PornhubVideo.Video.Tags }}{{ if .Name }}{{.Name}},{{ end }}{{ end }}just-tit">{{ end -}}
+    {{ if .RedtubeVideo.Video.Tags }}<meta name="keywords" content="{{ range $Name := .RedtubeVideo.Video.Tags }}{{ if $Name }}{{$Name}},{{ end }}{{ end }}just-tit">{{ end -}}
+    {{ if .Tube8Video.Videos.Tags.Tag }}<meta name="keywords" content="{{ range $Name := .Tube8Video.Videos.Tags.Tag }}{{ if $Name }}{{$Name}},{{ end }}{{ end }}just-tit">{{ end -}}
+    {{ if .YoupornVideo.Video.Tags }}<meta name="keywords" content="{{ range .YoupornVideo.Video.Tags }}{{ if .Name }}{{.Name}},{{ end }}{{ end }}just-tit">{{ end -}}
     <meta name="theme-color" content="#FFFFFF"/>
-    {{ if .Thumb }}
+    {{- if .Thumb }}
     <meta property="og:type" content="video">
     <meta property="og:title" content="{{.PageTitle}}"/>
     <meta property="og:image" content="{{ToImageProxy .Thumb}}"/>
@@ -19,7 +23,7 @@
     <meta name="twitter:player" content="{{.Url}}?tp=true"/>
     <meta name="twitter:player:width" content="{{.Width}}"/>
     <meta name="twitter:player:height" content="{{.Height}}"/>
-    {{ end }}
+    {{ end -}}
     <link rel="manifest" href="/manifest.json">
     <link rel="shortcut icon" type="image/png" href="https://s3-us-west-1.amazonaws.com/just-tit-s3/favicon.png"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"

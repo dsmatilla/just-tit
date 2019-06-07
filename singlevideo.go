@@ -50,6 +50,7 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 		replace.Url = fmt.Sprintf(BaseDomain+"/pornhub/%s.html", videoID)
 		replace.Width = "580"
 		replace.Height = "360"
+		replace.PornhubVideo = video
 	case "redtube":
 		video := redtubeGetVideoByID(videoID)
 		embed := redtubeGetVideoEmbedCode(videoID).Embed.Code
@@ -61,6 +62,7 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 		replace.Url = fmt.Sprintf(BaseDomain+"/redtube/%s.html", videoID)
 		replace.Width = "320"
 		replace.Height = "180"
+		replace.RedtubeVideo = video
 	case "tube8":
 		video := tube8GetVideoByID(videoID)
 		embed := tube8GetVideoEmbedCode(videoID).EmbedCode.Code
@@ -76,6 +78,7 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 		replace.Url = fmt.Sprintf(BaseDomain+"/tube8/%s.html", videoID)
 		replace.Width = "628"
 		replace.Height = "362"
+		replace.Tube8Video = video
 	case "youporn":
 		video := youpornGetVideoByID(videoID)
 		embed := youpornGetVideoEmbedCode(videoID).Embed.Code
@@ -86,6 +89,7 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 		replace.Url = fmt.Sprintf(BaseDomain+"/youporn/%s.html", videoID)
 		replace.Width = "628"
 		replace.Height = "501"
+		replace.YoupornVideo = video
 	case "xtube":
 		video := xtubeGetVideoByID(videoID)
 		replace.Embed = template.HTML(fmt.Sprintf("<object><embed src=\"%+v\" /></object>", video.EmbedCode))
@@ -95,6 +99,7 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 		replace.Url = fmt.Sprintf(BaseDomain+"/xtube/%s.html", videoID)
 		replace.Width = "628"
 		replace.Height = "501"
+		replace.XtubeVideo = video
 	case "spankwire":
 		video := spankwireGetVideoByID(videoID)
 		embed := spankwireGetVideoEmbedCode(videoID).Embed.Code
@@ -106,6 +111,7 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 		replace.Url = fmt.Sprintf(BaseDomain+"/spankwire/%s.html", videoID)
 		replace.Width = "650"
 		replace.Height = "550"
+		replace.SpankwireVideo = video
 	case "keezmovies":
 		video := keezmoviesGetVideoByID(videoID)
 		embed := keezmoviesGetVideoEmbedCode(videoID).Embed.Code
@@ -117,6 +123,7 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 		replace.Url = fmt.Sprintf(BaseDomain+"/keezmovies/%s.html", videoID)
 		replace.Width = "650"
 		replace.Height = "550"
+		replace.KeezmoviesVideo = video
 	case "extremetube":
 		video := extremetubeGetVideoByID(videoID)
 		embed := extremetubeGetVideoEmbedCode(videoID).Embed.Code
@@ -128,6 +135,7 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 		replace.Url = fmt.Sprintf(BaseDomain+"/extremetube/%s.html", videoID)
 		replace.Width = "650"
 		replace.Height = "550"
+		replace.ExtretubeVideo = video
 	default:
 		return events.APIGatewayProxyResponse{
 			StatusCode: 301,

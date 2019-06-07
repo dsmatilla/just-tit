@@ -6,6 +6,14 @@ import (
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/dsmatilla/extremetube"
+	"github.com/dsmatilla/keezmovies"
+	"github.com/dsmatilla/pornhub"
+	"github.com/dsmatilla/redtube"
+	"github.com/dsmatilla/spankwire"
+	"github.com/dsmatilla/tube8"
+	"github.com/dsmatilla/xtube"
+	"github.com/dsmatilla/youporn"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -19,17 +27,25 @@ var BaseDomain = os.Getenv("BaseDomain")
 var Theme = os.Getenv("Theme")
 
 type TemplateData struct {
-	ID 			 string
-	PageTitle    string
-	Search       string
-	PageMetaDesc string
-	Url          string
-	Thumb        string
-	Domain       string
-	Width        string
-	Height       string
-	Embed        template.HTML
-	Result       searchResult
+	ID              string
+	PageTitle       string
+	Search          string
+	PageMetaDesc    string
+	Url             string
+	Thumb           string
+	Domain          string
+	Width           string
+	Height          string
+	Embed           template.HTML
+	Result          searchResult
+	PornhubVideo    pornhub.PornhubSingleVideo
+	RedtubeVideo    redtube.RedtubeSingleVideo
+	Tube8Video      tube8.Tube8SingleVideo
+	YoupornVideo    youporn.YoupornSingleVideo
+	XtubeVideo      xtube.XtubeVideo
+	SpankwireVideo  spankwire.SpankwireSingleVideo
+	KeezmoviesVideo keezmovies.KeezmoviesSingleVideo
+	ExtretubeVideo  extremetube.ExtremetubeSingleVideo
 }
 
 var TemplateFunctions = template.FuncMap{
@@ -37,7 +53,7 @@ var TemplateFunctions = template.FuncMap{
 		if os.Getenv("ImageProxy") == "yes" {
 			aux := strings.Split(url, ".")
 			ext := aux[len(aux)-1]
-			if ext == "jpg" || ext == "png"{
+			if ext == "jpg" || ext == "png" {
 				return BaseDomain + "/images/" + base64.StdEncoding.EncodeToString([]byte(url)) + "." + ext
 			} else {
 				return url

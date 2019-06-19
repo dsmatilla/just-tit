@@ -7,15 +7,32 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"html"
 	"html/template"
+	"net/http"
 	"strings"
 )
 
-func singlevideo(provider string, videoID string, tp string) events.APIGatewayProxyResponse {
-	headers := map[string]string{
-		"Content-Type":  "text/html; charset=utf-8",
-		"Cache-Control": "max-age=31536000",
+func singlevideo(provider string, videoID string, tp string, visited bool) events.APIGatewayProxyResponse {
+	var headers = map[string]string{}
+	if visited {
+		headers = map[string]string{
+			"Content-Type":  "text/html; charset=utf-8",
+			"Cache-Control": "max-age=31536000",
+		}
+	} else {
+		cookie := http.Cookie{
+			Name:     "justtit_visited",
+			Value:    "true",
+			Domain:   BaseDomain,
+			Path:     "/",
+			MaxAge:   60 * 60 * 24,
+			HttpOnly: true,
+		}
+		headers = map[string]string{
+			"Content-Type":  "text/html; charset=utf-8",
+			"Cache-Control": "max-age=31536000",
+			"Set-Cookie":    cookie.String(),
+		}
 	}
-
 	var templateFile string
 	if tp == "true" {
 		templateFile = "html/" + Theme + "/player.html"

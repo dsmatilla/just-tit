@@ -138,7 +138,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		} else {
 			provider := str[1]
 			videoID := strings.Replace(str[2], ".html", "", -1)
-			return singlevideo(provider, videoID, request.QueryStringParameters["tp"]), nil
+			return singlevideo(provider, videoID, request.QueryStringParameters["tp"], strings.Contains(request.Headers["cookie"], "justtit_visited")), nil
 		}
 	}
 

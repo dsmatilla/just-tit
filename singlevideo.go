@@ -7,15 +7,61 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"html"
 	"html/template"
+	"net/http"
 	"strings"
 )
 
-func singlevideo(provider string, videoID string, tp string) events.APIGatewayProxyResponse {
+func singlevideo(provider string, videoID string, tp string, rd string, visited bool) events.APIGatewayProxyResponse {
 	var headers = map[string]string{}
 
-	headers = map[string]string{
-		"Content-Type":  "text/html; charset=utf-8",
-		"Cache-Control": "max-age=31536000",
+	var redirect string
+	switch provider {
+	case "pornhub":
+		redirect = "https://pornhub.com/view_video.php?viewkey=" + videoID + "&t=1&utm_source=just-tit.com&utm_medium=embed&utm_campaign=embed-logo-html5"
+	case "redtube":
+		redirect = "https://www.redtube.com/" + videoID + "?utm_source=just-tit.com&utm_medium=embed&utm_campaign=embed-logo-html5"
+	case "tube8":
+		redirect = "https://www.tube8.com/video/title/" + videoID + "/?utm_source=just-tit.com&utm_medium=embed&utm_campaign=embed-logo-html5"
+	case "youporn":
+		redirect = "https://www.youporn.com/watch/" + videoID + "/title/?utm_source=just-tit.com&utm_medium=embed&utm_campaign=embed-logo-html5"
+	case "xtube":
+		redirect = "https://www.xtube.com/video-watch/watchin-xtube-" + videoID + "?t=0&utm_source=just-tit.com&utm_medium=embed&utm_campaign=embed-logo-html5"
+	case "spankwire":
+		redirect = "https://www.spankwire.com/title/video" + videoID + "?utm_source=just-tit.com&utm_medium=embed&utm_campaign=embed-logo-html5"
+	case "keezmovies":
+		redirect = "https://www.keezmovies.com/video/title-" + videoID + "?utm_source=just-tit.com&utm_medium=embed&utm_campaign=embed-logo-html5"
+	case "extremetube":
+		redirect = "https://www.extremetube.com/video/title-" + videoID + "?utm_source=just-tit.com&utm_medium=embed&utm_campaign=embed-logo"
+	}
+
+	if visited {
+		headers = map[string]string{
+			"Content-Type":  "text/html; charset=utf-8",
+			"Cache-Control": "max-age=31536000",
+		}
+	} else {
+		cookie := http.Cookie{
+			Name:     "justtit_visited",
+			Value:    "true",
+			Domain:   BaseDomain,
+			Path:     "/",
+			MaxAge:   60 * 60 * 24,
+			HttpOnly: true,
+		}
+		headers = map[string]string{
+			"Content-Type":  "text/html; charset=utf-8",
+			"Cache-Control": "max-age=31536000",
+			"Set-Cookie":    cookie.String(),
+		}
+		if rd == "true" {
+			headers = map[string]string{
+				"Content-Type": "text/html; charset=utf-8",
+				"Cache-Control": "max-age=31536000",
+				"Set-Cookie": cookie.String(),
+				"Location": redirect,
+			}
+			return events.APIGatewayProxyResponse{StatusCode: 307,Headers: headers,}
+		}
 	}
 
 	var templateFile string
@@ -149,7 +195,6 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 	replace.Result = doSearch(replace.PageTitle)
 	replace.Result.Flag = false
 
-
 	for index, element := range replace.Result.Pornhub.Videos {
 		if element.ID == videoID {
 			replace.Result.Pornhub.Videos = append(replace.Result.Pornhub.Videos[:index], replace.Result.Pornhub.Videos[index+1:]...)
@@ -181,10 +226,10 @@ func singlevideo(provider string, videoID string, tp string) events.APIGatewayPr
 
 	if len(replace.PageTitle) == 0 {
 		return events.APIGatewayProxyResponse{
-			StatusCode: 301,
+			StatusCode: 303,
 			Headers: map[string]string{
 				"Content-Type": "text/html",
-				"Location":     BaseDomain,
+				"Location":     redirect,
 			},
 			Body: "",
 		}

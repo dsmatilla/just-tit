@@ -322,7 +322,7 @@ func searchRedtube(search string, c chan redtube.RedtubeSearchResult) {
 	}*/
 
 
-	result = redtube.SearchVideos(search)
+	//result = redtube.SearchVideos(search)
 	c <- result
 
 	close(c)

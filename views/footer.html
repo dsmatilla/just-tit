@@ -1,0 +1,79 @@
+</main>
+<footer class="d-flex justify-content-center mt-auto bg-dark text-center footer">
+    <div class="d-flex justify-content-between col-md-5 col-md-offset-2 mb-3 mt-5">
+    <span class="text-muted">
+        <img loading="lazy" src="/img/pornhub.png" alt="Pornhub logo" width="150px" height="50px" />
+        <img loading="lazy" src="/img/redtube.png" alt="Redtube logo" width="150px" height="50px" />
+        <img loading="lazy" src="/img/youporn.png" alt="Youporn logo" width="150px" height="50px" />
+        <img loading="lazy" src="/img/tube8.png" alt="Tube8 logo" width="150px" height="50px" />
+        <img loading="lazy" src="/img/spankwire.png" alt="Spankwire logo" width="150px" height="50px" />
+        <img loading="lazy" src="/img/xtube.png" alt="Xtube logo" width="150px" height="50px" />
+        <img loading="lazy" src="/img/extremetube.png" alt="Extremetube logo" width="150px" height="50px" />
+        <img loading="lazy" src="/img/keezmovies.png" alt="Keezmovies logo" width="150px" height="50px" />
+        <div class="footer-copyright text-center py-3">© 2010 - 2020 Copyright:
+            <a href="https://esdis.cloud"> Esdis Cloud</a>
+        </div>
+    </span>
+    </div>
+</footer>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106943798-2"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'UA-106943798-2');
+</script>
+<script type="text/javascript">var sc_project=11999640;var sc_invisible=1;var sc_security="4e8e7b5a";</script>
+<script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js');
+    }
+</script>
+<script type="text/javascript" src="https://www.hubtraffic.com/js/external/helpers.js"></script>
+{{ if .Embed -}}
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "VideoObject",
+        "name": "{{.PageTitle}}",
+        "description": "{{.PageTitle}}",
+        "thumbnailUrl": [
+            "{{.Domain}}{{ToImageProxy .Thumb}}"
+        ],
+        {{ if .PornhubVideo.video.publish_date }}"uploadDate": "{{ .PornhubVideo.video.publish_date }}",{{ end -}}
+        {{ if .RedtubeVideo.video.publish_date }}"uploadDate": "{{ .RedtubeVideo.video.publish_date }}",{{ end -}}
+        {{ if .Tube8Video.video.publish_date }}"uploadDate": "{{ .Tube8Video.video.publish_date }}",{{ end -}}
+        {{ if .YoupornVideo.video.publish_date }}"uploadDate": "{{ .YoupornVideo.video.publish_date }}",{{ end -}}
+        {{ if .XtubeVideo.publish_date }}"uploadDate": "{{ .XtubeVideo.publish_date }}",{{ end -}}
+        {{ if .SpankwireVideo.publish_date }}"uploadDate": "{{ .SpankwireVideo.publish_date }}",{{ end -}}
+        {{ if .KeezmoviesVideo.publish_date }}"uploadDate": "{{ .KeezmoviesVideo.publish_date }}",{{ end -}}
+        {{ if .ExtremetubeVideo.publish_date }}"uploadDate": "{{ .ExtremetubeVideo.publish_date }}",{{ end }}
+        "embedUrl": "{{.Url}}?tp=true"
+    }
+</script>
+{{ else }}
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "url": "https://just-tit.com/",
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://just-tit.com/{search_term_string}.html",
+                "query-input": "required name=search_term_string"
+            }
+        }
+    </script>
+{{ end }}
+</body>
+</html>

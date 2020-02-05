@@ -1,0 +1,7 @@
+{{template "header.html" .}}
+  {{ if .Embed }}
+    {{ template "video/container.html" . }}
+  {{ else }}
+    {{ template "search/container.html" .Result }}
+  {{ end }}
+{{template "footer.html" .}}

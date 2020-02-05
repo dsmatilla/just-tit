@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="{{.PageMetaDesc}}">
+  {{ if .PornhubVideo.video.tags }}<meta name="keywords" content="{{ range .PornhubVideo.video.tags }}{{ if .tag_name }}{{.tag_name}},{{ end }}{{ end }}just-tit">{{ end -}}
+  {{ if .RedtubeVideo.video.tags }}<meta name="keywords" content="{{ range $tag_name := .RedtubeVideo.video.tags }}{{ if $tag_name }}{{$tag_name}},{{ end }}{{ end }}just-tit">{{ end -}}
+  {{ if .Tube8Video.tags }}<meta name="keywords" content="{{ range $Name := .Tube8Video.tags }}{{ if $Name }}{{$Name}},{{ end }}{{ end }}just-tit">{{ end -}}
+  {{ if .YoupornVideo.video.tags }}<meta name="keywords" content="{{ range .YoupornVideo.video.tags }}{{ if .tag_name }}{{.tag_name}},{{ end }}{{ end }}just-tit">{{ end -}}
+  {{ if .XtubeVideo.tags }}<meta name="keywords" content="{{ range $Name := .XtubeVideo.tags }}{{ if $Name }}{{$Name}},{{ end }}{{ end }}just-tit">{{ end -}}
+  {{ if .SpankwireVideo.tags }}<meta name="keywords" content="{{ range $Name := .SpankwireVideo.tags }}{{ if $Name }}{{$Name}},{{ end }}{{ end }}just-tit">{{ end -}}
+  {{ if .KeezmoviesVideo.tags }}<meta name="keywords" content="{{ range $Name := .KeezmoviesVideo.tags }}{{ if $Name }}{{$Name}},{{ end }}{{ end }}just-tit">{{ end -}}
+  {{ if .ExtremetubeVideo.tags }}<meta name="keywords" content="{{ range $Name := .ExtremetubeVideo.tags }}{{ if $Name }}{{$Name}},{{ end }}{{ end }}just-tit">{{ end -}}
+  <meta name="theme-color" content="#FFFFFF"/>
+  {{- if .Thumb }}
+  <meta property="og:type" content="video">
+  <meta property="og:title" content="{{.PageTitle}}"/>
+  <meta property="og:image" content="{{.Domain}}{{ToImageProxy .Thumb}}"/>
+  <meta property="og:url" content="{{.Url}}"/>
+  <meta name="twitter:card" content="player"/>
+  <meta name="twitter:site" content="@Just_Tit"/>
+  <meta name="twitter:title" content="{{.PageTitle}}"/>
+  <meta name="twitter:image" content="{{.Domain}}{{ToImageProxy .Thumb}}"/>
+  <meta name="twitter:player" content="{{.Url}}?tp=true"/>
+  <meta name="twitter:player:width" content="{{.Width}}"/>
+  <meta name="twitter:player:height" content="{{.Height}}"/>
+  {{ end -}}
+  <link rel="apple-touch-icon" href="/img/icon-192x192.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="shortcut icon" type="image/png" href="/img/favicon.png"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <title>{{.PageTitle}}</title>
+</head>
+<body>
+<header>
+  <div class="collapse bg-white" id="navbarHeader">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-8 col-md-7 py-4">
+          <h4 class="text-dark">About just-tit.com</h4>
+          <p class="text-muted">This is a personal project, developed in Go, using BeeGo. I
+            hope
+            you enjoy it!</p>
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+            <p class="text-muted">
+              This is an ad-free project. If you like it, please consider a donation to help me cover the costs of keeping the project online. Thank you!
+            </p>
+            <input type="hidden" name="cmd" value="_s-xclick" />
+            <input type="hidden" name="hosted_button_id" value="PE2N8QAY7N28G" />
+            <input type="image" src="https://www.paypalobjects.com/es_ES/ES/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Botón Donar con PayPal" />
+            <img alt="" border="0" src="https://www.paypal.com/es_ES/i/scr/pixel.gif" width="1" height="1" />
+          </form>
+        </div>
+        <div class="col-sm-4 offset-md-1 py-4">
+          <h4 class="text-dark">Contact</h4>
+          <ul class="list-unstyled">
+            <li><a href="https://twitter.com/dsmatilla" class="text-dark">Follow author on Twitter</a>
+            </li>
+            <li><a href="https://github.com/dsmatilla" class="text-dark">My github</a></li>
+            <li><a href="mailto:just-tit@esdis.es" class="text-dark">Email me</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="navbar navbar-light bg-white shadow-sm">
+    <div class="container d-flex justify-content-between">
+      <a href="/" class="navbar-brand d-flex align-items-center"><span class="d-none">Just-tit</span><img
+                src="/img/just-tit.png" alt="Just-tit logo" width="150px" height="50px" /></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader"
+              aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+  </div>
+</header>
+<main role="main" style="min-height: 600px;">
+  <section class="jumbotron text-center bg-white">
+    <div class="container">
+      <p>
+      <form action="/" method="get">
+        <input title="Search" id="search" type="text" name="s">
+        <button type="submit" value="Search">Search</button>
+      </form>
+      </p>
+    </div>
+  </section>

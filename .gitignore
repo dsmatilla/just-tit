@@ -16,3 +16,4 @@
 *.zip
 just-tit
 .gitignore
+conf/app.conf

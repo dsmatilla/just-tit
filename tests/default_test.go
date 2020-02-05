@@ -6,7 +6,7 @@ import (
 	"testing"
 	"runtime"
 	"path/filepath"
-	_ "github.com/dsmatilla/just-tit-beego/routers"
+	_ "github.com/dsmatilla/just-tit/routers"
 
 	"github.com/astaxie/beego"
 	. "github.com/smartystreets/goconvey/convey"

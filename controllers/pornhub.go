@@ -16,7 +16,7 @@ import (
 
 const PornhubApiURL = "http://www.pornhub.com/webmasters/"
 const PornhubApiTimeout = 2
-const PornhubCacheDuration = time.Minute * 10
+const PornhubCacheDuration = time.Minute * 2
 
 type PornhubSearchResult map[string]interface{}
 type PornhubSingleVideo map[string]interface{}
@@ -33,7 +33,7 @@ func (c *PornhubController) Get() {
 
 	redirect := "https://pornhub.com/view_video.php?viewkey=" + videoID + "&t=1&utm_source=just-tit.com&utm_medium=embed&utm_campaign=hubtraffic_dsmatilla"
 
-	BaseDomain := "https://"+c.Ctx.Request.Host
+	BaseDomain := "https://just-tit.com"
 	type TemplateData = map[string]interface{}
 
 	c.Data["ID"] = videoID

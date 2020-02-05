@@ -3,7 +3,7 @@ package routers
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/cache"
-	"github.com/dsmatilla/just-tit-beego/controllers"
+	"github.com/dsmatilla/just-tit/controllers"
 )
 
 func init() {

@@ -17,7 +17,7 @@ import (
 
 const RedtubeApiURL = "https://api.redtube.com/"
 const RedtubeApiTimeout = 2
-const RedtubeCacheDuration = time.Minute * 10
+const RedtubeCacheDuration = time.Minute * 2
 
 type RedtubeSearchResult map[string]interface{}
 type RedtubeSingleVideo map[string]interface{}
@@ -34,7 +34,7 @@ func (c *RedtubeController) Get() {
 
 	redirect := "https://www.redtube.com/" + videoID + "?utm_source=just-tit.com&utm_medium=embed&utm_campaign=hubtraffic_dsmatilla"
 
-	BaseDomain := "https://"+c.Ctx.Request.Host
+	BaseDomain := "https://just-tit.com"
 
 	type TemplateData = map[string]interface{}
 

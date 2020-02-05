@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"github.com/astaxie/beego"
-	_ "github.com/dsmatilla/just-tit-beego/routers"
+	_ "github.com/dsmatilla/just-tit/routers"
 	"strings"
 )
 

@@ -15,7 +15,7 @@ import (
 
 const YoupornApiURL = "http://www.youporn.com/api/webmasters/"
 const YoupornApiTimeout = 2
-const YoupornCacheDuration = time.Minute * 10
+const YoupornCacheDuration = time.Minute * 2
 
 type YoupornSearchResult map[string]interface{}
 type YoupornSingleVideo map[string]interface{}
@@ -32,7 +32,7 @@ func (c *YoupornController) Get() {
 
 	redirect := "https://www.youporn.com/watch/" + videoID + "/title/?utm_source=just-tit.com&utm_medium=embed&utm_campaign=hubtraffic_dsmatilla"
 
-	BaseDomain := "https://"+c.Ctx.Request.Host
+	BaseDomain := "https://just-tit.com"
 
 	type TemplateData = map[string]interface{}
 

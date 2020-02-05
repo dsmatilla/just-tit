@@ -15,9 +15,9 @@ import (
 
 const Tube8ApiURL = "http://api.tube8.com/api.php"
 const Tube8ApiTimeout = 2
-const Tube8CacheDuration = time.Minute * 10
+const Tube8CacheDuration = time.Minute * 2
 
-type Tube8SearchResult map[string]interface{}
+type Tube8SearchResult map[string]interface{}git
 type Tube8SingleVideo map[string]interface{}
 
 type Tube8Controller struct {
@@ -31,7 +31,7 @@ func (c *Tube8Controller) Get() {
 
 	redirect := "https://www.tube8.com/video/title/" + videoID + "/?utm_source=just-tit.com&utm_medium=embed&utm_campaign=hubtraffic_dsmatilla"
 
-	BaseDomain := "https://"+c.Ctx.Request.Host
+	BaseDomain := "https://just-tit.com"
 
 	type TemplateData = map[string]interface{}
 

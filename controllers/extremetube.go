@@ -32,6 +32,7 @@ func (c *ExtremetubeController) Get() {
 	redirect := "https://www.extremetube.com/video/title-" + videoID + "?utm_source=just-tit.com&utm_medium=embed&utm_campaign=hubtraffic_dsmatilla"
 
 	BaseDomain := "https://just-tit.com"
+
 	type TemplateData = map[string]interface{}
 
 	c.Data["ID"] = videoID

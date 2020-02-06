@@ -15,7 +15,7 @@ import (
 
 const YoupornApiURL = "http://www.youporn.com/api/webmasters/"
 const YoupornApiTimeout = 2
-const YoupornCacheDuration = time.Minute * 2
+const YoupornCacheDuration = time.Minute * 5
 
 type YoupornSearchResult map[string]interface{}
 type YoupornSingleVideo map[string]interface{}
@@ -66,7 +66,6 @@ func (c *YoupornController) Get() {
 func YoupornSearchVideos(search string) YoupornSearchResult {
 	Cached := JTCache.Get("youporn-search-"+search)
 	if Cached == nil {
-		log.Println("SEARCH NOT CACHED")
 		timeout := time.Duration(YoupornApiTimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
@@ -85,7 +84,6 @@ func YoupornSearchVideos(search string) YoupornSearchResult {
 		JTCache.Put("youporn-search-"+search, result, YoupornCacheDuration)
 		return result
 	} else {
-		log.Println("SEARCH CACHED")
 		return Cached.(YoupornSearchResult)
 	}
 }
@@ -93,7 +91,6 @@ func YoupornSearchVideos(search string) YoupornSearchResult {
 func YoupornGetVideoByID(ID string) YoupornSingleVideo {
 	Cached := JTCache.Get("youporn-video-"+ID)
 	if Cached == nil {
-		log.Println("VIDEO NOT CACHED")
 		timeout := time.Duration(YoupornApiTimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
@@ -112,7 +109,6 @@ func YoupornGetVideoByID(ID string) YoupornSingleVideo {
 		JTCache.Put("youporn-video-"+ID, result, YoupornCacheDuration)
 		return result
 	} else {
-		log.Println("VIDEO CACHED")
 		return Cached.(YoupornSingleVideo)
 	}
 }
@@ -120,7 +116,6 @@ func YoupornGetVideoByID(ID string) YoupornSingleVideo {
 func YoupornGetVideoEmbedCode(ID string) YoupornEmbedCode {
 	Cached := JTCache.Get("youporn-embed-"+ID)
 	if Cached == nil {
-		log.Println("EMBED NOT CACHED")
 		timeout := time.Duration(YoupornApiTimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
@@ -139,7 +134,6 @@ func YoupornGetVideoEmbedCode(ID string) YoupornEmbedCode {
 		JTCache.Put("youporn-embed-"+ID, result, YoupornCacheDuration)
 		return result
 	} else {
-		log.Println("EMBED CACHED")
 		return Cached.(YoupornEmbedCode)
 	}
 }

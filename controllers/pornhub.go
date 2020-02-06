@@ -16,7 +16,7 @@ import (
 
 const PornhubApiURL = "http://www.pornhub.com/webmasters/"
 const PornhubApiTimeout = 2
-const PornhubCacheDuration = time.Minute * 2
+const PornhubCacheDuration = time.Minute * 5
 
 type PornhubSearchResult map[string]interface{}
 type PornhubSingleVideo map[string]interface{}
@@ -34,6 +34,7 @@ func (c *PornhubController) Get() {
 	redirect := "https://pornhub.com/view_video.php?viewkey=" + videoID + "&t=1&utm_source=just-tit.com&utm_medium=embed&utm_campaign=hubtraffic_dsmatilla"
 
 	BaseDomain := "https://just-tit.com"
+
 	type TemplateData = map[string]interface{}
 
 	c.Data["ID"] = videoID
@@ -67,7 +68,6 @@ func (c *PornhubController) Get() {
 func PornhubSearchVideos(search string) PornhubSearchResult {
 	Cached := JTCache.Get("pornhub-search-"+search)
 	if Cached == nil {
-		log.Println("SEARCH NOT CACHED")
 		timeout := time.Duration(PornhubApiTimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
@@ -86,7 +86,6 @@ func PornhubSearchVideos(search string) PornhubSearchResult {
 		JTCache.Put("pornhub-search-"+search, result, PornhubCacheDuration)
 		return result
 	} else {
-		log.Println("SEARCH CACHED")
 		return Cached.(PornhubSearchResult)
 	}
 }
@@ -94,7 +93,6 @@ func PornhubSearchVideos(search string) PornhubSearchResult {
 func PornhubGetVideoByID(ID string) PornhubSingleVideo {
 	Cached := JTCache.Get("pornhub-video-"+ID)
 	if Cached == nil {
-		log.Println("VIDEO NOT CACHED")
 		timeout := time.Duration(PornhubApiTimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
@@ -113,7 +111,6 @@ func PornhubGetVideoByID(ID string) PornhubSingleVideo {
 		JTCache.Put("pornhub-video-"+ID, result, PornhubCacheDuration)
 		return result
 	} else {
-		log.Println("VIDEO CACHED")
 		return Cached.(PornhubSingleVideo)
 	}
 }
@@ -121,7 +118,6 @@ func PornhubGetVideoByID(ID string) PornhubSingleVideo {
 func PornhubGetVideoEmbedCode(ID string) PornhubEmbedCode {
 	Cached := JTCache.Get("pornhub-embed-"+ID)
 	if Cached == nil {
-		log.Println("EMBED NOT CACHED")
 		timeout := time.Duration(PornhubApiTimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
@@ -140,7 +136,6 @@ func PornhubGetVideoEmbedCode(ID string) PornhubEmbedCode {
 		JTCache.Put("pornhub-embed-"+ID, result, PornhubCacheDuration)
 		return result
 	} else {
-		log.Println("EMBED CACHED")
 		return Cached.(PornhubEmbedCode)
 	}
 }

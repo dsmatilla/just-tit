@@ -30,6 +30,7 @@ func (c *XtubeController) Get() {
 	redirect := "https://www.xtube.com/video-watch/watchin-xtube-" + videoID + "?t=0&utm_source=just-tit.com&utm_medium=embed&utm_campaign=hubtraffic_dsmatilla"
 
 	BaseDomain := "https://just-tit.com"
+
 	type TemplateData = map[string]interface{}
 
 	c.Data["ID"] = videoID

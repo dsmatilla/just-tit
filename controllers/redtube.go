@@ -17,7 +17,7 @@ import (
 
 const RedtubeApiURL = "https://api.redtube.com/"
 const RedtubeApiTimeout = 2
-const RedtubeCacheDuration = time.Minute * 2
+const RedtubeCacheDuration = time.Minute * 5
 
 type RedtubeSearchResult map[string]interface{}
 type RedtubeSingleVideo map[string]interface{}
@@ -70,7 +70,6 @@ func (c *RedtubeController) Get() {
 func RedtubeSearchVideos(search string) RedtubeSearchResult {
 	Cached := JTCache.Get("redtube-search-"+search)
 	if Cached == nil {
-		log.Println("SEARCH NOT CACHED")
 		timeout := time.Duration(RedtubeApiTimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
@@ -89,7 +88,6 @@ func RedtubeSearchVideos(search string) RedtubeSearchResult {
 		JTCache.Put("redtube-search-"+search, result, RedtubeCacheDuration)
 		return result
 	} else {
-		log.Println("SEARCH CACHED")
 		return Cached.(RedtubeSearchResult)
 	}
 }
@@ -97,7 +95,6 @@ func RedtubeSearchVideos(search string) RedtubeSearchResult {
 func RedtubeGetVideoByID(ID string) RedtubeSingleVideo {
 	Cached := JTCache.Get("redtube-video-"+ID)
 	if Cached == nil {
-		log.Println("VIDEO NOT CACHED")
 		timeout := time.Duration(RedtubeApiTimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
@@ -116,7 +113,6 @@ func RedtubeGetVideoByID(ID string) RedtubeSingleVideo {
 		JTCache.Put("redtube-video-"+ID, result, RedtubeCacheDuration)
 		return result
 	} else {
-		log.Println("VIDEO CACHED")
 		return Cached.(RedtubeSingleVideo)
 	}
 }
@@ -124,7 +120,6 @@ func RedtubeGetVideoByID(ID string) RedtubeSingleVideo {
 func RedtubeGetVideoEmbedCode(ID string) RedtubeEmbedCode {
 	Cached := JTCache.Get("redtube-embed-"+ID)
 	if Cached == nil {
-		log.Println("EMBED NOT CACHED")
 		timeout := time.Duration(RedtubeApiTimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
@@ -143,7 +138,6 @@ func RedtubeGetVideoEmbedCode(ID string) RedtubeEmbedCode {
 		JTCache.Put("redtube-embed-"+ID, result, RedtubeCacheDuration)
 		return result
 	} else {
-		log.Println("EMBED CACHED")
 		return Cached.(RedtubeEmbedCode)
 	}
 }

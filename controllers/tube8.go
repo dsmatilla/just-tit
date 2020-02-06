@@ -15,9 +15,9 @@ import (
 
 const Tube8ApiURL = "http://api.tube8.com/api.php"
 const Tube8ApiTimeout = 2
-const Tube8CacheDuration = time.Minute * 2
+const Tube8CacheDuration = time.Minute * 5
 
-type Tube8SearchResult map[string]interface{}git
+type Tube8SearchResult map[string]interface{}
 type Tube8SingleVideo map[string]interface{}
 
 type Tube8Controller struct {
@@ -69,7 +69,6 @@ func (c *Tube8Controller) Get() {
 func Tube8SearchVideos(search string) Tube8SearchResult {
 	Cached := JTCache.Get("tube8-search-"+search)
 	if Cached == nil {
-		log.Println("SEARCH NOT CACHED")
 		timeout := time.Duration(Tube8ApiTimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
@@ -88,7 +87,6 @@ func Tube8SearchVideos(search string) Tube8SearchResult {
 		JTCache.Put("tube8-search-"+search, result, Tube8CacheDuration)
 		return result
 	} else {
-		log.Println("SEARCH CACHED")
 		return Cached.(Tube8SearchResult)
 	}
 }
@@ -96,7 +94,6 @@ func Tube8SearchVideos(search string) Tube8SearchResult {
 func Tube8GetVideoByID(ID string) Tube8SingleVideo {
 	Cached := JTCache.Get("tube8-video-"+ID)
 	if Cached == nil {
-		log.Println("VIDEO NOT CACHED")
 		timeout := time.Duration(Tube8ApiTimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
@@ -115,7 +112,6 @@ func Tube8GetVideoByID(ID string) Tube8SingleVideo {
 		JTCache.Put("tube8-video-"+ID, result, Tube8CacheDuration)
 		return result
 	} else {
-		log.Println("VIDEO CACHED")
 		return Cached.(Tube8SingleVideo)
 	}
 }
@@ -123,7 +119,6 @@ func Tube8GetVideoByID(ID string) Tube8SingleVideo {
 func Tube8GetVideoEmbedCode(ID string) string {
 	Cached := JTCache.Get("tube8-embed-"+ID)
 	if Cached == nil {
-		log.Println("EMBED NOT CACHED")
 		timeout := time.Duration(Tube8ApiTimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
@@ -137,7 +132,6 @@ func Tube8GetVideoEmbedCode(ID string) string {
 		JTCache.Put("tube8-embed-"+ID, result, Tube8CacheDuration)
 		return result
 	} else {
-		log.Println("EMBED CACHED")
 		return Cached.(string)
 	}
 }

@@ -15,7 +15,7 @@ import (
 )
 
 const KeezmoviesApiURL = "http://www.keezmovies.com/wapi/"
-const KeezmoviesApiTimeout = 2
+const KeezmoviesApiTimeout = 5
 
 type KeezmoviesEmbedCode map[string]interface{}
 type KeezmoviesSingleVideo map[string]interface{}
@@ -39,6 +39,8 @@ func (c *KeezmoviesController) Get() {
 	c.Data["Domain"] = BaseDomain
 
 	videocode := KeezmoviesGetVideoByID(videoID)
+	_, ok := videocode["video"]
+	if !ok { c.Redirect(redirect, 307) }
 	video := videocode["video"].(map[string]interface{})
 	embedcode := KeezmoviesGetVideoEmbedCode(videoID)
 	if embedcode["error"] != nil {

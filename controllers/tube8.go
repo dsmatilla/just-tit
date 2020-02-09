@@ -14,7 +14,7 @@ import (
 )
 
 const Tube8ApiURL = "http://api.tube8.com/api.php"
-const Tube8ApiTimeout = 2
+const Tube8ApiTimeout = 5
 const Tube8CacheDuration = time.Minute * 5
 
 type Tube8SearchResult map[string]interface{}
@@ -39,6 +39,8 @@ func (c *Tube8Controller) Get() {
 	c.Data["Domain"] = BaseDomain
 
 	videocode := Tube8GetVideoByID(videoID)
+	_, ok := videocode["video"]
+	if !ok { c.Redirect(redirect, 307) }
 	video := videocode["video"].(map[string]interface{})
 	embed := Tube8GetVideoEmbedCode(videoID)
 	embed = strings.Replace(embed, "[\"", "", -1)

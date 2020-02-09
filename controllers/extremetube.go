@@ -15,7 +15,7 @@ import (
 )
 
 const ExtremetubeApiURL = "https://www.extremetube.com/api/HubTrafficApiCall?"
-const ExtremetubeApiTimeout = 2
+const ExtremetubeApiTimeout = 5
 
 type ExtremetubeEmbedCode map[string]interface{}
 type ExtremetubeSingleVideo map[string]interface{}
@@ -39,6 +39,8 @@ func (c *ExtremetubeController) Get() {
 	c.Data["Domain"] = BaseDomain
 
 	videocode := ExtremetubeGetVideoByID(videoID)
+	_, ok := videocode["video"]
+	if !ok { c.Redirect(redirect, 307) }
 	video := videocode["video"].(map[string]interface{})
 	embedcode := ExtremetubeGetVideoEmbedCode(videoID)
 	embed := embedcode["embed"].(map[string]interface{})

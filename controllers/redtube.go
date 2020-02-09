@@ -16,7 +16,7 @@ import (
 )
 
 const RedtubeApiURL = "https://api.redtube.com/"
-const RedtubeApiTimeout = 2
+const RedtubeApiTimeout = 5
 const RedtubeCacheDuration = time.Minute * 5
 
 type RedtubeSearchResult map[string]interface{}
@@ -42,6 +42,8 @@ func (c *RedtubeController) Get() {
 	c.Data["Domain"] = BaseDomain
 
 	videocode := RedtubeGetVideoByID(videoID)
+	_, ok := videocode["video"]
+	if !ok { c.Redirect(redirect, 307) }
 	video := videocode["video"].(map[string]interface{})
 	embedcode := RedtubeGetVideoEmbedCode(videoID)
 	embed := embedcode["embed"].(map[string]interface{})

@@ -15,7 +15,7 @@ import (
 )
 
 const PornhubApiURL = "http://www.pornhub.com/webmasters/"
-const PornhubApiTimeout = 2
+const PornhubApiTimeout = 5
 const PornhubCacheDuration = time.Minute * 5
 
 type PornhubSearchResult map[string]interface{}
@@ -41,6 +41,8 @@ func (c *PornhubController) Get() {
 	c.Data["Domain"] = BaseDomain
 
 	videocode := PornhubGetVideoByID(videoID)
+	_, ok := videocode["video"]
+	if !ok { c.Redirect(redirect, 307) }
 	video := videocode["video"].(map[string]interface{})
 	embedcode := PornhubGetVideoEmbedCode(videoID)
 	embed := embedcode["embed"].(map[string]interface{})

@@ -14,7 +14,7 @@ import (
 )
 
 const YoupornApiURL = "http://www.youporn.com/api/webmasters/"
-const YoupornApiTimeout = 2
+const YoupornApiTimeout = 5
 const YoupornCacheDuration = time.Minute * 5
 
 type YoupornSearchResult map[string]interface{}
@@ -40,6 +40,8 @@ func (c *YoupornController) Get() {
 	c.Data["Domain"] = BaseDomain
 
 	videocode := YoupornGetVideoByID(videoID)
+	_, ok := videocode["video"]
+	if !ok { c.Redirect(redirect, 307) }
 	video := videocode["video"].(map[string]interface{})
 	embed := YoupornGetVideoEmbedCode(videoID)
 	c.Data["Embed"] = template.HTML(fmt.Sprintf("%+v", embed))

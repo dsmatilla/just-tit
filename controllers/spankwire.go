@@ -15,7 +15,7 @@ import (
 )
 
 const SpankwireApiURL = "http://www.spankwire.com/api/HubTrafficApiCall"
-const SpankwireApiTimeout = 2
+const SpankwireApiTimeout = 5
 
 type SpankwireVideo map[string]interface{}
 type SpankwireEmbedCode map[string]interface{}
@@ -39,6 +39,8 @@ func (c *SpankwireController) Get() {
 	c.Data["Domain"] = BaseDomain
 
 	videocode := SpankwireGetVideoByID(videoID)
+	_, ok := videocode["video"]
+	if !ok { c.Redirect(redirect, 307) }
 	video := videocode["video"].(map[string]interface{})
 	embedcode := SpankwireGetVideoEmbedCode(videoID)
 	embed := embedcode["embed"].(map[string]interface{})

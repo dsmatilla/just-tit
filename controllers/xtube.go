@@ -14,7 +14,7 @@ import (
 )
 
 const XtubeApiURL = "http://www.xtube.com/webmaster/api.php"
-const XtubeApiTimeout = 2
+const XtubeApiTimeout = 5
 
 type XtubeVideo map[string]interface{}
 

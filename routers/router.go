@@ -14,7 +14,7 @@ func init() {
 	redisDBNum := os.Getenv("redisDBNum")
 	redisPasswd := os.Getenv("redisPasswd")
 	if redisHost != "" {
-		controllers.JTCache, _ = cache.NewCache("memory", `{"key":"`+redisName+`","conn":"`+redisHost+`","dbNum":"`+redisDBNum+`","password":"`+redisPasswd+`"}`)
+		controllers.JTCache, _ = cache.NewCache("redis", `{"key":"`+redisName+`","conn":"`+redisHost+`","dbNum":"`+redisDBNum+`","password":"`+redisPasswd+`"}`)
 	} else {
 		controllers.JTCache, _ = cache.NewCache("memory", `{"interval":60}`)
 	}

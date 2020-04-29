@@ -4,11 +4,20 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/cache"
 	"github.com/dsmatilla/just-tit/controllers"
+	"os"
 )
 
 func init() {
 	// Initialize memory cache
-	controllers.JTCache, _ = cache.NewCache("memory", `{"interval":60}`)
+	redisHost := os.Getenv("redisHost")
+	redisName := os.Getenv("redisName")
+	redisDBNum := os.Getenv("redisDBNum")
+	redisPasswd := os.Getenv("redisPasswd")
+	if redisHost != "" {
+		controllers.JTCache, _ = cache.NewCache("memory", `{"key":"`+redisName+`","conn":"`+redisHost+`","dbNum":"`+redisDBNum+`","password":"`+redisPasswd+`"}`)
+	} else {
+		controllers.JTCache, _ = cache.NewCache("memory", `{"interval":60}`)
+	}
 
     beego.Router("/", &controllers.IndexController{})
     beego.Router("/*.html", &controllers.SearchController{})

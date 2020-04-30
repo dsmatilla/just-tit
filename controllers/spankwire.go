@@ -73,8 +73,8 @@ func SpankwireGetVideoByID(ID string) SpankwireVideo {
 	}
 	resp, err := client.Get(fmt.Sprintf(SpankwireApiURL+"?data=getVideoById&output=json&video_id=%s", ID))
 	if err != nil {
-		return SpankwireVideo{}
 		log.Println("[SPANKWIRE][GETVIDEOBYID]",err)
+		return SpankwireVideo{}
 	}
 	b, _ := ioutil.ReadAll(resp.Body)
 	var result SpankwireVideo
@@ -93,8 +93,8 @@ func SpankwireGetVideoEmbedCode(ID string) SpankwireEmbedCode {
 	}
 	resp, err := client.Get(fmt.Sprintf(SpankwireApiURL+"?data=getVideoEmbedCode&output=json&video_id=%s", ID))
 	if err != nil {
-		return SpankwireEmbedCode{}
 		log.Println("[SPANKWIRE][GETVIDEOEMBEDCODE]",err)
+		return SpankwireEmbedCode{}
 	}
 	b, _ := ioutil.ReadAll(resp.Body)
 	var result SpankwireEmbedCode

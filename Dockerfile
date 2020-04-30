@@ -1,6 +1,8 @@
 FROM library/golang
 
 RUN go get github.com/astaxie/beego
+RUN go get github.com/astaxie/beego/cache
+RUN go get github.com/astaxie/beego/cache/redis
 
 # Recompile the standard library without CGO
 RUN CGO_ENABLED=0 go install -a std

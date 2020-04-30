@@ -3,18 +3,19 @@ package routers
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/cache"
+	_ "github.com/astaxie/beego/cache/redis"
 	"github.com/dsmatilla/just-tit/controllers"
 	"os"
 )
 
 func init() {
 	// Initialize memory cache
-	redisHost := os.Getenv("redisHost")
-	redisName := os.Getenv("redisName")
-	redisDBNum := os.Getenv("redisDBNum")
-	redisPasswd := os.Getenv("redisPasswd")
+	redisHost := os.Getenv("REDISHOST")
+	redisName := os.Getenv("REDISNAME")
+	redisDBNum := os.Getenv("REDISDBNUM")
+	redisPasswd := os.Getenv("REDISPASSWD")
 	if redisHost != "" {
-		controllers.JTCache, _ = cache.NewCache("redis", `{"key":"`+redisName+`","conn":"`+redisHost+`","dbNum":"`+redisDBNum+`","password":"`+redisPasswd+`"}`)
+		controllers.JTCache, _ = cache.NewCache("redis", `{"key":"`+redisName+`","conn":"`+redisHost+`","dbNum":`+redisDBNum+`,"password":"`+redisPasswd+`"}`)
 	} else {
 		controllers.JTCache, _ = cache.NewCache("memory", `{"interval":60}`)
 	}

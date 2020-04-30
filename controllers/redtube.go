@@ -78,8 +78,8 @@ func RedtubeSearchVideos(search string) RedtubeSearchResult {
 		}
 		resp, err := client.Get(fmt.Sprintf(RedtubeApiURL+"?data=redtube.Videos.searchVideos&output=json&search=%s&thumbsize=all", url.QueryEscape(search)))
 		if err != nil {
-			return RedtubeSearchResult{}
 			log.Println("[REDTUBE][SEARCHVIDEOS]",err)
+			return RedtubeSearchResult{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		var result RedtubeSearchResult
@@ -87,10 +87,12 @@ func RedtubeSearchVideos(search string) RedtubeSearchResult {
 		if err != nil {
 			log.Println("[REDTUBE][SEARCHVIDEOS]",err)
 		}
-		JTCache.Put("redtube-search-"+search, result, RedtubeCacheDuration)
+		JTCache.Put("redtube-search-"+search, b, RedtubeCacheDuration)
 		return result
 	} else {
-		return Cached.(RedtubeSearchResult)
+		var result RedtubeSearchResult
+		json.Unmarshal(Cached.([]uint8), &result)
+		return result
 	}
 }
 
@@ -103,8 +105,8 @@ func RedtubeGetVideoByID(ID string) RedtubeSingleVideo {
 		}
 		resp, err := client.Get(fmt.Sprintf(RedtubeApiURL+"?data=redtube.Videos.getVideoById&video_id=%s&output=json", ID))
 		if err != nil {
-			return RedtubeSingleVideo{}
 			log.Println("[REDTUBE][GETVIDEOBYID]",err)
+			return RedtubeSingleVideo{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		var result RedtubeSingleVideo
@@ -112,10 +114,12 @@ func RedtubeGetVideoByID(ID string) RedtubeSingleVideo {
 		if err != nil {
 			log.Println("[REDTUBE][GETVIDEOBYID]",err)
 		}
-		JTCache.Put("redtube-video-"+ID, result, RedtubeCacheDuration)
+		JTCache.Put("redtube-video-"+ID, b, RedtubeCacheDuration)
 		return result
 	} else {
-		return Cached.(RedtubeSingleVideo)
+		var result RedtubeSingleVideo
+		json.Unmarshal(Cached.([]uint8), &result)
+		return result
 	}
 }
 
@@ -128,8 +132,8 @@ func RedtubeGetVideoEmbedCode(ID string) RedtubeEmbedCode {
 		}
 		resp, err := client.Get(fmt.Sprintf(RedtubeApiURL+"?data=redtube.Videos.getVideoEmbedCode&video_id=%s&output=json", ID))
 		if err != nil {
-			return RedtubeEmbedCode{}
 			log.Println("[REDTUBE][GETVIDEOEMBEDCODE]",err)
+			return RedtubeEmbedCode{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		var result RedtubeEmbedCode
@@ -137,9 +141,11 @@ func RedtubeGetVideoEmbedCode(ID string) RedtubeEmbedCode {
 		if err != nil {
 			log.Println("[REDTUBE][GETVIDEOEMBEDCODE]",err)
 		}
-		JTCache.Put("redtube-embed-"+ID, result, RedtubeCacheDuration)
+		JTCache.Put("redtube-embed-"+ID, b, RedtubeCacheDuration)
 		return result
 	} else {
-		return Cached.(RedtubeEmbedCode)
+		var result RedtubeEmbedCode
+		json.Unmarshal(Cached.([]uint8), &result)
+		return result
 	}
 }

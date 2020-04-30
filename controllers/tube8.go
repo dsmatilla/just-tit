@@ -77,8 +77,8 @@ func Tube8SearchVideos(search string) Tube8SearchResult {
 		}
 		resp, err := client.Get(fmt.Sprintf(Tube8ApiURL+"?action=searchVideos&output=json&search=%s&thumbsize=all", url.QueryEscape(search)))
 		if err != nil {
-			return Tube8SearchResult{}
 			log.Println("[TUBE8][SEARCHVIDEOS]",err)
+			return Tube8SearchResult{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		var result Tube8SearchResult
@@ -86,10 +86,12 @@ func Tube8SearchVideos(search string) Tube8SearchResult {
 		if err != nil {
 			log.Println("[TUBE8][SEARCHVIDEOS]",err)
 		}
-		JTCache.Put("tube8-search-"+search, result, Tube8CacheDuration)
+		JTCache.Put("tube8-search-"+search, b, Tube8CacheDuration)
 		return result
 	} else {
-		return Cached.(Tube8SearchResult)
+		var result Tube8SearchResult
+		json.Unmarshal(Cached.([]uint8), &result)
+		return result
 	}
 }
 
@@ -102,8 +104,8 @@ func Tube8GetVideoByID(ID string) Tube8SingleVideo {
 		}
 		resp, err := client.Get(fmt.Sprintf(Tube8ApiURL+"?action=getvideobyid&video_id=%s&output=json&thumbsize=all", ID))
 		if err != nil {
-			return Tube8SingleVideo{}
 			log.Println("[TUBE8][GETVIDEOBYID]",err)
+			return Tube8SingleVideo{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		var result Tube8SingleVideo
@@ -111,10 +113,12 @@ func Tube8GetVideoByID(ID string) Tube8SingleVideo {
 		if err != nil {
 			log.Println("[TUBE8][GETVIDEOBYID]",err)
 		}
-		JTCache.Put("tube8-video-"+ID, result, Tube8CacheDuration)
+		JTCache.Put("tube8-video-"+ID, b, Tube8CacheDuration)
 		return result
 	} else {
-		return Cached.(Tube8SingleVideo)
+		var result Tube8SingleVideo
+		json.Unmarshal(Cached.([]uint8), &result)
+		return result
 	}
 }
 
@@ -131,10 +135,12 @@ func Tube8GetVideoEmbedCode(ID string) string {
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		result := fmt.Sprintf("%s", b)
-		JTCache.Put("tube8-embed-"+ID, result, Tube8CacheDuration)
+		JTCache.Put("tube8-embed-"+ID, b, Tube8CacheDuration)
 		return result
 	} else {
-		return Cached.(string)
+		var result string
+		json.Unmarshal(Cached.([]uint8), &result)
+		return result
 	}
 }
 

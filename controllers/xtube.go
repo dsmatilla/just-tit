@@ -65,8 +65,8 @@ func XtubeGetVideoByID(ID string) XtubeVideo {
 	}
 	resp, err := client.Get(fmt.Sprintf(XtubeApiURL+"?action=getVideoById&video_id=%s", ID))
 	if err != nil {
-		return XtubeVideo{}
 		log.Println("[XTUBE][GETVIDEOBYID]",err)
+		return XtubeVideo{}
 	}
 	b, _ := ioutil.ReadAll(resp.Body)
 	var result XtubeVideo

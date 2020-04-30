@@ -85,10 +85,12 @@ func PornhubSearchVideos(search string) PornhubSearchResult {
 		if err != nil {
 			log.Println("[PORNHUB][SEARCHVIDEOS]",err)
 		}
-		JTCache.Put("pornhub-search-"+search, result, PornhubCacheDuration)
+		JTCache.Put("pornhub-search-"+search, b, PornhubCacheDuration)
 		return result
 	} else {
-		return Cached.(PornhubSearchResult)
+		var result PornhubSearchResult
+		json.Unmarshal(Cached.([]uint8), &result)
+		return result
 	}
 }
 
@@ -110,10 +112,12 @@ func PornhubGetVideoByID(ID string) PornhubSingleVideo {
 		if err != nil {
 			log.Println("[PORNHUB][GETVIDEOBYID]", err)
 		}
-		JTCache.Put("pornhub-video-"+ID, result, PornhubCacheDuration)
+		JTCache.Put("pornhub-video-"+ID, b, PornhubCacheDuration)
 		return result
 	} else {
-		return Cached.(PornhubSingleVideo)
+		var result PornhubSingleVideo
+		json.Unmarshal(Cached.([]uint8), &result)
+		return result
 	}
 }
 
@@ -135,9 +139,11 @@ func PornhubGetVideoEmbedCode(ID string) PornhubEmbedCode {
 		if err != nil {
 			log.Println("[PORNHUB][GETVIDEOEMBEDCODE]",err)
 		}
-		JTCache.Put("pornhub-embed-"+ID, result, PornhubCacheDuration)
+		JTCache.Put("pornhub-embed-"+ID, b, PornhubCacheDuration)
 		return result
 	} else {
-		return Cached.(PornhubEmbedCode)
+		var result PornhubEmbedCode
+		json.Unmarshal(Cached.([]uint8), &result)
+		return result
 	}
 }

@@ -3,6 +3,7 @@ FROM library/golang
 RUN go get github.com/astaxie/beego
 RUN go get github.com/astaxie/beego/cache
 RUN go get github.com/astaxie/beego/cache/redis
+RUN go get github.com/go-sql-driver/mysql
 
 # Recompile the standard library without CGO
 RUN CGO_ENABLED=0 go install -a std

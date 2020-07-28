@@ -12,6 +12,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"github.com/dsmatilla/just-tit/models"
+	"strconv"
 )
 
 const PornhubApiURL = "http://www.pornhub.com/webmasters/"
@@ -96,6 +98,7 @@ func PornhubSearchVideos(search string) PornhubSearchResult {
 
 func PornhubGetVideoByID(ID string) PornhubSingleVideo {
 	Cached := JTCache.Get("pornhub-video-"+ID)
+	var result PornhubSingleVideo
 	if Cached == nil {
 		timeout := time.Duration(PornhubApiTimeout * time.Second)
 		client := http.Client{
@@ -107,18 +110,26 @@ func PornhubGetVideoByID(ID string) PornhubSingleVideo {
 			return PornhubSingleVideo{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
-		var result PornhubSingleVideo
+
 		err = json.Unmarshal(b, &result)
 		if err != nil {
 			log.Println("[PORNHUB][GETVIDEOBYID]", err)
 		}
 		JTCache.Put("pornhub-video-"+ID, b, PornhubCacheDuration)
-		return result
 	} else {
-		var result PornhubSingleVideo
 		json.Unmarshal(Cached.([]uint8), &result)
-		return result
 	}
+
+	_, ok := result["video"]
+	if ok {
+		video := result["video"].(map[string]interface{})
+		if score, ok := video["rating"].(string); ok {
+			fscore, _ := strconv.ParseFloat(score, 2)
+			models.SaveScore(models.Score{"pornhub-video-"+ID, fscore})
+		}
+	}
+
+	return result
 }
 
 func PornhubGetVideoEmbedCode(ID string) PornhubEmbedCode {

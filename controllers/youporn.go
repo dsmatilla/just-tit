@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"github.com/dsmatilla/just-tit/models"
 )
 
 const YoupornApiURL = "http://www.youporn.com/api/webmasters/"
@@ -94,6 +95,7 @@ func YoupornSearchVideos(search string) YoupornSearchResult {
 
 func YoupornGetVideoByID(ID string) YoupornSingleVideo {
 	Cached := JTCache.Get("youporn-video-"+ID)
+	var result YoupornSingleVideo
 	if Cached == nil {
 		timeout := time.Duration(YoupornApiTimeout * time.Second)
 		client := http.Client{
@@ -105,18 +107,24 @@ func YoupornGetVideoByID(ID string) YoupornSingleVideo {
 			return YoupornSingleVideo{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
-		var result YoupornSingleVideo
 		err = json.Unmarshal(b, &result)
 		if err != nil {
 			log.Println("[YOUPORN][GETVIDEOBYID]",err)
 		}
 		JTCache.Put("youporn-video-"+ID, b, YoupornCacheDuration)
-		return result
 	} else {
-		var result YoupornSingleVideo
 		json.Unmarshal(Cached.([]uint8), &result)
-		return result
 	}
+
+	_, ok := result["video"]
+	if ok {
+		video := result["video"].(map[string]interface{})
+		if score, ok := video["rating"].(float64); ok {
+			models.SaveScore(models.Score{"youporn-video-"+ID, score})
+		}
+	}
+
+	return result
 }
 
 func YoupornGetVideoEmbedCode(ID string) YoupornEmbedCode {

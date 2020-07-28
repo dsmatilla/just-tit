@@ -13,6 +13,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"github.com/dsmatilla/just-tit/models"
+	"strconv"
 )
 
 const RedtubeApiURL = "https://api.redtube.com/"
@@ -98,6 +100,7 @@ func RedtubeSearchVideos(search string) RedtubeSearchResult {
 
 func RedtubeGetVideoByID(ID string) RedtubeSingleVideo {
 	Cached := JTCache.Get("redtube-video-"+ID)
+	var result RedtubeSingleVideo
 	if Cached == nil {
 		timeout := time.Duration(RedtubeApiTimeout * time.Second)
 		client := http.Client{
@@ -109,18 +112,25 @@ func RedtubeGetVideoByID(ID string) RedtubeSingleVideo {
 			return RedtubeSingleVideo{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
-		var result RedtubeSingleVideo
 		err = json.Unmarshal(b, &result)
 		if err != nil {
 			log.Println("[REDTUBE][GETVIDEOBYID]",err)
 		}
 		JTCache.Put("redtube-video-"+ID, b, RedtubeCacheDuration)
-		return result
 	} else {
-		var result RedtubeSingleVideo
 		json.Unmarshal(Cached.([]uint8), &result)
-		return result
 	}
+
+	_, ok := result["video"]
+	if ok {
+		video := result["video"].(map[string]interface{})
+		if score, ok := video["rating"].(string); ok {
+			fscore, _ := strconv.ParseFloat(score, 2)
+			models.SaveScore(models.Score{"redtube-video-"+ID, fscore})
+		}
+	}
+
+	return result
 }
 
 func RedtubeGetVideoEmbedCode(ID string) RedtubeEmbedCode {

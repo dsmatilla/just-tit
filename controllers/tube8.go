@@ -11,6 +11,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"github.com/dsmatilla/just-tit/models"
+	"strconv"
 )
 
 const Tube8ApiURL = "http://api.tube8.com/api.php"
@@ -97,6 +99,7 @@ func Tube8SearchVideos(search string) Tube8SearchResult {
 
 func Tube8GetVideoByID(ID string) Tube8SingleVideo {
 	Cached := JTCache.Get("tube8-video-"+ID)
+	var result Tube8SingleVideo
 	if Cached == nil {
 		timeout := time.Duration(Tube8ApiTimeout * time.Second)
 		client := http.Client{
@@ -108,18 +111,25 @@ func Tube8GetVideoByID(ID string) Tube8SingleVideo {
 			return Tube8SingleVideo{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
-		var result Tube8SingleVideo
 		err = json.Unmarshal(b, &result)
 		if err != nil {
 			log.Println("[TUBE8][GETVIDEOBYID]",err)
 		}
 		JTCache.Put("tube8-video-"+ID, b, Tube8CacheDuration)
-		return result
 	} else {
-		var result Tube8SingleVideo
 		json.Unmarshal(Cached.([]uint8), &result)
-		return result
 	}
+
+	_, ok := result["video"]
+	if ok {
+		video := result["video"].(map[string]interface{})
+		if score, ok := video["rating"].(string); ok {
+			fscore, _ := strconv.ParseFloat(score, 2)
+			models.SaveScore(models.Score{"tube8-video-"+ID, fscore})
+		}
+	}
+
+	return result
 }
 
 func Tube8GetVideoEmbedCode(ID string) string {

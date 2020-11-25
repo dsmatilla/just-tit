@@ -1,21 +1,23 @@
-FROM library/golang
+FROM golang:1.15.5-alpine as build
 
-RUN go get github.com/astaxie/beego
-RUN go get github.com/astaxie/beego/cache
-RUN go get github.com/astaxie/beego/cache/redis
-RUN go get github.com/go-sql-driver/mysql
+WORKDIR /go/src/just-tit
+ADD go.mod .
+RUN apk add git gcc libc-dev ca-certificates
 
-# Recompile the standard library without CGO
-RUN CGO_ENABLED=0 go install -a std
+# Recompile the standard library with CGO
+RUN CGO_ENABLED=1 go install -a std
 
-ENV APP_DIR $GOPATH/src/github.com/dsmatilla/just-tit
-RUN mkdir -p $APP_DIR
-
-# Set the entrypoint
-ENTRYPOINT (cd $APP_DIR && ./just-tit)
-ADD . $APP_DIR
-
+ADD . .
 # Compile the binary and statically link
-RUN cd $APP_DIR && CGO_ENABLED=0 go build -ldflags '-w -s'
+RUN CGO_ENABLED=1 go build -ldflags '-linkmode external -extldflags -static' -o just-tit
 
+FROM scratch
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=build /go/src/just-tit/just-tit /just-tit
+COPY --from=build /go/src/just-tit/static/ /static/
+COPY --from=build /go/src/just-tit/views/ /views/
+COPY --from=build /go/src/just-tit/conf/ /conf/
+
+CMD ["/just-tit"]
 EXPOSE 8080
+HEALTHCHECK --interval=5m --timeout=3s CMD /bin/true

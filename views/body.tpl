@@ -122,6 +122,7 @@
         {{ end -}}
         <script type="application/ld+json">
             {
+                "name": "Search engine",
                 "@context": "https://schema.org",
                 "@type": "WebSite",
                 "url": "https://just-tit.com",

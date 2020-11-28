@@ -23,6 +23,8 @@
         <meta name="twitter:title" content="{{.PageTitle}}"/>
         <meta name="twitter:image" content="{{(index .Result 0).Domain}}{{ToImageProxy (index .Result 0).Thumb}}"/>
         <meta name="twitter:player" content="{{(index .Result 0).URL}}?tp=true"/>
+        <meta name="twitter:player:width" content="560"/>
+        <meta name="twitter:player:height" content="340"/>        
         {{ end -}}
         {{ end -}}
     </head>

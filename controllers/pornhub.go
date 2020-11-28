@@ -44,6 +44,9 @@ func (c *PornhubController) Get() {
 
 	// Get base domain from URL
 	BaseDomain := c.Controller.Ctx.Input.Scheme() + "://" + c.Controller.Ctx.Input.Domain()
+	if c.Controller.Ctx.Input.Port() != 80 && c.Controller.Ctx.Input.Port() != 443 {
+		BaseDomain += fmt.Sprintf("%s%d", ":", c.Controller.Ctx.Input.Port())
+	}
 
 	// Call the API and 307 redirect to fallback URL if something is not right
 	data := PornhubGetVideoByID(videoID)
@@ -68,12 +71,12 @@ func (c *PornhubController) Get() {
 	video := JTVideo{}
 	video.ID = videoID
 	video.Provider = "pornhub"
-	video.Domain = BaseDomain
+	video.Domain = template.URL(BaseDomain)
 	video.Title = fmt.Sprintf("%s", v["title"])
 	video.Description = fmt.Sprintf("%s", v["title"])
 	video.Thumb = fmt.Sprintf("%s", v["thumb"])
 	video.Embed = template.HTML(fmt.Sprintf("%+v", html.UnescapeString(embed["code"].(string))))
-	video.URL = fmt.Sprintf(BaseDomain+"/pornhub/%s.html", videoID)
+	video.URL = template.URL(fmt.Sprintf(BaseDomain+"/pornhub/%s.html", videoID))
 	video.Width = fmt.Sprintf("%s", v["width"])
 	video.Height = fmt.Sprintf("%s", v["height"])
 	video.Duration = fmt.Sprintf("%s", v["duration"])

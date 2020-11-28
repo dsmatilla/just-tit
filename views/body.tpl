@@ -81,7 +81,54 @@
             </div>
         </footer>
         
-    </body>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106943798-2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+
+            gtag('js', new Date());
+            gtag('config', 'UA-106943798-2');
+        </script>
+        <script type="text/javascript">var sc_project=11999640;var sc_invisible=1;var sc_security="4e8e7b5a";</script>
+        <script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+        <script>
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js');
+            }
+        </script>
+        <script type="text/javascript" src="https://www.hubtraffic.com/js/external/helpers.js"></script>
+        {{ if eq (index .Result 0).Type  "single" -}}
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "VideoObject",
+                "name": "{{(index .Result 0).Title}}",
+                "description": "{{(index .Result 0).Title}}",
+                "thumbnailUrl": [
+                    "{{(index .Result 0).Domain}}{{ToImageProxy (index .Result 0).Thumb}}"
+                ],
+                "uploadDate": "{{ (index .Result 0).PublishDate }}",
+                "embedUrl": "{{(index .Result 0).URL}}?tp=true"
+            }
+        </script>
+        {{ else }}
+            <script type="application/ld+json">
+                {
+                    "@context": "https://schema.org",
+                    "@type": "WebSite",
+                    "url": "https://just-tit.com",
+                    "potentialAction": {
+                        "@type": "SearchAction",
+                        "target": "https://just-tit.com/{search_term_string}.html",
+                        "query-input": "required name=search_term_string"
+                    }
+                }
+            </script>
+        {{ end -}}
+    </body>

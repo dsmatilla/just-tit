@@ -13,13 +13,13 @@ var JTCache cache.Cache
 // JTVideo Just-tit video struct
 type JTVideo struct {
 	ID		     	string
-	Domain	     	string
+	Domain	     	template.URL
 	Title        	string
 	Description		string
 	Thumb		 	string
 	Thumbs			[]string
 	Embed 			template.HTML
-	URL				string
+	URL				template.URL
 	Provider		string
 	Rating			string
 	Ratings			string

@@ -103,6 +103,7 @@
             }
         </script>
         <script type="text/javascript" src="https://www.hubtraffic.com/js/external/helpers.js"></script>
+        {{ if .Result -}}
         {{ if eq (index .Result 0).Type  "single" -}}
         <script type="application/ld+json">
             {
@@ -130,5 +131,6 @@
                     }
                 }
             </script>
+        {{ end -}}
         {{ end -}}
     </body>

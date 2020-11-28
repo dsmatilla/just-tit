@@ -1,4 +1,4 @@
-{{ range .Result }}
+{{- range .Result }}
                         <div class="col-md-4 d-flex">
                             <div class="card border-secondary mb-3">
                                 <div class="card-header bg-secondary" style="height:90px;">
@@ -25,13 +25,13 @@
                                         <div class="carousel-inner">
                                             <a href="/{{ .Provider }}/{{ .ID }}.html" class="stretched-link"></a>
                                             <div class="carousel-item active">
-                                            <img class="d-block w-100 h-100" src="{{ToImageProxy .Thumb}}">
+                                                <img class="d-block w-100 h-100" src="{{ToImageProxy .Thumb}}">
                                             </div>
-                                            {{ $alt := .Title }}{{ range .Thumbs }}
+                                            {{ $alt := .Title }}{{ range .Thumbs -}}
                                             <div class="carousel-item">
-                                            <img class="d-block w-100 h-100" src="{{ToImageProxy .}}" alt="{{$alt}}">
+                                                <img class="d-block w-100 h-100" src="{{ToImageProxy .}}" alt="{{$alt}}">
                                             </div>
-                                            {{ end }}
+                                            {{ end -}}
                                         </div>
                                         <a class="carousel-control-prev" href="#carousel{{ .ID }}" role="button" data-slide="prev">
                                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -42,10 +42,10 @@
                                             <span class="sr-only">Next</span>
                                         </a>
                                     </div>
-                                    {{ range .Pornstars }}
+                                    {{ range .Pornstars -}}
                                     <a href="/{{.}}.html" class="badge badge-dark" alt="{{.}}">{{.}}</a>
                                     {{ end -}}
-                                    {{ range .Categories }}
+                                    {{ range .Categories -}}
                                     <a href="/{{.}}.html" class="badge badge-light" alt="{{.}}">{{.}}</a>
                                     {{ end -}}
                                 </div>

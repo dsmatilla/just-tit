@@ -104,6 +104,8 @@ func (c *PornhubController) Get() {
 	result = append(result, video)
 
 	// Send object to template
+	c.Data["PageTitle"] = video.Title
+	c.Data["PageMetaDesc"] = video.Title
 	c.Data["Result"] = result
 	c.Layout = "index.tpl"
 	c.TplName = "singlevideo.tpl"

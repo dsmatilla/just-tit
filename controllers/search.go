@@ -32,16 +32,16 @@ func (c *SearchController) Get() {
 var waitGroup sync.WaitGroup
 
 func doSearch(search string) []JTVideo {
-		waitGroup.Add(1)
+	waitGroup.Add(1)
 
-		Channel := make(chan []JTVideo)
+	Channel := make(chan []JTVideo)
 
-		go searchPornhub(search, Channel)
+	go searchPornhub(search, Channel)
 
-		result := <- Channel
+	result := <-Channel
 
-		waitGroup.Wait()
-		return result
+	waitGroup.Wait()
+	return result
 }
 
 func searchPornhub(search string, c chan []JTVideo) {

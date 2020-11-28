@@ -3,7 +3,9 @@
         <title>{{.PageTitle}}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="{{.PageMetaDesc}}">
+        {{ if .Result -}}
         <meta name="keywords" content="{{ range (index .Result 0).Tags }}{{ . }},{{ end }}just-tit">
+        {{ end -}}
         <meta name="author" content="@dsmatilla" />
         <meta name="theme-color" content="#FFFFFF"/>
         <link rel="apple-touch-icon" href="/img/icon-192x192.png"/>

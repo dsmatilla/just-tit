@@ -104,33 +104,32 @@
         </script>
         <script type="text/javascript" src="https://www.hubtraffic.com/js/external/helpers.js"></script>
         {{ if .Result -}}
-        {{ if eq (index .Result 0).Type  "single" -}}
-        <script type="application/ld+json">
-            {
-                "@context": "https://schema.org",
-                "@type": "VideoObject",
-                "name": "{{(index .Result 0).Title}}",
-                "description": "{{(index .Result 0).Title}}",
-                "thumbnailUrl": [
-                    "{{(index .Result 0).Domain}}{{ToImageProxy (index .Result 0).Thumb}}"
-                ],
-                "uploadDate": "{{ (index .Result 0).PublishDate }}",
-                "embedUrl": "{{(index .Result 0).URL}}?tp=true"
-            }
-        </script>
-        {{ else }}
+            {{ if eq (index .Result 0).Type  "single" -}}
             <script type="application/ld+json">
                 {
                     "@context": "https://schema.org",
-                    "@type": "WebSite",
-                    "url": "https://just-tit.com",
-                    "potentialAction": {
-                        "@type": "SearchAction",
-                        "target": "https://just-tit.com/{search_term_string}.html",
-                        "query-input": "required name=search_term_string"
-                    }
+                    "@type": "VideoObject",
+                    "name": "{{(index .Result 0).Title}}",
+                    "description": "{{(index .Result 0).Title}}",
+                    "thumbnailUrl": [
+                        "{{(index .Result 0).Domain}}{{ToImageProxy (index .Result 0).Thumb}}"
+                    ],
+                    "uploadDate": "{{ (index .Result 0).PublishDate }}",
+                    "embedUrl": "{{(index .Result 0).URL}}?tp=true"
                 }
             </script>
+            {{ end -}}
         {{ end -}}
-        {{ end -}}
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "url": "https://just-tit.com",
+                "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": "https://just-tit.com/{search_term_string}.html",
+                    "query-input": "required name=search_term_string"
+                }
+            }
+        </script>
     </body>

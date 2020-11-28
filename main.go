@@ -19,7 +19,7 @@ func ToImageProxy(url string) string {
 }
 
 func main() {
-	beego.AddFuncMap("ToImageProxy",ToImageProxy)
+	beego.AddFuncMap("ToImageProxy", ToImageProxy)
 	beego.SetStaticPath("/img", "static/img")
 	beego.SetStaticPath("/robots.txt", "static/robots.txt")
 	beego.SetStaticPath("/service-worker.js", "static/js/service-worker.js")

@@ -82,6 +82,7 @@ func (c *PornhubController) Get() {
 	video.Ratings = fmt.Sprintf("%s", v["ratings"])
 	video.Segment = fmt.Sprintf("%s", v["segment"])
 	video.PublishDate = fmt.Sprintf("%s", v["publish_date"])
+	video.Type = "single"
 	for _, tags := range v["tags"].([]interface{}) {
 		video.Tags = append(video.Tags, fmt.Sprintf("%s", tags.(map[string]interface {})["tag_name"]))
 	}
@@ -182,7 +183,7 @@ func PornhubSearch(search string) []JTVideo {
 		video.PublishDate = fmt.Sprintf("%s", v.(map[string]interface {})["publish_date"])
 		video.ExternalID = fmt.Sprintf("%s", v.(map[string]interface {})["video_id"])
 		video.ExternalURL = fmt.Sprintf("%s", v.(map[string]interface {})["url"])
-
+		video.Type = "search"
 		tags := v.(map[string]interface {})["tags"]
 		for _, tag := range tags.([]interface{}) {
 			video.Tags = append(video.Tags, fmt.Sprintf("%s", tag.(map[string]interface {})["tag_name"]))

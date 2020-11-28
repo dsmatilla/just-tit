@@ -29,6 +29,7 @@ type JTVideo struct {
 	Height			string
 	Segment			string
 	PublishDate		string
+	Type 			string
 	Tags			[]string
 	Categories		[]string
 	Pornstars		[]string

@@ -62,6 +62,7 @@ func (c *PornhubController) Get() {
 	}
 	embed := embedcode["embed"].(map[string]interface{})
 
+	result := []JTVideo{}
 	// Construct video object
 	v := data["video"].(map[string]interface{})
 	video := JTVideo{}
@@ -96,9 +97,10 @@ func (c *PornhubController) Get() {
 	video.ExternalID = fmt.Sprintf("%s", v["video_id"])
 	video.ExternalURL = fmt.Sprintf("%s", v["url"])
 
+	result = append(result, video)
+
 	// Send object to template
-	c.Data["video"] = video
-	c.Data["debug"] = data
+	c.Data["Result"] = result
 	c.Layout = "index.tpl"
 	c.TplName = "singlevideo.tpl"
 }

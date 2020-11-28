@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="container embed-responsive embed-responsive-16by9">
-    {{ (index Result 0).Embed }}
+    {{ (index .Result 0).Embed }}
 </div>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106943798-2"></script>

@@ -43,7 +43,7 @@ func (c *PornhubController) Get() {
 	redirect := "https://pornhub.com/view_video.php?viewkey=" + videoID + "&t=1&utm_source=just-tit.com&utm_medium=embed&utm_campaign=hubtraffic_dsmatilla"
 
 	// Get base domain from URL
-	BaseDomain := c.Controller.Ctx.Input.Scheme() + "://" + c.Controller.Ctx.Input.Domain()
+	BaseDomain := "https://" + c.Controller.Ctx.Input.Domain()
 	if c.Controller.Ctx.Input.Port() != 80 && c.Controller.Ctx.Input.Port() != 443 {
 		BaseDomain += fmt.Sprintf("%s%d", ":", c.Controller.Ctx.Input.Port())
 	}

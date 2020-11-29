@@ -13,7 +13,7 @@
                                             
                                             <div class="col-4 text-right">
                                                 <a href="{{.ExternalURL}}" target="_blank">
-                                                    <img src="/img/{{ .Provider }}-100x30.png" class="image-fluid" alt="{{ .Provider }} logo small" />
+                                                    <img src="/img/{{ .Provider }}-100x30.png" class="image-fluid" alt="{{ .Provider }} logo small" loading="lazy" />
                                                 </a>
                                             </div>
 
@@ -25,11 +25,11 @@
                                         <div class="carousel-inner">
                                             <a href="/{{ .Provider }}/{{ .ID }}.html" class="stretched-link"></a>
                                             <div class="carousel-item active">
-                                                <img class="d-block w-100 h-100" src="{{ToImageProxy .Thumb}}">
+                                                <img class="d-block w-100 h-100" src="{{ToImageProxy .Thumb}}" loading="lazy">
                                             </div>
                                             {{ $alt := .Title }}{{ range .Thumbs -}}
                                             <div class="carousel-item">
-                                                <img class="d-block w-100 h-100" src="{{ToImageProxy .}}" alt="{{$alt}}">
+                                                <img class="d-block w-100 h-100" src="{{ToImageProxy .}}" alt="{{$alt}}" loading="lazy">
                                             </div>
                                             {{ end -}}
                                         </div>

@@ -5,6 +5,7 @@ import (
 	"github.com/astaxie/beego"
 	"strings"
 	"sync"
+	"sort"
 )
 
 // SearchController Beego Controller
@@ -32,15 +33,30 @@ func (c *SearchController) Get() {
 var waitGroup sync.WaitGroup
 
 func doSearch(search string) []JTVideo {
-	waitGroup.Add(1)
+	waitGroup.Add(3)
 
-	Channel := make(chan []JTVideo)
+	ChannelPornhub := make(chan []JTVideo)
+	ChannelRedtube := make(chan []JTVideo)
+	ChannelYouporn := make(chan []JTVideo)
 
-	go searchPornhub(search, Channel)
+	go searchPornhub(search, ChannelPornhub)
+	go searchRedtube(search, ChannelRedtube)
+	go searchYouporn(search, ChannelYouporn)
 
-	result := <-Channel
+	resultPornhub := <-ChannelPornhub
+	resultRedtube := <-ChannelRedtube
+	resultYouporn := <-ChannelYouporn
 
 	waitGroup.Wait()
+
+	var result []JTVideo
+	result = append(result, resultPornhub...)
+	result = append(result, resultRedtube...)
+	result = append(result, resultYouporn...)
+
+    sort.Slice(result, func(p, q int) bool {  
+		return result[p].Rating > result[q].Rating }) 
+
 	return result
 }
 
@@ -48,6 +64,22 @@ func searchPornhub(search string, c chan []JTVideo) {
 	defer waitGroup.Done()
 	var result []JTVideo
 	result = PornhubSearch(search)
+	c <- result
+	close(c)
+}
+
+func searchRedtube(search string, c chan []JTVideo) {
+	defer waitGroup.Done()
+	var result []JTVideo
+	result = RedtubeSearch(search)
+	c <- result
+	close(c)
+}
+
+func searchYouporn(search string, c chan []JTVideo) {
+	defer waitGroup.Done()
+	var result []JTVideo
+	result = YoupornSearch(search)
 	c <- result
 	close(c)
 }

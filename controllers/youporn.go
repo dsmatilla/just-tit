@@ -14,33 +14,33 @@ import (
 	"time"
 )
 
-const pornhubAPIURL = "http://www.pornhub.com/webmasters/"
-const pornhubAPITimeout = 3
-const pornhubCacheDuration = time.Minute * 5
+const youpornAPIURL = "http://www.youporn.com/api/webmasters/"
+const youpornAPITimeout = 3
+const youpornCacheDuration = time.Minute * 5
 
-// PornhubSearchResult type for pornhub api search result
-type PornhubSearchResult map[string]interface{}
+// YoupornSearchResult type for youporn search result
+type YoupornSearchResult map[string]interface{}
 
-// PornhubSingleVideo type for pornhub api single video result
-type PornhubSingleVideo map[string]interface{}
+// YoupornSingleVideo type for youporn video result
+type YoupornSingleVideo map[string]interface{}
 
-// PornhubEmbedCode type for pornhub api embed code
-type PornhubEmbedCode map[string]interface{}
+// YoupornEmbedCode type for youporn embed code
+type YoupornEmbedCode map[string]interface{}
 
-// PornhubController Beego Controller
-type PornhubController struct {
+// YoupornController Beego Controler
+type YoupornController struct {
 	beego.Controller
 }
 
-// Get Pornhub Video controller
-func (c *PornhubController) Get() {
-	// Get videoID from URL
+// Get Youporn Video controller
+func (c *YoupornController) Get() {
+    // Get videoID from URL
 	aux := strings.Replace(c.Ctx.Request.URL.Path, ".html", "", -1)
 	str := strings.Split(aux, "/")
 	videoID := str[2]
 
-	// Build redirect URL in case the API fails
-	redirect := "https://pornhub.com/view_video.php?viewkey=" + videoID + "&t=1&utm_source=just-tit.com&utm_medium=embed&utm_campaign=hubtraffic_dsmatilla"
+    // Build redirect URL in case the API fails
+	redirect := "https://www.youporn.com/watch/" + videoID + "/title/?utm_source=just-tit.com&utm_medium=embed&utm_campaign=hubtraffic_dsmatilla"
 
 	// Get base domain from URL
 	BaseDomain := "https://" + c.Controller.Ctx.Input.Domain()
@@ -48,8 +48,9 @@ func (c *PornhubController) Get() {
 		BaseDomain += fmt.Sprintf("%s%d", ":", c.Controller.Ctx.Input.Port())
 	}
 
+
 	// Call the API and 307 redirect to fallback URL if something is not right
-	data := pornhubGetVideoByID(videoID)
+	data := youpornGetVideoByID(videoID)
 	_, ok := data["video"]
 	if !ok {
 		c.Redirect(redirect, 307)
@@ -57,7 +58,7 @@ func (c *PornhubController) Get() {
 	}
 
 	// Get Embed Code from API
-	embedcode := pornhubGetVideoEmbedCode(videoID)
+	embedcode := youpornGetVideoEmbedCode(videoID)
 	if embedcode["embed"] == nil {
 		c.Redirect(redirect, 307)
 		return
@@ -69,13 +70,13 @@ func (c *PornhubController) Get() {
 	v := data["video"].(map[string]interface{})
 	video := JTVideo{}
 	video.ID = videoID
-	video.Provider = "pornhub"
+	video.Provider = "youporn"
 	video.Domain = template.URL(BaseDomain)
 	video.Title = fmt.Sprintf("%s", v["title"])
 	video.Description = fmt.Sprintf("%s", v["title"])
 	video.Thumb = fmt.Sprintf("%s", v["thumb"])
 	video.Embed = template.HTML(fmt.Sprintf("%+v", html.UnescapeString(embed["code"].(string))))
-	video.URL = template.URL(fmt.Sprintf(BaseDomain+"/pornhub/%s.html", videoID))
+	video.URL = template.URL(fmt.Sprintf(BaseDomain+"/youporn/%s.html", videoID))
 	video.Width = fmt.Sprintf("%s", v["width"])
 	video.Height = fmt.Sprintf("%s", v["height"])
 	video.Duration = fmt.Sprintf("%s", v["duration"])
@@ -87,12 +88,6 @@ func (c *PornhubController) Get() {
 	video.Type = "single"
 	for _, tags := range v["tags"].([]interface{}) {
 		video.Tags = append(video.Tags, fmt.Sprintf("%s", tags.(map[string]interface{})["tag_name"]))
-	}
-	for _, categories := range v["categories"].([]interface{}) {
-		video.Categories = append(video.Categories, fmt.Sprintf("%s", categories.(map[string]interface{})["category"]))
-	}
-	for _, thumbs := range v["thumbs"].([]interface{}) {
-		video.Thumbs = append(video.Thumbs, fmt.Sprintf("%s", thumbs.(map[string]interface{})["src"]))
 	}
 	for _, pornstars := range v["pornstars"].([]interface{}) {
 		video.Pornstars = append(video.Pornstars, fmt.Sprintf("%s", pornstars.(map[string]interface{})["pornstar_name"]))
@@ -115,69 +110,70 @@ func (c *PornhubController) Get() {
 	}
 }
 
-func pornhubGetVideoByID(ID string) PornhubSingleVideo {
-	Cached := JTCache.Get("pornhub-video-" + ID)
-	var result PornhubSingleVideo
+func youpornGetVideoByID(ID string) YoupornSingleVideo {
+	Cached := JTCache.Get("youporn-video-"+ID)
+	var result YoupornSingleVideo
 	if Cached == nil {
-		timeout := time.Duration(pornhubAPITimeout * time.Second)
+		timeout := time.Duration(youpornAPITimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
 		}
-		resp, err := client.Get(fmt.Sprintf(pornhubAPIURL+"video_by_id?id=%s", ID))
+		resp, err := client.Get(fmt.Sprintf(youpornAPIURL+"video_by_id/?video_id=%s", ID))
 		if err != nil {
-			log.Println("[PORNHUB][GETVIDEOBYID]", err)
-			return PornhubSingleVideo{}
+			log.Println("[YOUPORN][GETVIDEOBYID]",err)
+			return YoupornSingleVideo{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
-
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[PORNHUB][GETVIDEOBYID]", err)
+			log.Println("[YOUPORN][GETVIDEOBYID]",err)
 		}
-		JTCache.Put("pornhub-video-"+ID, b, pornhubCacheDuration)
+		JTCache.Put("youporn-video-"+ID, b, youpornCacheDuration)
 	} else {
 		json.Unmarshal(Cached.([]uint8), &result)
 	}
+
 	return result
 }
 
-func pornhubGetVideoEmbedCode(ID string) PornhubEmbedCode {
-	Cached := JTCache.Get("pornhub-embed-" + ID)
+func youpornGetVideoEmbedCode(ID string) YoupornEmbedCode {
+	Cached := JTCache.Get("youporn-embed-"+ID)
 	if Cached == nil {
-		timeout := time.Duration(pornhubAPITimeout * time.Second)
+		timeout := time.Duration(youpornAPITimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
 		}
-		resp, err := client.Get(fmt.Sprintf(pornhubAPIURL+"video_embed_code?id=%s", ID))
+		resp, err := client.Get(fmt.Sprintf(youpornAPIURL+"video_embed_code/?video_id=%s", ID))
 		if err != nil {
-			log.Println("[PORNHUB][GETVIDEOEMBEDCODE]", err)
-			return PornhubEmbedCode{}
+			log.Println("[YOUPORN][GETVIDEOEMBEDCODE]",err)
+			return YoupornEmbedCode{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
-		var result PornhubEmbedCode
+		var result YoupornEmbedCode
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[PORNHUB][GETVIDEOEMBEDCODE]", err)
+			log.Println("[YOUPORN][GETVIDEOEMBEDCODE]",err)
 		}
-		JTCache.Put("pornhub-embed-"+ID, b, pornhubCacheDuration)
+		JTCache.Put("youporn-embed-"+ID, b, youpornCacheDuration)
 		return result
 	}
-	var result PornhubEmbedCode
+	var result YoupornEmbedCode
 	json.Unmarshal(Cached.([]uint8), &result)
 	return result
 }
 
-// PornhubSearch Calls pornhub search function and process result to get array of videos
-func PornhubSearch(search string) []JTVideo {
-	videos := pornhubSearchVideos(search)
+// YoupornSearch Calls porhub search function and process result to get array of videos
+func YoupornSearch(search string) []JTVideo {
+	videos := youpornSearchVideos(search)
 	result := []JTVideo{}
-	if videos["videos"] != nil {	
-		for _, data := range videos["videos"].([]interface{}) {
+	if videos["video"] != nil {		
+		for _, data := range videos["video"].([]interface{}) {
 			// Construct video object
-			v := data.(interface{})
+			//v := data.(map[string]interface{})["video"]
+			v := data
 			video := JTVideo{}
 			video.ID = fmt.Sprintf("%s", v.(map[string]interface{})["video_id"])
-			video.Provider = "pornhub"
+			video.Provider = "youporn"
 			video.Title = fmt.Sprintf("%s", v.(map[string]interface{})["title"])
 			video.Description = fmt.Sprintf("%s", v.(map[string]interface{})["title"])
 			video.Thumb = fmt.Sprintf("%s", v.(map[string]interface{})["thumb"])
@@ -196,46 +192,40 @@ func PornhubSearch(search string) []JTVideo {
 			for _, tag := range tags.([]interface{}) {
 				video.Tags = append(video.Tags, fmt.Sprintf("%s", tag.(map[string]interface{})["tag_name"]))
 			}
-			categories := v.(map[string]interface{})["categories"]
-			for _, category := range categories.([]interface{}) {
-				video.Categories = append(video.Categories, fmt.Sprintf("%s", category.(map[string]interface{})["category"]))
-			}
+
 			thumbs := v.(map[string]interface{})["thumbs"]
 			for _, thumb := range thumbs.([]interface{}) {
 				video.Thumbs = append(video.Thumbs, fmt.Sprintf("%s", thumb.(map[string]interface{})["src"]))
 			}
-			pornstars := v.(map[string]interface{})["pornstars"]
-			for _, pornstar := range pornstars.([]interface{}) {
-				video.Pornstars = append(video.Pornstars, fmt.Sprintf("%s", pornstar.(map[string]interface{})["pornstar_name"]))
-			}
+
 			result = append(result, video)
 		}
 	}
 	return result
 }
 
-func pornhubSearchVideos(search string) PornhubSearchResult {
-	Cached := JTCache.Get("pornhub-search-" + search)
+func youpornSearchVideos(search string) YoupornSearchResult {
+	Cached := JTCache.Get("youporn-search-"+search)
 	if Cached == nil {
-		timeout := time.Duration(pornhubAPITimeout * time.Second)
+		timeout := time.Duration(youpornAPITimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
 		}
-		resp, err := client.Get(fmt.Sprintf(pornhubAPIURL+"search?search=%s&thumbnail=all", url.QueryEscape(search)))
+		resp, err := client.Get(fmt.Sprintf(youpornAPIURL+"search?search=%s&thumbsize=all", url.QueryEscape(search)))
 		if err != nil {
-			log.Println("[PORNHUB][SEARCHVIDEOS]", err)
-			return PornhubSearchResult{}
+			log.Println("[YOUPORN][SEARCHVIDEOS]",err)
+			return YoupornSearchResult{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
-		var result PornhubSearchResult
+		var result YoupornSearchResult
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[PORNHUB][SEARCHVIDEOS]", err)
+			log.Println("[YOUPORN][SEARCHVIDEOS]",err)
 		}
-		JTCache.Put("pornhub-search-"+search, b, pornhubCacheDuration)
+		JTCache.Put("youporn-search-"+search, b, youpornCacheDuration)
 		return result
 	}
-	var result PornhubSearchResult
+	var result YoupornSearchResult
 	json.Unmarshal(Cached.([]uint8), &result)
 	return result
 }

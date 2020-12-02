@@ -48,6 +48,9 @@
                                     {{ range .Categories -}}
                                     <a href="/{{.}}.html" class="badge badge-light" alt="{{.}}">{{.}}</a>
                                     {{ end -}}
+                                    {{ range .Tags -}}
+                                    <a href="/{{.}}.html" class="badge badge-light" alt="{{.}}">{{.}}</a>
+                                    {{ end -}}
                                 </div>
                                 <div class="card-footer bg-dark text-white">
                                     <small>{{ .PublishDate }}</small>

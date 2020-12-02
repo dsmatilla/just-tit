@@ -14,33 +14,33 @@ import (
 	"time"
 )
 
-const pornhubAPIURL = "http://www.pornhub.com/webmasters/"
-const pornhubAPITimeout = 3
-const pornhubCacheDuration = time.Minute * 5
+const redtubeAPIURL = "https://api.redtube.com/"
+const redtubeAPITimeout = 3
+const redtubeCacheDuration = time.Minute * 5
 
-// PornhubSearchResult type for pornhub api search result
-type PornhubSearchResult map[string]interface{}
+// RedtubeSearchResult type for redtube search result
+type RedtubeSearchResult map[string]interface{}
 
-// PornhubSingleVideo type for pornhub api single video result
-type PornhubSingleVideo map[string]interface{}
+// RedtubeSingleVideo type for redtube video result
+type RedtubeSingleVideo map[string]interface{}
 
-// PornhubEmbedCode type for pornhub api embed code
-type PornhubEmbedCode map[string]interface{}
+// RedtubeEmbedCode type for redtube embed code
+type RedtubeEmbedCode map[string]interface{}
 
-// PornhubController Beego Controller
-type PornhubController struct {
+// RedtubeController Beego Controler
+type RedtubeController struct {
 	beego.Controller
 }
 
-// Get Pornhub Video controller
-func (c *PornhubController) Get() {
+// Get Redtube Video controller
+func (c *RedtubeController) Get() {
 	// Get videoID from URL
 	aux := strings.Replace(c.Ctx.Request.URL.Path, ".html", "", -1)
 	str := strings.Split(aux, "/")
 	videoID := str[2]
 
 	// Build redirect URL in case the API fails
-	redirect := "https://pornhub.com/view_video.php?viewkey=" + videoID + "&t=1&utm_source=just-tit.com&utm_medium=embed&utm_campaign=hubtraffic_dsmatilla"
+	redirect := "https://www.redtube.com/" + videoID + "?utm_source=just-tit.com&utm_medium=embed&utm_campaign=hubtraffic_dsmatilla"
 
 	// Get base domain from URL
 	BaseDomain := "https://" + c.Controller.Ctx.Input.Domain()
@@ -49,7 +49,7 @@ func (c *PornhubController) Get() {
 	}
 
 	// Call the API and 307 redirect to fallback URL if something is not right
-	data := pornhubGetVideoByID(videoID)
+	data := redtubeGetVideoByID(videoID)
 	_, ok := data["video"]
 	if !ok {
 		c.Redirect(redirect, 307)
@@ -57,7 +57,7 @@ func (c *PornhubController) Get() {
 	}
 
 	// Get Embed Code from API
-	embedcode := pornhubGetVideoEmbedCode(videoID)
+	embedcode := redtubeGetVideoEmbedCode(videoID)
 	if embedcode["embed"] == nil {
 		c.Redirect(redirect, 307)
 		return
@@ -69,13 +69,13 @@ func (c *PornhubController) Get() {
 	v := data["video"].(map[string]interface{})
 	video := JTVideo{}
 	video.ID = videoID
-	video.Provider = "pornhub"
+	video.Provider = "redtube"
 	video.Domain = template.URL(BaseDomain)
 	video.Title = fmt.Sprintf("%s", v["title"])
 	video.Description = fmt.Sprintf("%s", v["title"])
 	video.Thumb = fmt.Sprintf("%s", v["thumb"])
 	video.Embed = template.HTML(fmt.Sprintf("%+v", html.UnescapeString(embed["code"].(string))))
-	video.URL = template.URL(fmt.Sprintf(BaseDomain+"/pornhub/%s.html", videoID))
+	video.URL = template.URL(fmt.Sprintf(BaseDomain+"/redtube/%s.html", videoID))
 	video.Width = fmt.Sprintf("%s", v["width"])
 	video.Height = fmt.Sprintf("%s", v["height"])
 	video.Duration = fmt.Sprintf("%s", v["duration"])
@@ -115,69 +115,70 @@ func (c *PornhubController) Get() {
 	}
 }
 
-func pornhubGetVideoByID(ID string) PornhubSingleVideo {
-	Cached := JTCache.Get("pornhub-video-" + ID)
-	var result PornhubSingleVideo
+func redtubeGetVideoByID(ID string) RedtubeSingleVideo {
+	Cached := JTCache.Get("redtube-video-"+ID)
+	var result RedtubeSingleVideo
 	if Cached == nil {
-		timeout := time.Duration(pornhubAPITimeout * time.Second)
+		timeout := time.Duration(redtubeAPITimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
 		}
-		resp, err := client.Get(fmt.Sprintf(pornhubAPIURL+"video_by_id?id=%s", ID))
+		resp, err := client.Get(fmt.Sprintf(redtubeAPIURL+"?data=redtube.Videos.getVideoById&video_id=%s&output=json", ID))
 		if err != nil {
-			log.Println("[PORNHUB][GETVIDEOBYID]", err)
-			return PornhubSingleVideo{}
+			log.Println("[REDTUBE][GETVIDEOBYID]",err)
+			return RedtubeSingleVideo{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
-
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[PORNHUB][GETVIDEOBYID]", err)
+			log.Println("[REDTUBE][GETVIDEOBYID]",err)
 		}
-		JTCache.Put("pornhub-video-"+ID, b, pornhubCacheDuration)
+		JTCache.Put("redtube-video-"+ID, b, redtubeCacheDuration)
 	} else {
 		json.Unmarshal(Cached.([]uint8), &result)
 	}
+
 	return result
 }
 
-func pornhubGetVideoEmbedCode(ID string) PornhubEmbedCode {
-	Cached := JTCache.Get("pornhub-embed-" + ID)
+func redtubeGetVideoEmbedCode(ID string) RedtubeEmbedCode {
+	Cached := JTCache.Get("redtube-embed-"+ID)
 	if Cached == nil {
-		timeout := time.Duration(pornhubAPITimeout * time.Second)
+		timeout := time.Duration(redtubeAPITimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
 		}
-		resp, err := client.Get(fmt.Sprintf(pornhubAPIURL+"video_embed_code?id=%s", ID))
+		resp, err := client.Get(fmt.Sprintf(redtubeAPIURL+"?data=redtube.Videos.getVideoEmbedCode&video_id=%s&output=json", ID))
+		log.Printf(redtubeAPIURL+"?data=redtube.Videos.getVideoEmbedCode&video_id=%s&output=json", ID)
 		if err != nil {
-			log.Println("[PORNHUB][GETVIDEOEMBEDCODE]", err)
-			return PornhubEmbedCode{}
+			log.Println("[REDTUBE][GETVIDEOEMBEDCODE]",err)
+			return RedtubeEmbedCode{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
-		var result PornhubEmbedCode
+		var result RedtubeEmbedCode
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[PORNHUB][GETVIDEOEMBEDCODE]", err)
+			log.Println("[REDTUBE][GETVIDEOEMBEDCODE]",err)
 		}
-		JTCache.Put("pornhub-embed-"+ID, b, pornhubCacheDuration)
+		JTCache.Put("redtube-embed-"+ID, b, redtubeCacheDuration)
 		return result
 	}
-	var result PornhubEmbedCode
+	var result RedtubeEmbedCode
 	json.Unmarshal(Cached.([]uint8), &result)
 	return result
 }
 
-// PornhubSearch Calls pornhub search function and process result to get array of videos
-func PornhubSearch(search string) []JTVideo {
-	videos := pornhubSearchVideos(search)
+// RedtubeSearch Calls redtube search function and process result to get array of videos
+func RedtubeSearch(search string) []JTVideo {
+	videos := redtubeSearchVideos(search)
 	result := []JTVideo{}
-	if videos["videos"] != nil {	
+	if videos["videos"] != nil {
 		for _, data := range videos["videos"].([]interface{}) {
 			// Construct video object
-			v := data.(interface{})
+			v := data.(map[string]interface{})["video"]
 			video := JTVideo{}
 			video.ID = fmt.Sprintf("%s", v.(map[string]interface{})["video_id"])
-			video.Provider = "pornhub"
+			video.Provider = "redtube"
 			video.Title = fmt.Sprintf("%s", v.(map[string]interface{})["title"])
 			video.Description = fmt.Sprintf("%s", v.(map[string]interface{})["title"])
 			video.Thumb = fmt.Sprintf("%s", v.(map[string]interface{})["thumb"])
@@ -196,46 +197,40 @@ func PornhubSearch(search string) []JTVideo {
 			for _, tag := range tags.([]interface{}) {
 				video.Tags = append(video.Tags, fmt.Sprintf("%s", tag.(map[string]interface{})["tag_name"]))
 			}
-			categories := v.(map[string]interface{})["categories"]
-			for _, category := range categories.([]interface{}) {
-				video.Categories = append(video.Categories, fmt.Sprintf("%s", category.(map[string]interface{})["category"]))
-			}
+
 			thumbs := v.(map[string]interface{})["thumbs"]
 			for _, thumb := range thumbs.([]interface{}) {
 				video.Thumbs = append(video.Thumbs, fmt.Sprintf("%s", thumb.(map[string]interface{})["src"]))
 			}
-			pornstars := v.(map[string]interface{})["pornstars"]
-			for _, pornstar := range pornstars.([]interface{}) {
-				video.Pornstars = append(video.Pornstars, fmt.Sprintf("%s", pornstar.(map[string]interface{})["pornstar_name"]))
-			}
+
 			result = append(result, video)
 		}
 	}
 	return result
 }
 
-func pornhubSearchVideos(search string) PornhubSearchResult {
-	Cached := JTCache.Get("pornhub-search-" + search)
+func redtubeSearchVideos(search string) RedtubeSearchResult {
+	Cached := JTCache.Get("redtube-search-"+search)
 	if Cached == nil {
-		timeout := time.Duration(pornhubAPITimeout * time.Second)
+		timeout := time.Duration(redtubeAPITimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
 		}
-		resp, err := client.Get(fmt.Sprintf(pornhubAPIURL+"search?search=%s&thumbnail=all", url.QueryEscape(search)))
+		resp, err := client.Get(fmt.Sprintf(redtubeAPIURL+"?data=redtube.Videos.searchVideos&output=json&search=%s&thumbsize=all", url.QueryEscape(search)))
 		if err != nil {
-			log.Println("[PORNHUB][SEARCHVIDEOS]", err)
-			return PornhubSearchResult{}
+			log.Println("[REDTUBE][SEARCHVIDEOS]",err)
+			return RedtubeSearchResult{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
-		var result PornhubSearchResult
+		var result RedtubeSearchResult
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[PORNHUB][SEARCHVIDEOS]", err)
+			log.Println("[REDTUBE][SEARCHVIDEOS]",err)
 		}
-		JTCache.Put("pornhub-search-"+search, b, pornhubCacheDuration)
+		JTCache.Put("redtube-search-"+search, b, redtubeCacheDuration)
 		return result
 	}
-	var result PornhubSearchResult
+	var result RedtubeSearchResult
 	json.Unmarshal(Cached.([]uint8), &result)
 	return result
 }

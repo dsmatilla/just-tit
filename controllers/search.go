@@ -33,19 +33,22 @@ func (c *SearchController) Get() {
 var waitGroup sync.WaitGroup
 
 func doSearch(search string) []JTVideo {
-	waitGroup.Add(3)
+	waitGroup.Add(4)
 
 	ChannelPornhub := make(chan []JTVideo)
 	ChannelRedtube := make(chan []JTVideo)
 	ChannelYouporn := make(chan []JTVideo)
+	ChannelTube8 := make(chan []JTVideo)
 
 	go searchPornhub(search, ChannelPornhub)
 	go searchRedtube(search, ChannelRedtube)
 	go searchYouporn(search, ChannelYouporn)
+	go searchTube8(search, ChannelTube8)
 
 	resultPornhub := <-ChannelPornhub
 	resultRedtube := <-ChannelRedtube
 	resultYouporn := <-ChannelYouporn
+	resultTube8 := <-ChannelTube8
 
 	waitGroup.Wait()
 
@@ -53,6 +56,7 @@ func doSearch(search string) []JTVideo {
 	result = append(result, resultPornhub...)
 	result = append(result, resultRedtube...)
 	result = append(result, resultYouporn...)
+	result = append(result, resultTube8...)
 
     sort.Slice(result, func(p, q int) bool {  
 		return result[p].Rating > result[q].Rating }) 
@@ -80,6 +84,14 @@ func searchYouporn(search string, c chan []JTVideo) {
 	defer waitGroup.Done()
 	var result []JTVideo
 	result = YoupornSearch(search)
+	c <- result
+	close(c)
+}
+
+func searchTube8(search string, c chan []JTVideo) {
+	defer waitGroup.Done()
+	var result []JTVideo
+	result = Tube8Search(search)
 	c <- result
 	close(c)
 }

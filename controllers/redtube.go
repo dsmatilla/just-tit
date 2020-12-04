@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/base64"	
 	"encoding/json"
 	"fmt"
 	"github.com/astaxie/beego"
@@ -62,8 +63,8 @@ func (c *RedtubeController) Get() {
 		c.Redirect(redirect, 307)
 		return
 	}
-	embed := embedcode["embed"].(map[string]interface{})
-
+	temp := embedcode["embed"].(map[string]interface{})
+	embed, _ := base64.StdEncoding.DecodeString(fmt.Sprintf("%s", temp["code"]))
 	result := []JTVideo{}
 	// Construct video object
 	v := data["video"].(map[string]interface{})
@@ -74,7 +75,7 @@ func (c *RedtubeController) Get() {
 	video.Title = fmt.Sprintf("%s", v["title"])
 	video.Description = fmt.Sprintf("%s", v["title"])
 	video.Thumb = fmt.Sprintf("%s", v["thumb"])
-	video.Embed = template.HTML(fmt.Sprintf("%+v", html.UnescapeString(embed["code"].(string))))
+	video.Embed = template.HTML(fmt.Sprintf("<object><embed src=\"%+v\" /></object>", html.UnescapeString(string(embed))))
 	video.URL = template.URL(fmt.Sprintf(BaseDomain+"/redtube/%s.html", videoID))
 	video.Width = fmt.Sprintf("%s", v["width"])
 	video.Height = fmt.Sprintf("%s", v["height"])
@@ -86,17 +87,13 @@ func (c *RedtubeController) Get() {
 	video.PublishDate = fmt.Sprintf("%s", v["publish_date"])
 	video.Type = "single"
 	for _, tags := range v["tags"].([]interface{}) {
-		video.Tags = append(video.Tags, fmt.Sprintf("%s", tags.(map[string]interface{})["tag_name"]))
+		video.Tags = append(video.Tags, fmt.Sprintf("%s", tags))
 	}
-	for _, categories := range v["categories"].([]interface{}) {
-		video.Categories = append(video.Categories, fmt.Sprintf("%s", categories.(map[string]interface{})["category"]))
-	}
+
 	for _, thumbs := range v["thumbs"].([]interface{}) {
 		video.Thumbs = append(video.Thumbs, fmt.Sprintf("%s", thumbs.(map[string]interface{})["src"]))
 	}
-	for _, pornstars := range v["pornstars"].([]interface{}) {
-		video.Pornstars = append(video.Pornstars, fmt.Sprintf("%s", pornstars.(map[string]interface{})["pornstar_name"]))
-	}
+
 	video.ExternalID = fmt.Sprintf("%s", v["video_id"])
 	video.ExternalURL = fmt.Sprintf("%s", v["url"])
 
@@ -149,7 +146,6 @@ func redtubeGetVideoEmbedCode(ID string) RedtubeEmbedCode {
 			Timeout: timeout,
 		}
 		resp, err := client.Get(fmt.Sprintf(redtubeAPIURL+"?data=redtube.Videos.getVideoEmbedCode&video_id=%s&output=json", ID))
-		log.Printf(redtubeAPIURL+"?data=redtube.Videos.getVideoEmbedCode&video_id=%s&output=json", ID)
 		if err != nil {
 			log.Println("[REDTUBE][GETVIDEOEMBEDCODE]",err)
 			return RedtubeEmbedCode{}

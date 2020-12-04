@@ -26,7 +26,7 @@ func init() {
 
     beego.Router("/pornhub/*.html", &controllers.PornhubController{})
 	beego.Router("/redtube/*.html", &controllers.RedtubeController{})
-	//beego.Router("/tube8/*.html", &controllers.Tube8Controller{})
+	beego.Router("/tube8/*.html", &controllers.Tube8Controller{})
 	beego.Router("/youporn/*.html", &controllers.YoupornController{})
 	//beego.Router("/xtube/*.html", &controllers.XtubeController{})
 	//beego.Router("/spankwire/*.html", &controllers.SpankwireController{})

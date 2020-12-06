@@ -210,9 +210,11 @@ func KeezmoviesSearch(search string) []JTVideo {
 			video.ExternalID = fmt.Sprintf("%s", v.(map[string]interface{})["video_id"])
 			video.ExternalURL = fmt.Sprintf("%s", v.(map[string]interface{})["video_url"])
 			video.Type = "search"
-			tags := v.(map[string]interface{})["tags"]
-			for _, tag := range tags.(map[string]interface{}) {
-				video.Tags = append(video.Tags, fmt.Sprintf("%s", tag))
+			if v.(map[string]interface{})["tags"] != nil {
+				tags := v.(map[string]interface{})["tags"]
+				for _, tag := range tags.(map[string]interface{}) {
+					video.Tags = append(video.Tags, fmt.Sprintf("%s", tag))
+				}
 			}
 			if v.(map[string]interface{})["categories"] != nil {
 				categories := v.(map[string]interface{})["categories"]

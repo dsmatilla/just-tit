@@ -54,6 +54,7 @@
                                 </div>
                                 <div class="card-footer bg-dark text-white">
                                     <small>{{ .PublishDate }}</small>
+                                    <small>{{ .Rating }}</small>
                                     <small class="float-right">{{ .Duration }}</small>
                                 </div>
                             </div>

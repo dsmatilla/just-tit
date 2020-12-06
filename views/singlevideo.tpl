@@ -1,14 +1,14 @@
 {{ range .Result -}}
                         <div class="card">
-                            <div class="card-header bg-secondary" style="height:100px;">
+                            <div class="card-header bg-secondary" style="height:120px;">
                                 <div class="container">
                                     <div class="row">
                                         
                                         <div class="col text-truncate">
-                                            <h2 class="font-weight-normal text-wrap text-white text-capitalize" title="{{.Title}}"><small>{{.Title}}</small></h2>
+                                            <h1 class="font-weight-normal text-wrap text-white text-capitalize" title="{{.Title}}"><small>{{.Title}}</small></h1>
                                         </div>
                                         
-                                        <div class="col-3 text-right">
+                                        <div class="col-4 text-left">
                                             <a href="{{.ExternalURL}}" target="_blank">
                                                 <img src="/img/{{ .Provider }}-100x30.png" class="image-fluid" alt="{{ .Provider }} logo small" />
                                             </a>

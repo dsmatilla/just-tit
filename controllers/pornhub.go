@@ -133,6 +133,7 @@ func pornhubGetVideoByID(ID string) PornhubSingleVideo {
 		err = json.Unmarshal(b, &result)
 		if err != nil {
 			log.Println("[PORNHUB][GETVIDEOBYID]", err)
+			return PornhubSingleVideo{}
 		}
 		JTCache.Put("pornhub-video-"+ID, b, pornhubCacheDuration)
 	} else {
@@ -158,6 +159,7 @@ func pornhubGetVideoEmbedCode(ID string) PornhubEmbedCode {
 		err = json.Unmarshal(b, &result)
 		if err != nil {
 			log.Println("[PORNHUB][GETVIDEOEMBEDCODE]", err)
+			return PornhubEmbedCode{}
 		}
 		JTCache.Put("pornhub-embed-"+ID, b, pornhubCacheDuration)
 		return result
@@ -231,6 +233,7 @@ func pornhubSearchVideos(search string) PornhubSearchResult {
 		err = json.Unmarshal(b, &result)
 		if err != nil {
 			log.Println("[PORNHUB][SEARCHVIDEOS]", err)
+			return PornhubSearchResult{}
 		}
 		JTCache.Put("pornhub-search-"+search, b, pornhubCacheDuration)
 		return result

@@ -129,6 +129,7 @@ func redtubeGetVideoByID(ID string) RedtubeSingleVideo {
 		err = json.Unmarshal(b, &result)
 		if err != nil {
 			log.Println("[REDTUBE][GETVIDEOBYID]",err)
+			return RedtubeSingleVideo{}
 		}
 		JTCache.Put("redtube-video-"+ID, b, redtubeCacheDuration)
 	} else {
@@ -155,6 +156,7 @@ func redtubeGetVideoEmbedCode(ID string) RedtubeEmbedCode {
 		err = json.Unmarshal(b, &result)
 		if err != nil {
 			log.Println("[REDTUBE][GETVIDEOEMBEDCODE]",err)
+			return RedtubeEmbedCode{}
 		}
 		JTCache.Put("redtube-embed-"+ID, b, redtubeCacheDuration)
 		return result
@@ -222,6 +224,7 @@ func redtubeSearchVideos(search string) RedtubeSearchResult {
 		err = json.Unmarshal(b, &result)
 		if err != nil {
 			log.Println("[REDTUBE][SEARCHVIDEOS]",err)
+			return RedtubeSearchResult{}
 		}
 		JTCache.Put("redtube-search-"+search, b, redtubeCacheDuration)
 		return result

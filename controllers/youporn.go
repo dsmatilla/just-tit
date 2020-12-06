@@ -127,6 +127,7 @@ func youpornGetVideoByID(ID string) YoupornSingleVideo {
 		err = json.Unmarshal(b, &result)
 		if err != nil {
 			log.Println("[YOUPORN][GETVIDEOBYID]",err)
+			return YoupornSingleVideo{}
 		}
 		JTCache.Put("youporn-video-"+ID, b, youpornCacheDuration)
 	} else {
@@ -153,6 +154,7 @@ func youpornGetVideoEmbedCode(ID string) YoupornEmbedCode {
 		err = json.Unmarshal(b, &result)
 		if err != nil {
 			log.Println("[YOUPORN][GETVIDEOEMBEDCODE]",err)
+			return YoupornEmbedCode{}
 		}
 		JTCache.Put("youporn-embed-"+ID, b, youpornCacheDuration)
 		return result
@@ -221,6 +223,7 @@ func youpornSearchVideos(search string) YoupornSearchResult {
 		err = json.Unmarshal(b, &result)
 		if err != nil {
 			log.Println("[YOUPORN][SEARCHVIDEOS]",err)
+			return YoupornSearchResult{}
 		}
 		JTCache.Put("youporn-search-"+search, b, youpornCacheDuration)
 		return result

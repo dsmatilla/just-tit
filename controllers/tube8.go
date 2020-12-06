@@ -72,7 +72,7 @@ func (c *Tube8Controller) Get() {
 	video.Domain = template.URL(BaseDomain)
 	video.Title = fmt.Sprintf("%s", data["title"])
 	video.Description = fmt.Sprintf("%s", data["title"])
-	video.Thumb = fmt.Sprintf("%s", v["thumb"])
+	video.Thumb = fmt.Sprintf("%s", v["default_thumb"])
 	video.Embed = template.HTML(fmt.Sprintf("%+v", html.UnescapeString(embed)))
 	video.URL = template.URL(fmt.Sprintf(BaseDomain+"/tube8/%s.html", videoID))
 	video.Width = fmt.Sprintf("%s", v["width"])
@@ -123,6 +123,7 @@ func tube8GetVideoByID(ID string) Tube8SingleVideo {
 		err = json.Unmarshal(b, &result)
 		if err != nil {
 			log.Println("[TUBE8][GETVIDEOBYID]",err)
+			return Tube8SingleVideo{}
 		}
 		JTCache.Put("tube8-video-"+ID, b, tube8CacheDuration)
 	} else {
@@ -142,6 +143,7 @@ func tube8GetVideoEmbedCode(ID string) string {
 		resp, err := client.Get(fmt.Sprintf(tube8APIURL+"?action=getvideoembedcode&output=json&video_id=%s", ID))
 		if err != nil {
 			log.Println("[TUBE8][GETVIDEOEMBEDCODE]",err)
+			return ""
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		result := fmt.Sprintf("%s", b)
@@ -214,6 +216,7 @@ func tube8SearchVideos(search string) Tube8SearchResult {
 		err = json.Unmarshal(b, &result)
 		if err != nil {
 			log.Println("[TUBE8][SEARCHVIDEOS]",err)
+			return Tube8SearchResult{}
 		}
 		JTCache.Put("tube8-search-"+search, b, tube8CacheDuration)
 		return result

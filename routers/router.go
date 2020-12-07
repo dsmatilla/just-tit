@@ -29,7 +29,7 @@ func init() {
 	beego.Router("/tube8/*.html", &controllers.Tube8Controller{})
 	beego.Router("/youporn/*.html", &controllers.YoupornController{})
 	//beego.Router("/xtube/*.html", &controllers.XtubeController{})
-	//beego.Router("/spankwire/*.html", &controllers.SpankwireController{})
+	beego.Router("/spankwire/*.html", &controllers.SpankwireController{})
 	beego.Router("/keezmovies/*.html", &controllers.KeezmoviesController{})
-	//beego.Router("/extremetube/*.html", &controllers.ExtremetubeController{})
+	beego.Router("/extremetube/*.html", &controllers.ExtremetubeController{})
 }

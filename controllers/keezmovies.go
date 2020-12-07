@@ -89,9 +89,11 @@ func (c *KeezmoviesController) Get() {
 	video.Segment = fmt.Sprintf("%s", v["segment"])
 	video.PublishDate = fmt.Sprintf("%s", v["publish_date"])
 	video.Type = "single"
-	tags := v["tags"]
-	for _, tag := range tags.(map[string]interface{}) {
-		video.Tags = append(video.Tags, fmt.Sprintf("%s", tag))
+	if v["tags"] != nil {
+		tags := v["tags"]
+		for _, tag := range tags.(map[string]interface{}) {
+			video.Tags = append(video.Tags, fmt.Sprintf("%s", tag))
+		}
 	}
 	if v["categories"] != nil {
 		categories := v["categories"]
@@ -251,14 +253,14 @@ func keezmoviesSearchVideos(search string) KeezmoviesSearchResult {
 		resp, err := client.Get(fmt.Sprintf(keezmoviesAPIURL+"searchVideos?query=%s&thumbnail=all", url.QueryEscape(search)))
 
 		if err != nil {
-			log.Println("[PORNHUB][SEARCHVIDEOS]", err)
+			log.Println("[KEEZMOVIES][SEARCHVIDEOS]", err)
 			return KeezmoviesSearchResult{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		var result KeezmoviesSearchResult
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[PORNHUB][SEARCHVIDEOS]", err)
+			log.Println("[KEEZMOVIES][SEARCHVIDEOS]", err)
 			return KeezmoviesSearchResult{}
 		}
 		JTCache.Put("keezmovies-search-"+search, b, keezmoviesCacheDuration)

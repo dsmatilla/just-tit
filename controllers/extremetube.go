@@ -40,6 +40,7 @@ func (c *ExtremetubeController) Get() {
 	str := strings.Split(aux, "/")
 	videoID := str[2]
 
+    // Build redirect URL in case the API fails
 	redirect := "https://www.extremetube.com/video/title-" + videoID + "?utm_source=just-tit.com&utm_medium=embed&utm_campaign=hubtraffic_dsmatilla"
 
 	// Get base domain from URL
@@ -209,7 +210,7 @@ func extremetubeSearchVideos(search string) ExtremetubeSearchResult {
 		client := http.Client{
 			Timeout: timeout,
 		}
-		resp, err := client.Get(fmt.Sprintf(extremetubeAPIURL+"?data=searchVideos&output=json&search=%s&thumbsize=small", url.QueryEscape(search)))
+		resp, err := client.Get(fmt.Sprintf(extremetubeAPIURL+"?data=searchVideos&output=json&search=%s&thumbsize=small&count=10", url.QueryEscape(search)))
 		if err != nil {
 			log.Println("[EXTREMETUBE][SEARCHVIDEOS]", err)
 			return ExtremetubeSearchResult{}

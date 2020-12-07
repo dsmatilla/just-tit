@@ -81,8 +81,8 @@ func (c *YoupornController) Get() {
 	video.Height = fmt.Sprintf("%s", v["height"])
 	video.Duration = fmt.Sprintf("%s", v["duration"])
 	video.Views = fmt.Sprintf("%s", v["views"])
-	video.Rating = fmt.Sprintf("%s", v["rating"])
-	video.Ratings = fmt.Sprintf("%s", v["ratings"])
+	video.Rating = fmt.Sprintf("%.0f", v["rating"])
+	video.Ratings = fmt.Sprintf("%.0f", v["ratings"])
 	video.Segment = fmt.Sprintf("%s", v["segment"])
 	video.PublishDate = fmt.Sprintf("%s", v["publish_date"])
 	video.Type = "single"
@@ -183,8 +183,8 @@ func YoupornSearch(search string) []JTVideo {
 			video.Height = fmt.Sprintf("%s", v.(map[string]interface{})["height"])
 			video.Duration = fmt.Sprintf("%s", v.(map[string]interface{})["duration"])
 			video.Views = fmt.Sprintf("%s", v.(map[string]interface{})["views"])
-			video.Rating = fmt.Sprintf("%s", v.(map[string]interface{})["rating"])
-			video.Ratings = fmt.Sprintf("%s", v.(map[string]interface{})["ratings"])
+			video.Rating = fmt.Sprintf("%.0f", v.(map[string]interface{})["rating"])
+			video.Ratings = fmt.Sprintf("%.0f", v.(map[string]interface{})["ratings"])
 			video.Segment = fmt.Sprintf("%s", v.(map[string]interface{})["segment"])
 			video.PublishDate = fmt.Sprintf("%s", v.(map[string]interface{})["publish_date"])
 			video.ExternalID = fmt.Sprintf("%s", v.(map[string]interface{})["video_id"])
@@ -213,7 +213,7 @@ func youpornSearchVideos(search string) YoupornSearchResult {
 		client := http.Client{
 			Timeout: timeout,
 		}
-		resp, err := client.Get(fmt.Sprintf(youpornAPIURL+"search?search=%s&thumbsize=all", url.QueryEscape(search)))
+		resp, err := client.Get(fmt.Sprintf(youpornAPIURL+"search?search=%s&thumbsize=all&limit=10", url.QueryEscape(search)))
 		if err != nil {
 			log.Println("[YOUPORN][SEARCHVIDEOS]",err)
 			return YoupornSearchResult{}

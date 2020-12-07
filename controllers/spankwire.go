@@ -169,45 +169,46 @@ func spankwireGetVideoEmbedCode(ID string) SpankwireEmbedCode {
 func SpankwireSearch(search string) []JTVideo {
 	videos := spankwireSearchVideos(search)
 	result := []JTVideo{}
-	for _, data := range videos["videos"].([]interface{}) {
-		// Construct video object
-		v := data.(map[string]interface{})["video"]
-		video := JTVideo{}
-		video.ID = fmt.Sprintf("%s", v.(map[string]interface{})["id"])
-		if _, err := strconv.Atoi(video.ID); err != nil {
-			video.ID = fmt.Sprintf("%.0f", v.(map[string]interface{})["id"])
-		}
-		video.Provider = "spankwire"
-		video.Title = fmt.Sprintf("%s", v.(map[string]interface{})["title"])
-		video.Description = fmt.Sprintf("%s", v.(map[string]interface{})["title"])
-		video.Thumb = fmt.Sprintf("%s", v.(map[string]interface{})["thumb"])
-		video.Width = fmt.Sprintf("%s", v.(map[string]interface{})["width"])
-		video.Height = fmt.Sprintf("%s", v.(map[string]interface{})["height"])
-		video.Duration = fmt.Sprintf("%s", v.(map[string]interface{})["duration"])
-		video.Views = fmt.Sprintf("%s", v.(map[string]interface{})["views"])
-		video.Rating = fmt.Sprintf("%.0f", v.(map[string]interface{})["rating"])
-		video.Ratings = fmt.Sprintf("%.0f", v.(map[string]interface{})["ratings"])
-		video.Segment = fmt.Sprintf("%s", v.(map[string]interface{})["segment"])
-		video.PublishDate = fmt.Sprintf("%s", v.(map[string]interface{})["publish_date"])
-		video.ExternalID = fmt.Sprintf("%s", v.(map[string]interface{})["id"])
-		if _, err := strconv.Atoi(video.ExternalID); err != nil {
-			video.ExternalID = fmt.Sprintf("%.0f", v.(map[string]interface{})["id"])
-		}
-		video.ExternalURL = fmt.Sprintf("%s", v.(map[string]interface{})["url"])
-		video.Type = "search"
-		/*tags := v.(map[string]interface{})["tags"] // Tags seem to be broken
-		for _, tag := range tags.([]interface{}) {
-			video.Tags = append(video.Tags, fmt.Sprintf("%s", tag.(map[string]interface{})["tag_name"]))
-		}*/ 
+	if videos["videos"] != nil {
+		for _, data := range videos["videos"].([]interface{}) {
+			// Construct video object
+			v := data.(map[string]interface{})["video"]
+			video := JTVideo{}
+			video.ID = fmt.Sprintf("%s", v.(map[string]interface{})["id"])
+			if _, err := strconv.Atoi(video.ID); err != nil {
+				video.ID = fmt.Sprintf("%.0f", v.(map[string]interface{})["id"])
+			}
+			video.Provider = "spankwire"
+			video.Title = fmt.Sprintf("%s", v.(map[string]interface{})["title"])
+			video.Description = fmt.Sprintf("%s", v.(map[string]interface{})["title"])
+			video.Thumb = fmt.Sprintf("%s", v.(map[string]interface{})["thumb"])
+			video.Width = fmt.Sprintf("%s", v.(map[string]interface{})["width"])
+			video.Height = fmt.Sprintf("%s", v.(map[string]interface{})["height"])
+			video.Duration = fmt.Sprintf("%s", v.(map[string]interface{})["duration"])
+			video.Views = fmt.Sprintf("%s", v.(map[string]interface{})["views"])
+			video.Rating = fmt.Sprintf("%.0f", v.(map[string]interface{})["rating"])
+			video.Ratings = fmt.Sprintf("%.0f", v.(map[string]interface{})["ratings"])
+			video.Segment = fmt.Sprintf("%s", v.(map[string]interface{})["segment"])
+			video.PublishDate = fmt.Sprintf("%s", v.(map[string]interface{})["publish_date"])
+			video.ExternalID = fmt.Sprintf("%s", v.(map[string]interface{})["id"])
+			if _, err := strconv.Atoi(video.ExternalID); err != nil {
+				video.ExternalID = fmt.Sprintf("%.0f", v.(map[string]interface{})["id"])
+			}
+			video.ExternalURL = fmt.Sprintf("%s", v.(map[string]interface{})["url"])
+			video.Type = "search"
+			/*tags := v.(map[string]interface{})["tags"] // Tags seem to be broken
+			for _, tag := range tags.([]interface{}) {
+				video.Tags = append(video.Tags, fmt.Sprintf("%s", tag.(map[string]interface{})["tag_name"]))
+			}*/ 
 
-		thumbs := v.(map[string]interface{})["thumbs"]
-		for _, thumb := range thumbs.([]interface{}) {
-			video.Thumbs = append(video.Thumbs, fmt.Sprintf("%s", thumb.(map[string]interface{})["src"]))
-		}
+			thumbs := v.(map[string]interface{})["thumbs"]
+			for _, thumb := range thumbs.([]interface{}) {
+				video.Thumbs = append(video.Thumbs, fmt.Sprintf("%s", thumb.(map[string]interface{})["src"]))
+			}
 
-		result = append(result, video)
+			result = append(result, video)
+		}
 	}
-
 	return result
 }
 
@@ -218,7 +219,7 @@ func spankwireSearchVideos(search string) KeezmoviesSearchResult {
 		client := http.Client{
 			Timeout: timeout,
 		}
-		resp, err := client.Get(fmt.Sprintf(spankwireAPIURL+"?data=searchVideos&output=json&search=%s&thumbsize=small", url.QueryEscape(search)))
+		resp, err := client.Get(fmt.Sprintf(spankwireAPIURL+"?data=searchVideos&output=json&search=%s&thumbsize=small&count=10", url.QueryEscape(search)))
 
 		if err != nil {
 			log.Println("[SPANKWIRE][SEARCHVIDEOS]", err)

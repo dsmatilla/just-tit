@@ -33,7 +33,7 @@ func (c *SearchController) Get() {
 var waitGroup sync.WaitGroup
 
 func doSearch(search string) []JTVideo {
-	waitGroup.Add(7)
+	waitGroup.Add(8)
 
 	ChannelPornhub := make(chan []JTVideo)
 	ChannelRedtube := make(chan []JTVideo)
@@ -42,6 +42,7 @@ func doSearch(search string) []JTVideo {
 	ChannelKeezmovies := make(chan []JTVideo)
 	ChannelSpankwire := make(chan []JTVideo)
 	ChannelExtremetube := make(chan []JTVideo)
+	ChannelXtube := make(chan []JTVideo)
 
 	go searchPornhub(search, ChannelPornhub)
 	go searchRedtube(search, ChannelRedtube)
@@ -50,6 +51,7 @@ func doSearch(search string) []JTVideo {
 	go searchKeezmovies(search, ChannelKeezmovies)
 	go searchSpankwire(search, ChannelSpankwire)
 	go searchExtremetube(search, ChannelExtremetube)
+	go searchXtube(search, ChannelXtube)
 
 	resultPornhub := <-ChannelPornhub
 	resultRedtube := <-ChannelRedtube
@@ -58,6 +60,7 @@ func doSearch(search string) []JTVideo {
 	resultKeezmovies := <-ChannelKeezmovies
 	resultSpankwire := <-ChannelSpankwire
 	resultExtremetube := <-ChannelExtremetube
+	resultXtube := <-ChannelXtube
 
 	waitGroup.Wait()
 
@@ -69,6 +72,7 @@ func doSearch(search string) []JTVideo {
 	result = append(result, resultKeezmovies...)
 	result = append(result, resultSpankwire...)
 	result = append(result, resultExtremetube...)
+	result = append(result, resultXtube...)
 
     sort.Slice(result, func(p, q int) bool {  
 		return result[p].Rating > result[q].Rating }) 
@@ -128,6 +132,14 @@ func searchExtremetube(search string, c chan []JTVideo) {
 	defer waitGroup.Done()
 	var result []JTVideo
 	result = ExtremetubeSearch(search)
+	c <- result
+	close(c)
+}
+
+func searchXtube(search string, c chan []JTVideo) {
+	defer waitGroup.Done()
+	var result []JTVideo
+	result = XtubeSearch(search)
 	c <- result
 	close(c)
 }

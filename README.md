@@ -1,4 +1,4 @@
-# Just-Tit [![Build Status](https://travis-ci.org/dsmatilla/just-tit.svg?branch=v4)](https://travis-ci.org/dsmatilla/just-tit) [![GoDoc](http://godoc.org/github.com/dsmatilla/just-tit?status.svg)](http://godoc.org/github.com/dsmatilla/just-tit) [![Foundation](https://img.shields.io/badge/Golang-Foundation-green.svg)](http://golangfoundation.org) [![Go Report Card](https://goreportcard.com/badge/github.com/dsmatilla/just-tit)](https://goreportcard.com/report/github.com/dsmatilla/just-tit)
+# Just-Tit [![Build Status](https://travis-ci.org/dsmatilla/just-tit.svg?branch=v4)](https://travis-ci.org/dsmatilla/just-tit) [![Go Report Card](https://goreportcard.com/badge/github.com/dsmatilla/just-tit)](https://goreportcard.com/report/github.com/dsmatilla/just-tit)
 
 # Just-tit
 

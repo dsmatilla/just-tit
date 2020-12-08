@@ -3,90 +3,142 @@ package controllers
 import (
 	"fmt"
 	"github.com/astaxie/beego"
+	"sort"
 	"strings"
 	"sync"
 )
 
+// SearchController Beego Controller
 type SearchController struct {
 	beego.Controller
 }
 
+// Get results of the search using different providers with go routines
 func (c *SearchController) Get() {
 	aux := strings.Replace(c.Ctx.Request.URL.Path, ".html", "", -1)
 	search := strings.Replace(aux, "/", "", -1)
 	result := doSearch(search)
 
 	c.Data["PageTitle"] = fmt.Sprintf("Search results for %s", search)
-	c.Data["Result"] = result
+	c.Data["SearchResult"] = result
 	c.Data["PageMetaDesc"] = fmt.Sprintf("Search results for %s", search)
 	c.Data["Search"] = search
-	c.TplName = "index.html"
-}
 
-type searchResult struct {
-	Pornhub PornhubSearchResult
-	Redtube RedtubeSearchResult
-	Tube8   Tube8SearchResult
-	Youporn YoupornSearchResult
-	Flag    bool
+	c.Layout = "index.tpl"
+	c.TplName = "search.tpl"
 }
 
 var waitGroup sync.WaitGroup
 
-func doSearch(search string) searchResult {
-	//var cached searchResult
-	//if err := cache.Get(search, &cached); err == nil {
-	//	return cached
-	//} else {
-		//log.Print("Cache NOT found")
-		waitGroup.Add(4)
+func doSearch(search string) []JTVideo {
+	waitGroup.Add(8)
 
-		PornhubChannel := make(chan PornhubSearchResult)
-		RedtubeChannel := make(chan RedtubeSearchResult)
-		Tube8Channel := make(chan Tube8SearchResult)
-		YoupornChannel := make(chan YoupornSearchResult)
+	ChannelPornhub := make(chan []JTVideo)
+	ChannelRedtube := make(chan []JTVideo)
+	ChannelYouporn := make(chan []JTVideo)
+	ChannelTube8 := make(chan []JTVideo)
+	ChannelKeezmovies := make(chan []JTVideo)
+	ChannelSpankwire := make(chan []JTVideo)
+	ChannelExtremetube := make(chan []JTVideo)
+	ChannelXtube := make(chan []JTVideo)
 
-		go searchPornhub(search, PornhubChannel)
-		go searchRedtube(search, RedtubeChannel)
-		go searchTube8(search, Tube8Channel)
-		go searchYouporn(search, YoupornChannel)
-		result := searchResult{<-PornhubChannel, <-RedtubeChannel, <-Tube8Channel, <-YoupornChannel, true}
+	go searchPornhub(search, ChannelPornhub)
+	go searchRedtube(search, ChannelRedtube)
+	go searchYouporn(search, ChannelYouporn)
+	go searchTube8(search, ChannelTube8)
+	go searchKeezmovies(search, ChannelKeezmovies)
+	go searchSpankwire(search, ChannelSpankwire)
+	go searchExtremetube(search, ChannelExtremetube)
+	go searchXtube(search, ChannelXtube)
 
-		waitGroup.Wait()
+	resultPornhub := <-ChannelPornhub
+	resultRedtube := <-ChannelRedtube
+	resultYouporn := <-ChannelYouporn
+	resultTube8 := <-ChannelTube8
+	resultKeezmovies := <-ChannelKeezmovies
+	resultSpankwire := <-ChannelSpankwire
+	resultExtremetube := <-ChannelExtremetube
+	resultXtube := <-ChannelXtube
 
-		//go cache.Set(search, result, 5 * time.Minute)
-		return result
-	//}
+	waitGroup.Wait()
+
+	var result []JTVideo
+	result = append(result, resultPornhub...)
+	result = append(result, resultRedtube...)
+	result = append(result, resultYouporn...)
+	result = append(result, resultTube8...)
+	result = append(result, resultKeezmovies...)
+	result = append(result, resultSpankwire...)
+	result = append(result, resultExtremetube...)
+	result = append(result, resultXtube...)
+
+	sort.Slice(result, func(p, q int) bool {
+		return result[p].Rating > result[q].Rating
+	})
+
+	return result
 }
 
-func searchPornhub(search string, c chan PornhubSearchResult) {
+func searchPornhub(search string, c chan []JTVideo) {
 	defer waitGroup.Done()
-	var result PornhubSearchResult
-	result = PornhubSearchVideos(search)
+	var result []JTVideo
+	result = PornhubSearch(search)
 	c <- result
 	close(c)
 }
 
-func searchRedtube(search string, c chan RedtubeSearchResult) {
+func searchRedtube(search string, c chan []JTVideo) {
 	defer waitGroup.Done()
-	var result RedtubeSearchResult
-	result = RedtubeSearchVideos(search)
+	var result []JTVideo
+	result = RedtubeSearch(search)
 	c <- result
 	close(c)
 }
 
-func searchTube8(search string, c chan Tube8SearchResult) {
+func searchYouporn(search string, c chan []JTVideo) {
 	defer waitGroup.Done()
-	var result Tube8SearchResult
-	result = Tube8SearchVideos(search)
+	var result []JTVideo
+	result = YoupornSearch(search)
 	c <- result
 	close(c)
 }
 
-func searchYouporn(search string, c chan YoupornSearchResult) {
+func searchTube8(search string, c chan []JTVideo) {
 	defer waitGroup.Done()
-	var result YoupornSearchResult
-	result = YoupornSearchVideos(search)
+	var result []JTVideo
+	result = Tube8Search(search)
+	c <- result
+	close(c)
+}
+
+func searchKeezmovies(search string, c chan []JTVideo) {
+	defer waitGroup.Done()
+	var result []JTVideo
+	result = KeezmoviesSearch(search)
+	c <- result
+	close(c)
+}
+
+func searchSpankwire(search string, c chan []JTVideo) {
+	defer waitGroup.Done()
+	var result []JTVideo
+	result = SpankwireSearch(search)
+	c <- result
+	close(c)
+}
+
+func searchExtremetube(search string, c chan []JTVideo) {
+	defer waitGroup.Done()
+	var result []JTVideo
+	result = ExtremetubeSearch(search)
+	c <- result
+	close(c)
+}
+
+func searchXtube(search string, c chan []JTVideo) {
+	defer waitGroup.Done()
+	var result []JTVideo
+	result = XtubeSearch(search)
 	c <- result
 	close(c)
 }

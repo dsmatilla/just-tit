@@ -16,4 +16,5 @@
 *.zip
 just-tit
 .gitignore
-conf/app.conf
+vendor/
+.vscode/

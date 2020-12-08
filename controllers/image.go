@@ -9,10 +9,12 @@ import (
 	"strings"
 )
 
+// ImageController beego controller
 type ImageController struct {
 	beego.Controller
 }
 
+// Get ImageController
 func (c *ImageController) Get() {
 	image := strings.Replace(c.Ctx.Request.URL.Path, "/images/", "", -1)
 	aux := strings.Split(image, ".")

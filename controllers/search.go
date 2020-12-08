@@ -20,12 +20,10 @@ func (c *SearchController) Get() {
 	result := doSearch(search)
 
 	c.Data["PageTitle"] = fmt.Sprintf("Search results for %s", search)
-	c.Data["Result"] = result
+	c.Data["SearchResult"] = result
 	c.Data["PageMetaDesc"] = fmt.Sprintf("Search results for %s", search)
 	c.Data["Search"] = search
 
-	//c.Data["video"] = video
-	c.Data["debug"] = result
 	c.Layout = "index.tpl"
 	c.TplName = "search.tpl"
 }

@@ -104,6 +104,8 @@ func (c *RedtubeController) Get() {
 	c.Data["PageMetaDesc"] = video.Title
 	c.Data["Result"] = result
 
+	c.Data["SearchResult"] = doSearch(video.Title)
+
 	if c.GetString("tp") == "true" {
 		c.TplName = "player.tpl"
 	} else {
@@ -183,7 +185,7 @@ func RedtubeSearch(search string) []JTVideo {
 			video.Width = fmt.Sprintf("%s", v.(map[string]interface{})["width"])
 			video.Height = fmt.Sprintf("%s", v.(map[string]interface{})["height"])
 			video.Duration = fmt.Sprintf("%s", v.(map[string]interface{})["duration"])
-			video.Views = fmt.Sprintf("%s", v.(map[string]interface{})["views"])
+			video.Views = fmt.Sprintf("%.0f", v.(map[string]interface{})["views"])
 			video.Rating = fmt.Sprintf("%.0f", v.(map[string]interface{})["rating"])
 			video.Ratings = fmt.Sprintf("%.0f", v.(map[string]interface{})["ratings"])
 			video.Segment = fmt.Sprintf("%s", v.(map[string]interface{})["segment"])
@@ -214,7 +216,7 @@ func redtubeSearchVideos(search string) RedtubeSearchResult {
 		client := http.Client{
 			Timeout: timeout,
 		}
-		resp, err := client.Get(fmt.Sprintf(redtubeAPIURL+"?data=redtube.Videos.searchVideos&output=json&search=%s&thumbsize=all", url.QueryEscape(search)))
+		resp, err := client.Get(fmt.Sprintf(redtubeAPIURL+"?data=redtube.Videos.searchVideos&output=json&search=%s&thumbsize=small", url.QueryEscape(search)))
 		if err != nil {
 			log.Println("[REDTUBE][SEARCHVIDEOS]",err)
 			return RedtubeSearchResult{}

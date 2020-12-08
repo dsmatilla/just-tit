@@ -105,6 +105,8 @@ func (c *ExtremetubeController) Get() {
 	c.Data["PageMetaDesc"] = video.Title
 	c.Data["Result"] = result
 
+	c.Data["SearchResult"] = doSearch(video.Title)
+
 	if c.GetString("tp") == "true" {
 		c.TplName = "player.tpl"
 	} else {
@@ -136,7 +138,7 @@ func extremetubeGetVideoByID(ID string) ExtremetubeSingleVideo {
 }
 
 func extremetubeGetVideoEmbedCode(ID string) ExtremetubeEmbedCode {
-	Cached := JTCache.Get("pornhub-embed-" + ID)
+	Cached := JTCache.Get("extremetube-embed-" + ID)
 	if Cached == nil {
 		timeout := time.Duration(extremetubeAPITimeout * time.Second)
 		client := http.Client{

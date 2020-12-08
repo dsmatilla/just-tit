@@ -91,6 +91,8 @@ func (c *XtubeController) Get() {
 	c.Data["PageMetaDesc"] = video.Title
 	c.Data["Result"] = result
 
+	c.Data["SearchResult"] = doSearch(video.Title)
+
 	if c.GetString("tp") == "true" {
 		c.TplName = "player.tpl"
 	} else {
@@ -141,9 +143,9 @@ func XtubeSearch(search string) []JTVideo {
 			video.Width = fmt.Sprintf("%s", v.(map[string]interface{})["width"])
 			video.Height = fmt.Sprintf("%s", v.(map[string]interface{})["height"])
 			video.Duration = fmt.Sprintf("%s", v.(map[string]interface{})["duration"])
-			video.Views = fmt.Sprintf("%s", v.(map[string]interface{})["views"])
+			video.Views = fmt.Sprintf("%.0f", v.(map[string]interface{})["views"])
 			video.Rating = fmt.Sprintf("%s", v.(map[string]interface{})["rating"])
-			video.Ratings = fmt.Sprintf("%s", v.(map[string]interface{})["ratings"])
+			video.Ratings = fmt.Sprintf("%.0f", v.(map[string]interface{})["ratings"])
 			video.Segment = fmt.Sprintf("%s", v.(map[string]interface{})["segment"])
 			video.PublishDate = fmt.Sprintf("%s", v.(map[string]interface{})["publish_date"])
 			video.ExternalID = fmt.Sprintf("%s", v.(map[string]interface{})["video_id"])

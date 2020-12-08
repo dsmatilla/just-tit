@@ -124,6 +124,8 @@ func (c *KeezmoviesController) Get() {
 	c.Data["PageMetaDesc"] = video.Title
 	c.Data["Result"] = result
 
+	c.Data["SearchResult"] = doSearch(video.Title)
+
 	if c.GetString("tp") == "true" {
 		c.TplName = "player.tpl"
 	} else {

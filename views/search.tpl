@@ -1,4 +1,4 @@
-{{- range .Result }}
+{{- range .SearchResult }}
                         <div class="col-md-4 d-flex">
                             <div class="card border-secondary mb-3">
                                 <div class="card-header bg-secondary" style="height:90px;">
@@ -54,7 +54,6 @@
                                 </div>
                                 <div class="card-footer bg-dark text-white">
                                     <small>{{ .PublishDate }}</small>
-                                    <small>{{ .Rating }}</small>
                                     <small class="float-right">{{ .Duration }}</small>
                                 </div>
                             </div>

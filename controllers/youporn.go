@@ -102,6 +102,8 @@ func (c *YoupornController) Get() {
 	c.Data["PageMetaDesc"] = video.Title
 	c.Data["Result"] = result
 
+	c.Data["SearchResult"] = doSearch(video.Title)
+
 	if c.GetString("tp") == "true" {
 		c.TplName = "player.tpl"
 	} else {
@@ -213,7 +215,7 @@ func youpornSearchVideos(search string) YoupornSearchResult {
 		client := http.Client{
 			Timeout: timeout,
 		}
-		resp, err := client.Get(fmt.Sprintf(youpornAPIURL+"search?search=%s&thumbsize=all&limit=10", url.QueryEscape(search)))
+		resp, err := client.Get(fmt.Sprintf(youpornAPIURL+"search?search=%s&thumbsize=small&limit=10", url.QueryEscape(search)))
 		if err != nil {
 			log.Println("[YOUPORN][SEARCHVIDEOS]",err)
 			return YoupornSearchResult{}

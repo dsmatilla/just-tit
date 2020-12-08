@@ -104,8 +104,10 @@ func (c *PornhubController) Get() {
 
 	// Send object to template
 	c.Data["PageTitle"] = video.Title
-	c.Data["PageMetaDesc"] = video.Title
+	c.Data["PageMetaDesc"] = "Watch "+video.Title+" on "+c.Controller.Ctx.Input.Domain()
 	c.Data["Result"] = result
+
+	c.Data["SearchResult"] = doSearch(video.Title)
 
 	if c.GetString("tp") == "true" {
 		c.TplName = "player.tpl"
@@ -183,12 +185,12 @@ func PornhubSearch(search string) []JTVideo {
 			video.Title = fmt.Sprintf("%s", v.(map[string]interface{})["title"])
 			video.Description = fmt.Sprintf("%s", v.(map[string]interface{})["title"])
 			video.Thumb = fmt.Sprintf("%s", v.(map[string]interface{})["thumb"])
-			video.Width = fmt.Sprintf("%s", v.(map[string]interface{})["width"])
-			video.Height = fmt.Sprintf("%s", v.(map[string]interface{})["height"])
+			video.Width = fmt.Sprintf("%.0f", v.(map[string]interface{})["width"])
+			video.Height = fmt.Sprintf("%.0f", v.(map[string]interface{})["height"])
 			video.Duration = fmt.Sprintf("%s", v.(map[string]interface{})["duration"])
-			video.Views = fmt.Sprintf("%s", v.(map[string]interface{})["views"])
+			video.Views = fmt.Sprintf("%.0f", v.(map[string]interface{})["views"])
 			video.Rating = fmt.Sprintf("%s", v.(map[string]interface{})["rating"])
-			video.Ratings = fmt.Sprintf("%s", v.(map[string]interface{})["ratings"])
+			video.Ratings = fmt.Sprintf("%.0f", v.(map[string]interface{})["ratings"])
 			video.Segment = fmt.Sprintf("%s", v.(map[string]interface{})["segment"])
 			video.PublishDate = fmt.Sprintf("%s", v.(map[string]interface{})["publish_date"])
 			video.ExternalID = fmt.Sprintf("%s", v.(map[string]interface{})["video_id"])
@@ -223,7 +225,7 @@ func pornhubSearchVideos(search string) PornhubSearchResult {
 		client := http.Client{
 			Timeout: timeout,
 		}
-		resp, err := client.Get(fmt.Sprintf(pornhubAPIURL+"search?search=%s&thumbnail=all", url.QueryEscape(search)))
+		resp, err := client.Get(fmt.Sprintf(pornhubAPIURL+"search?search=%s&thumbnail=small", url.QueryEscape(search)))
 		if err != nil {
 			log.Println("[PORNHUB][SEARCHVIDEOS]", err)
 			return PornhubSearchResult{}

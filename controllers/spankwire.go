@@ -106,6 +106,8 @@ func (c *SpankwireController) Get() {
 	c.Data["PageMetaDesc"] = video.Title
 	c.Data["Result"] = result
 
+	c.Data["SearchResult"] = doSearch(video.Title)
+
 	if c.GetString("tp") == "true" {
 		c.TplName = "player.tpl"
 	} else {
@@ -212,30 +214,29 @@ func SpankwireSearch(search string) []JTVideo {
 	return result
 }
 
-func spankwireSearchVideos(search string) KeezmoviesSearchResult {
+func spankwireSearchVideos(search string) SpankwireSearchResult {
 	Cached := JTCache.Get("spankwire-search-" + search)
 	if Cached == nil {
 		timeout := time.Duration(spankwireAPITimeout * time.Second)
 		client := http.Client{
 			Timeout: timeout,
 		}
-		resp, err := client.Get(fmt.Sprintf(spankwireAPIURL+"?data=searchVideos&output=json&search=%s&thumbsize=small&count=10", url.QueryEscape(search)))
-
+		resp, err := client.Get(fmt.Sprintf(spankwireAPIURL+"?data=searchVideos&output=json&search=%s&thumbsize=small", url.QueryEscape(search)))
 		if err != nil {
 			log.Println("[SPANKWIRE][SEARCHVIDEOS]", err)
-			return KeezmoviesSearchResult{}
+			return SpankwireSearchResult{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
-		var result KeezmoviesSearchResult
+		var result SpankwireSearchResult
 		err = json.Unmarshal(b, &result)
 		if err != nil {
 			log.Println("[SPANKWIRE][SEARCHVIDEOS]", err)
-			return KeezmoviesSearchResult{}
+			return SpankwireSearchResult{}
 		}
 		JTCache.Put("spankwire-search-"+search, b, spankwireCacheDuration)
 		return result
 	}
-	var result KeezmoviesSearchResult
+	var result SpankwireSearchResult
 	json.Unmarshal(Cached.([]uint8), &result)
 	return result
 }

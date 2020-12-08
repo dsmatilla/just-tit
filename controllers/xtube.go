@@ -35,7 +35,7 @@ func (c *XtubeController) Get() {
 	str := strings.Split(aux, "/")
 	videoID := str[2]
 
-    // Build redirect URL in case the API fails
+	// Build redirect URL in case the API fails
 	redirect := "https://www.xtube.com/video-watch/watchin-xtube-" + videoID + "?t=0&utm_source=just-tit.com&utm_medium=embed&utm_campaign=hubtraffic_dsmatilla"
 
 	// Get base domain from URL
@@ -111,13 +111,13 @@ func xtubeGetVideoByID(ID string) XtubeSingleVideo {
 		}
 		resp, err := client.Get(fmt.Sprintf(xtubeAPIURL+"?action=getVideoById&video_id=%s", ID))
 		if err != nil {
-			log.Println("[XTUBE][GETVIDEOBYID]",err)
+			log.Println("[XTUBE][GETVIDEOBYID]", err)
 			return XtubeSingleVideo{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[XTUBE][GETVIDEOBYID]",err)
+			log.Println("[XTUBE][GETVIDEOBYID]", err)
 		}
 		JTCache.Put("xtube-video-"+ID, b, xtubeCacheDuration)
 	} else {
@@ -151,7 +151,7 @@ func XtubeSearch(search string) []JTVideo {
 			video.ExternalID = fmt.Sprintf("%s", v.(map[string]interface{})["video_id"])
 			video.ExternalURL = fmt.Sprintf("%s", v.(map[string]interface{})["url"])
 			video.Type = "search"
-			tags := v.(map[string]interface{})["tags"] 
+			tags := v.(map[string]interface{})["tags"]
 			for _, tag := range tags.(map[string]interface{}) {
 				video.Tags = append(video.Tags, fmt.Sprintf("%s", tag))
 			}

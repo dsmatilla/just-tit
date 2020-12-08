@@ -34,12 +34,12 @@ type YoupornController struct {
 
 // Get Youporn Video controller
 func (c *YoupornController) Get() {
-    // Get videoID from URL
+	// Get videoID from URL
 	aux := strings.Replace(c.Ctx.Request.URL.Path, ".html", "", -1)
 	str := strings.Split(aux, "/")
 	videoID := str[2]
 
-    // Build redirect URL in case the API fails
+	// Build redirect URL in case the API fails
 	redirect := "https://www.youporn.com/watch/" + videoID + "/title/?utm_source=just-tit.com&utm_medium=embed&utm_campaign=hubtraffic_dsmatilla"
 
 	// Get base domain from URL
@@ -47,7 +47,6 @@ func (c *YoupornController) Get() {
 	if c.Controller.Ctx.Input.Port() != 80 && c.Controller.Ctx.Input.Port() != 443 {
 		BaseDomain += fmt.Sprintf("%s%d", ":", c.Controller.Ctx.Input.Port())
 	}
-
 
 	// Call the API and 307 redirect to fallback URL if something is not right
 	data := youpornGetVideoByID(videoID)
@@ -113,7 +112,7 @@ func (c *YoupornController) Get() {
 }
 
 func youpornGetVideoByID(ID string) YoupornSingleVideo {
-	Cached := JTCache.Get("youporn-video-"+ID)
+	Cached := JTCache.Get("youporn-video-" + ID)
 	var result YoupornSingleVideo
 	if Cached == nil {
 		timeout := time.Duration(youpornAPITimeout * time.Second)
@@ -122,13 +121,13 @@ func youpornGetVideoByID(ID string) YoupornSingleVideo {
 		}
 		resp, err := client.Get(fmt.Sprintf(youpornAPIURL+"video_by_id/?video_id=%s", ID))
 		if err != nil {
-			log.Println("[YOUPORN][GETVIDEOBYID]",err)
+			log.Println("[YOUPORN][GETVIDEOBYID]", err)
 			return YoupornSingleVideo{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[YOUPORN][GETVIDEOBYID]",err)
+			log.Println("[YOUPORN][GETVIDEOBYID]", err)
 			return YoupornSingleVideo{}
 		}
 		JTCache.Put("youporn-video-"+ID, b, youpornCacheDuration)
@@ -140,7 +139,7 @@ func youpornGetVideoByID(ID string) YoupornSingleVideo {
 }
 
 func youpornGetVideoEmbedCode(ID string) YoupornEmbedCode {
-	Cached := JTCache.Get("youporn-embed-"+ID)
+	Cached := JTCache.Get("youporn-embed-" + ID)
 	if Cached == nil {
 		timeout := time.Duration(youpornAPITimeout * time.Second)
 		client := http.Client{
@@ -148,14 +147,14 @@ func youpornGetVideoEmbedCode(ID string) YoupornEmbedCode {
 		}
 		resp, err := client.Get(fmt.Sprintf(youpornAPIURL+"video_embed_code/?video_id=%s", ID))
 		if err != nil {
-			log.Println("[YOUPORN][GETVIDEOEMBEDCODE]",err)
+			log.Println("[YOUPORN][GETVIDEOEMBEDCODE]", err)
 			return YoupornEmbedCode{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		var result YoupornEmbedCode
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[YOUPORN][GETVIDEOEMBEDCODE]",err)
+			log.Println("[YOUPORN][GETVIDEOEMBEDCODE]", err)
 			return YoupornEmbedCode{}
 		}
 		JTCache.Put("youporn-embed-"+ID, b, youpornCacheDuration)
@@ -170,7 +169,7 @@ func youpornGetVideoEmbedCode(ID string) YoupornEmbedCode {
 func YoupornSearch(search string) []JTVideo {
 	videos := youpornSearchVideos(search)
 	result := []JTVideo{}
-	if videos["video"] != nil {		
+	if videos["video"] != nil {
 		for _, data := range videos["video"].([]interface{}) {
 			// Construct video object
 			//v := data.(map[string]interface{})["video"]
@@ -209,7 +208,7 @@ func YoupornSearch(search string) []JTVideo {
 }
 
 func youpornSearchVideos(search string) YoupornSearchResult {
-	Cached := JTCache.Get("youporn-search-"+search)
+	Cached := JTCache.Get("youporn-search-" + search)
 	if Cached == nil {
 		timeout := time.Duration(youpornAPITimeout * time.Second)
 		client := http.Client{
@@ -217,14 +216,14 @@ func youpornSearchVideos(search string) YoupornSearchResult {
 		}
 		resp, err := client.Get(fmt.Sprintf(youpornAPIURL+"search?search=%s&thumbsize=small&limit=10", url.QueryEscape(search)))
 		if err != nil {
-			log.Println("[YOUPORN][SEARCHVIDEOS]",err)
+			log.Println("[YOUPORN][SEARCHVIDEOS]", err)
 			return YoupornSearchResult{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		var result YoupornSearchResult
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[YOUPORN][SEARCHVIDEOS]",err)
+			log.Println("[YOUPORN][SEARCHVIDEOS]", err)
 			return YoupornSearchResult{}
 		}
 		JTCache.Put("youporn-search-"+search, b, youpornCacheDuration)

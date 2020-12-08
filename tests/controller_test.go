@@ -31,7 +31,7 @@ func checkSearchResponse(t *testing.T, resp []controllers.JTVideo) {
 		t.Logf("Categories: %+v\n", resp[0].Categories)
 		t.Logf("Pornstars: %+v\n", resp[0].Pornstars)
 		t.Logf("ExternalURL: %+v\n", resp[0].ExternalURL)
-		t.Logf("ExternalID: %+v\n", resp[0].ExternalID)	
+		t.Logf("ExternalID: %+v\n", resp[0].ExternalID)
 	}
 	t.Logf("Total results: %+v\n", len(resp))
 }

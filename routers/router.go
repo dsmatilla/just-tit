@@ -20,11 +20,11 @@ func init() {
 		controllers.JTCache, _ = cache.NewCache("memory", `{"interval":60}`)
 	}
 
-    beego.Router("/", &controllers.IndexController{})
-    beego.Router("/*.html", &controllers.SearchController{})
-    beego.Router("/images/*", &controllers.ImageController{})
+	beego.Router("/", &controllers.IndexController{})
+	beego.Router("/*.html", &controllers.SearchController{})
+	beego.Router("/images/*", &controllers.ImageController{})
 
-    beego.Router("/pornhub/*.html", &controllers.PornhubController{})
+	beego.Router("/pornhub/*.html", &controllers.PornhubController{})
 	beego.Router("/redtube/*.html", &controllers.RedtubeController{})
 	beego.Router("/tube8/*.html", &controllers.Tube8Controller{})
 	beego.Router("/youporn/*.html", &controllers.YoupornController{})

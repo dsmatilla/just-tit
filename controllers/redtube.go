@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"encoding/base64"	
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/astaxie/beego"
@@ -115,7 +115,7 @@ func (c *RedtubeController) Get() {
 }
 
 func redtubeGetVideoByID(ID string) RedtubeSingleVideo {
-	Cached := JTCache.Get("redtube-video-"+ID)
+	Cached := JTCache.Get("redtube-video-" + ID)
 	var result RedtubeSingleVideo
 	if Cached == nil {
 		timeout := time.Duration(redtubeAPITimeout * time.Second)
@@ -124,13 +124,13 @@ func redtubeGetVideoByID(ID string) RedtubeSingleVideo {
 		}
 		resp, err := client.Get(fmt.Sprintf(redtubeAPIURL+"?data=redtube.Videos.getVideoById&video_id=%s&output=json", ID))
 		if err != nil {
-			log.Println("[REDTUBE][GETVIDEOBYID]",err)
+			log.Println("[REDTUBE][GETVIDEOBYID]", err)
 			return RedtubeSingleVideo{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[REDTUBE][GETVIDEOBYID]",err)
+			log.Println("[REDTUBE][GETVIDEOBYID]", err)
 			return RedtubeSingleVideo{}
 		}
 		JTCache.Put("redtube-video-"+ID, b, redtubeCacheDuration)
@@ -142,7 +142,7 @@ func redtubeGetVideoByID(ID string) RedtubeSingleVideo {
 }
 
 func redtubeGetVideoEmbedCode(ID string) RedtubeEmbedCode {
-	Cached := JTCache.Get("redtube-embed-"+ID)
+	Cached := JTCache.Get("redtube-embed-" + ID)
 	if Cached == nil {
 		timeout := time.Duration(redtubeAPITimeout * time.Second)
 		client := http.Client{
@@ -150,14 +150,14 @@ func redtubeGetVideoEmbedCode(ID string) RedtubeEmbedCode {
 		}
 		resp, err := client.Get(fmt.Sprintf(redtubeAPIURL+"?data=redtube.Videos.getVideoEmbedCode&video_id=%s&output=json", ID))
 		if err != nil {
-			log.Println("[REDTUBE][GETVIDEOEMBEDCODE]",err)
+			log.Println("[REDTUBE][GETVIDEOEMBEDCODE]", err)
 			return RedtubeEmbedCode{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		var result RedtubeEmbedCode
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[REDTUBE][GETVIDEOEMBEDCODE]",err)
+			log.Println("[REDTUBE][GETVIDEOEMBEDCODE]", err)
 			return RedtubeEmbedCode{}
 		}
 		JTCache.Put("redtube-embed-"+ID, b, redtubeCacheDuration)
@@ -210,7 +210,7 @@ func RedtubeSearch(search string) []JTVideo {
 }
 
 func redtubeSearchVideos(search string) RedtubeSearchResult {
-	Cached := JTCache.Get("redtube-search-"+search)
+	Cached := JTCache.Get("redtube-search-" + search)
 	if Cached == nil {
 		timeout := time.Duration(redtubeAPITimeout * time.Second)
 		client := http.Client{
@@ -218,14 +218,14 @@ func redtubeSearchVideos(search string) RedtubeSearchResult {
 		}
 		resp, err := client.Get(fmt.Sprintf(redtubeAPIURL+"?data=redtube.Videos.searchVideos&output=json&search=%s&thumbsize=small", url.QueryEscape(search)))
 		if err != nil {
-			log.Println("[REDTUBE][SEARCHVIDEOS]",err)
+			log.Println("[REDTUBE][SEARCHVIDEOS]", err)
 			return RedtubeSearchResult{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		var result RedtubeSearchResult
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[REDTUBE][SEARCHVIDEOS]",err)
+			log.Println("[REDTUBE][SEARCHVIDEOS]", err)
 			return RedtubeSearchResult{}
 		}
 		JTCache.Put("redtube-search-"+search, b, redtubeCacheDuration)

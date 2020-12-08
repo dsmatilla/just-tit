@@ -11,9 +11,9 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
-	"strconv"
 )
 
 const spankwireAPIURL = "http://www.spankwire.com/api/HubTrafficApiCall"
@@ -126,13 +126,13 @@ func spankwireGetVideoByID(ID string) SpankwireSingleVideo {
 		}
 		resp, err := client.Get(fmt.Sprintf(spankwireAPIURL+"?data=getVideoById&output=json&video_id=%s", ID))
 		if err != nil {
-			log.Println("[SPANKWIRE][GETVIDEOBYID]",err)
+			log.Println("[SPANKWIRE][GETVIDEOBYID]", err)
 			return SpankwireSingleVideo{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[SPANKWIRE][GETVIDEOBYID]",err)
+			log.Println("[SPANKWIRE][GETVIDEOBYID]", err)
 			return SpankwireSingleVideo{}
 		}
 		JTCache.Put("spankwire-video-"+ID, b, spankwireCacheDuration)
@@ -151,20 +151,20 @@ func spankwireGetVideoEmbedCode(ID string) SpankwireEmbedCode {
 		}
 		resp, err := client.Get(fmt.Sprintf(spankwireAPIURL+"?data=getVideoEmbedCode&output=json&video_id=%s", ID))
 		if err != nil {
-			log.Println("[SPANKWIRE][GETVIDEOEMBEDCODE]",err)
+			log.Println("[SPANKWIRE][GETVIDEOEMBEDCODE]", err)
 			return SpankwireEmbedCode{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		var result SpankwireEmbedCode
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[SPANKWIRE][GETVIDEOEMBEDCODE]",err)
+			log.Println("[SPANKWIRE][GETVIDEOEMBEDCODE]", err)
 		}
 		return result
 	}
 	var result SpankwireEmbedCode
 	json.Unmarshal(Cached.([]uint8), &result)
-	return result		
+	return result
 }
 
 // SpankwireSearch Calls spankwire search function and process result to get array of videos
@@ -201,7 +201,7 @@ func SpankwireSearch(search string) []JTVideo {
 			/*tags := v.(map[string]interface{})["tags"] // Tags seem to be broken
 			for _, tag := range tags.([]interface{}) {
 				video.Tags = append(video.Tags, fmt.Sprintf("%s", tag.(map[string]interface{})["tag_name"]))
-			}*/ 
+			}*/
 
 			thumbs := v.(map[string]interface{})["thumbs"]
 			for _, thumb := range thumbs.([]interface{}) {

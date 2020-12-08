@@ -104,7 +104,7 @@ func (c *PornhubController) Get() {
 
 	// Send object to template
 	c.Data["PageTitle"] = video.Title
-	c.Data["PageMetaDesc"] = "Watch "+video.Title+" on "+c.Controller.Ctx.Input.Domain()
+	c.Data["PageMetaDesc"] = "Watch " + video.Title + " on " + c.Controller.Ctx.Input.Domain()
 	c.Data["Result"] = result
 
 	c.Data["SearchResult"] = doSearch(video.Title)
@@ -175,7 +175,7 @@ func pornhubGetVideoEmbedCode(ID string) PornhubEmbedCode {
 func PornhubSearch(search string) []JTVideo {
 	videos := pornhubSearchVideos(search)
 	result := []JTVideo{}
-	if videos["videos"] != nil {	
+	if videos["videos"] != nil {
 		for _, data := range videos["videos"].([]interface{}) {
 			// Construct video object
 			v := data.(interface{})

@@ -3,9 +3,9 @@ package controllers
 import (
 	"fmt"
 	"github.com/astaxie/beego"
+	"sort"
 	"strings"
 	"sync"
-	"sort"
 )
 
 // SearchController Beego Controller
@@ -72,8 +72,9 @@ func doSearch(search string) []JTVideo {
 	result = append(result, resultExtremetube...)
 	result = append(result, resultXtube...)
 
-    sort.Slice(result, func(p, q int) bool {  
-		return result[p].Rating > result[q].Rating }) 
+	sort.Slice(result, func(p, q int) bool {
+		return result[p].Rating > result[q].Rating
+	})
 
 	return result
 }

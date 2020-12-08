@@ -11,9 +11,9 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
-	"strconv"
 )
 
 const extremetubeAPIURL = "https://www.extremetube.com/api/HubTrafficApiCall"
@@ -34,13 +34,13 @@ type ExtremetubeController struct {
 	beego.Controller
 }
 
-// Get Extremetube Video Controller 
+// Get Extremetube Video Controller
 func (c *ExtremetubeController) Get() {
 	aux := strings.Replace(c.Ctx.Request.URL.Path, ".html", "", -1)
 	str := strings.Split(aux, "/")
 	videoID := str[2]
 
-    // Build redirect URL in case the API fails
+	// Build redirect URL in case the API fails
 	redirect := "https://www.extremetube.com/video/title-" + videoID + "?utm_source=just-tit.com&utm_medium=embed&utm_campaign=hubtraffic_dsmatilla"
 
 	// Get base domain from URL
@@ -127,7 +127,7 @@ func extremetubeGetVideoByID(ID string) ExtremetubeSingleVideo {
 		b, _ := ioutil.ReadAll(resp.Body)
 		err := json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[EXTREMETUBE][GETVIDEOBYID]",err)
+			log.Println("[EXTREMETUBE][GETVIDEOBYID]", err)
 			return ExtremetubeSingleVideo{}
 		}
 		JTCache.Put("extremetube-video-"+ID, b, extremetubeCacheDuration)
@@ -149,7 +149,7 @@ func extremetubeGetVideoEmbedCode(ID string) ExtremetubeEmbedCode {
 		var result ExtremetubeEmbedCode
 		err := json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[EXTREMETUBE][GETVIDEOEMBEDCODE]",err)
+			log.Println("[EXTREMETUBE][GETVIDEOEMBEDCODE]", err)
 		}
 		return result
 	}
@@ -189,7 +189,7 @@ func ExtremetubeSearch(search string) []JTVideo {
 			}
 			video.ExternalURL = fmt.Sprintf("%s", v.(map[string]interface{})["url"])
 			video.Type = "search"
-			tags := v.(map[string]interface{})["tags"] 
+			tags := v.(map[string]interface{})["tags"]
 			for _, tag := range tags.([]interface{}) {
 				video.Tags = append(video.Tags, fmt.Sprintf("%s", tag))
 			}

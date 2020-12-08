@@ -35,7 +35,7 @@ func (c *Tube8Controller) Get() {
 	str := strings.Split(aux, "/")
 	videoID := str[2]
 
-    // Build redirect URL in case the API fails
+	// Build redirect URL in case the API fails
 	redirect := "https://www.tube8.com/video/title/" + videoID + "/?utm_source=just-tit.com&utm_medium=embed&utm_campaign=hubtraffic_dsmatilla"
 
 	// Get base domain from URL
@@ -109,7 +109,7 @@ func (c *Tube8Controller) Get() {
 }
 
 func tube8GetVideoByID(ID string) Tube8SingleVideo {
-	Cached := JTCache.Get("tube8-video-"+ID)
+	Cached := JTCache.Get("tube8-video-" + ID)
 	var result Tube8SingleVideo
 	if Cached == nil {
 		timeout := time.Duration(tube8APITimeout * time.Second)
@@ -118,13 +118,13 @@ func tube8GetVideoByID(ID string) Tube8SingleVideo {
 		}
 		resp, err := client.Get(fmt.Sprintf(tube8APIURL+"?action=getvideobyid&video_id=%s&output=json&thumbsize=all", ID))
 		if err != nil {
-			log.Println("[TUBE8][GETVIDEOBYID]",err)
+			log.Println("[TUBE8][GETVIDEOBYID]", err)
 			return Tube8SingleVideo{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[TUBE8][GETVIDEOBYID]",err)
+			log.Println("[TUBE8][GETVIDEOBYID]", err)
 			return Tube8SingleVideo{}
 		}
 		JTCache.Put("tube8-video-"+ID, b, tube8CacheDuration)
@@ -136,7 +136,7 @@ func tube8GetVideoByID(ID string) Tube8SingleVideo {
 }
 
 func tube8GetVideoEmbedCode(ID string) string {
-	Cached := JTCache.Get("tube8-embed-"+ID)
+	Cached := JTCache.Get("tube8-embed-" + ID)
 	if Cached == nil {
 		timeout := time.Duration(tube8APITimeout * time.Second)
 		client := http.Client{
@@ -144,7 +144,7 @@ func tube8GetVideoEmbedCode(ID string) string {
 		}
 		resp, err := client.Get(fmt.Sprintf(tube8APIURL+"?action=getvideoembedcode&output=json&video_id=%s", ID))
 		if err != nil {
-			log.Println("[TUBE8][GETVIDEOEMBEDCODE]",err)
+			log.Println("[TUBE8][GETVIDEOEMBEDCODE]", err)
 			return ""
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
@@ -162,7 +162,7 @@ func Tube8Search(search string) []JTVideo {
 	videos := tube8SearchVideos(search)
 
 	result := []JTVideo{}
-	if videos["videos"] != nil {		
+	if videos["videos"] != nil {
 		for _, data := range videos["videos"].([]interface{}) {
 			// Construct video object
 			v := data.(map[string]interface{})["video"]
@@ -194,7 +194,6 @@ func Tube8Search(search string) []JTVideo {
 				video.Thumbs = append(video.Thumbs, fmt.Sprintf("%s", thumb))
 			}
 
-
 			result = append(result, video)
 		}
 	}
@@ -202,7 +201,7 @@ func Tube8Search(search string) []JTVideo {
 }
 
 func tube8SearchVideos(search string) Tube8SearchResult {
-	Cached := JTCache.Get("tube8-search-"+search)
+	Cached := JTCache.Get("tube8-search-" + search)
 	if Cached == nil {
 		timeout := time.Duration(tube8APITimeout * time.Second)
 		client := http.Client{
@@ -210,14 +209,14 @@ func tube8SearchVideos(search string) Tube8SearchResult {
 		}
 		resp, err := client.Get(fmt.Sprintf(tube8APIURL+"?action=searchVideos&output=json&search=%s&thumbsize=all", url.QueryEscape(search)))
 		if err != nil {
-			log.Println("[TUBE8][SEARCHVIDEOS]",err)
+			log.Println("[TUBE8][SEARCHVIDEOS]", err)
 			return Tube8SearchResult{}
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
 		var result Tube8SearchResult
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[TUBE8][SEARCHVIDEOS]",err)
+			log.Println("[TUBE8][SEARCHVIDEOS]", err)
 			return Tube8SearchResult{}
 		}
 		JTCache.Put("tube8-search-"+search, b, tube8CacheDuration)

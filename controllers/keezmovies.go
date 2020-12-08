@@ -150,7 +150,7 @@ func keezmoviesGetVideoByID(ID string) KeezmoviesSingleVideo {
 		b, _ := ioutil.ReadAll(resp.Body)
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[KEEZMOVIES][GETVIDEOBYID]",err)
+			log.Println("[KEEZMOVIES][GETVIDEOBYID]", err)
 			return KeezmoviesSingleVideo{}
 		}
 		JTCache.Put("keezmovies-video-"+ID, b, keezmoviesCacheDuration)
@@ -176,7 +176,7 @@ func keezmoviesGetVideoEmbedCode(ID string) KeezmoviesEmbedCode {
 		var result KeezmoviesEmbedCode
 		err = json.Unmarshal(b, &result)
 		if err != nil {
-			log.Println("[KEEZMOVIES][GETVIDEOEMBEDCODE]",err)
+			log.Println("[KEEZMOVIES][GETVIDEOEMBEDCODE]", err)
 			return KeezmoviesEmbedCode{}
 		}
 		JTCache.Put("keezmovies-embed-"+ID, b, keezmoviesCacheDuration)
@@ -192,7 +192,7 @@ func KeezmoviesSearch(search string) []JTVideo {
 	videos := keezmoviesSearchVideos(search)
 	result := []JTVideo{}
 	aux := videos["search"]
-	if aux != nil {	
+	if aux != nil {
 		aux2 := aux.(map[string]interface{})["videos"]
 		for _, data := range aux2.(map[string]interface{}) {
 			// Construct video object

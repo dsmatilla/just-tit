@@ -1,6 +1,6 @@
-# Just-Tit [![Build Status](https://travis-ci.org/dsmatilla/just-tit.svg?branch=v4)](https://travis-ci.org/dsmatilla/just-tit) [![Go Report Card](https://goreportcard.com/badge/github.com/dsmatilla/just-tit)](https://goreportcard.com/report/github.com/dsmatilla/just-tit)
+# Just-Tit [![Build Status](https://travis-ci.org/dsmatilla/just-tit.svg?branch=master)](https://travis-ci.org/dsmatilla/just-tit) [![Go Report Card](https://goreportcard.com/badge/github.com/dsmatilla/just-tit)](https://goreportcard.com/report/github.com/dsmatilla/just-tit)
 
-# Just-tit
+# [Just-tit](https://just-tit.com)
 
 Just-tit is an adult video search engine. It uses goroutines to fetch results from several video providers in parallel and shows the results of your queries in a convenient way for both mobile users and desktop users.
 

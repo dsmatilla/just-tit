@@ -18,7 +18,7 @@ Just-tit can be used locally by compiling this project or via docker since it do
 
 ### Docker
 
-    docker run -d -p8080:8080 dsmatilla/just-tit:v4.0
+    docker run -d -p8080:8080 dsmatilla/just-tit:latest
 
 ## REDIS (optional)
 Just-tit can be configured to use a Redis server for caching, in order to avoid hitting the limits of the provider's APIs.
@@ -26,6 +26,5 @@ Just-tit can be configured to use a Redis server for caching, in order to avoid 
     REDISHOST=IP_ADDRESS:6379
     REDISNAME=REDIS_NAME
     REDISDBNUM=0
-    REDISPASSWD=YOUR_PASSWORD
 
 

@@ -1,7 +1,8 @@
-FROM golang:1.15.5-alpine as build
+FROM golang:1.17-alpine as build
 
 WORKDIR /go/src/just-tit
 ADD go.mod .
+ADD go.sum .
 RUN apk add git gcc libc-dev ca-certificates
 
 # Recompile the standard library with CGO

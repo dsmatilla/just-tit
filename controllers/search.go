@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"fmt"
-	"github.com/astaxie/beego"
+	beego "github.com/beego/beego/v2/server/web"
 	"sort"
 	"strings"
 	"sync"
@@ -81,64 +81,56 @@ func doSearch(search string) []JTVideo {
 
 func searchPornhub(search string, c chan []JTVideo) {
 	defer waitGroup.Done()
-	var result []JTVideo
-	result = PornhubSearch(search)
+	var result = PornhubSearch(search)
 	c <- result
 	close(c)
 }
 
 func searchRedtube(search string, c chan []JTVideo) {
 	defer waitGroup.Done()
-	var result []JTVideo
-	result = RedtubeSearch(search)
+	var result = RedtubeSearch(search)
 	c <- result
 	close(c)
 }
 
 func searchYouporn(search string, c chan []JTVideo) {
 	defer waitGroup.Done()
-	var result []JTVideo
-	result = YoupornSearch(search)
+	var result = YoupornSearch(search)
 	c <- result
 	close(c)
 }
 
 func searchTube8(search string, c chan []JTVideo) {
 	defer waitGroup.Done()
-	var result []JTVideo
-	result = Tube8Search(search)
+	var result = Tube8Search(search)
 	c <- result
 	close(c)
 }
 
 func searchKeezmovies(search string, c chan []JTVideo) {
 	defer waitGroup.Done()
-	var result []JTVideo
-	result = KeezmoviesSearch(search)
+	var result = KeezmoviesSearch(search)
 	c <- result
 	close(c)
 }
 
 func searchSpankwire(search string, c chan []JTVideo) {
 	defer waitGroup.Done()
-	var result []JTVideo
-	result = SpankwireSearch(search)
+	var result = SpankwireSearch(search)
 	c <- result
 	close(c)
 }
 
 func searchExtremetube(search string, c chan []JTVideo) {
 	defer waitGroup.Done()
-	var result []JTVideo
-	result = ExtremetubeSearch(search)
+	var result = ExtremetubeSearch(search)
 	c <- result
 	close(c)
 }
 
 func searchXtube(search string, c chan []JTVideo) {
 	defer waitGroup.Done()
-	var result []JTVideo
-	result = XtubeSearch(search)
+	var result = XtubeSearch(search)
 	c <- result
 	close(c)
 }

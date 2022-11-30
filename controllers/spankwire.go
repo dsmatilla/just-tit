@@ -1,10 +1,11 @@
 package controllers
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/astaxie/beego"
+	beego "github.com/beego/beego/v2/server/web"
 	"html"
 	"html/template"
 	"io/ioutil"
@@ -17,7 +18,7 @@ import (
 )
 
 const spankwireAPIURL = "http://www.spankwire.com/api/HubTrafficApiCall"
-const spankwireAPITimeout = 3
+const spankwireAPITimeout = 10
 const spankwireCacheDuration = time.Minute * 5
 
 // SpankwireSearchResult type for spankwire api search result
@@ -117,7 +118,7 @@ func (c *SpankwireController) Get() {
 }
 
 func spankwireGetVideoByID(ID string) SpankwireSingleVideo {
-	Cached := JTCache.Get("spankwire-video-" + ID)
+	Cached, _ := JTCache.Get(context.Background(), "spankwire-video-" + ID)
 	var result SpankwireSingleVideo
 	if Cached == nil {
 		timeout := time.Duration(spankwireAPITimeout * time.Second)
@@ -135,7 +136,7 @@ func spankwireGetVideoByID(ID string) SpankwireSingleVideo {
 			log.Println("[SPANKWIRE][GETVIDEOBYID]", err)
 			return SpankwireSingleVideo{}
 		}
-		JTCache.Put("spankwire-video-"+ID, b, spankwireCacheDuration)
+		JTCache.Put(context.Background(), "spankwire-video-"+ID, b, spankwireCacheDuration)
 	} else {
 		json.Unmarshal(Cached.([]uint8), &result)
 	}
@@ -143,7 +144,7 @@ func spankwireGetVideoByID(ID string) SpankwireSingleVideo {
 }
 
 func spankwireGetVideoEmbedCode(ID string) SpankwireEmbedCode {
-	Cached := JTCache.Get("spankwire-embed-" + ID)
+	Cached, _ := JTCache.Get(context.Background(), "spankwire-embed-" + ID)
 	if Cached == nil {
 		timeout := time.Duration(spankwireAPITimeout * time.Second)
 		client := http.Client{
@@ -215,7 +216,7 @@ func SpankwireSearch(search string) []JTVideo {
 }
 
 func spankwireSearchVideos(search string) SpankwireSearchResult {
-	Cached := JTCache.Get("spankwire-search-" + search)
+	Cached, _ := JTCache.Get(context.Background(), "spankwire-search-" + search)
 	if Cached == nil {
 		timeout := time.Duration(spankwireAPITimeout * time.Second)
 		client := http.Client{
@@ -233,7 +234,7 @@ func spankwireSearchVideos(search string) SpankwireSearchResult {
 			log.Println("[SPANKWIRE][SEARCHVIDEOS]", err)
 			return SpankwireSearchResult{}
 		}
-		JTCache.Put("spankwire-search-"+search, b, spankwireCacheDuration)
+		JTCache.Put(context.Background(), "spankwire-search-"+search, b, spankwireCacheDuration)
 		return result
 	}
 	var result SpankwireSearchResult

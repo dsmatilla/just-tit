@@ -1,9 +1,10 @@
 package controllers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/astaxie/beego"
+	beego "github.com/beego/beego/v2/server/web"
 	"html"
 	"html/template"
 	"io/ioutil"
@@ -15,7 +16,7 @@ import (
 )
 
 const tube8APIURL = "http://api.tube8.com/api.php"
-const tube8APITimeout = 3
+const tube8APITimeout = 10
 const tube8CacheDuration = time.Minute * 5
 
 // Tube8SearchResult type for tube8 search result
@@ -109,7 +110,7 @@ func (c *Tube8Controller) Get() {
 }
 
 func tube8GetVideoByID(ID string) Tube8SingleVideo {
-	Cached := JTCache.Get("tube8-video-" + ID)
+	Cached, _ := JTCache.Get(context.Background(), "tube8-video-" + ID)
 	var result Tube8SingleVideo
 	if Cached == nil {
 		timeout := time.Duration(tube8APITimeout * time.Second)
@@ -127,7 +128,7 @@ func tube8GetVideoByID(ID string) Tube8SingleVideo {
 			log.Println("[TUBE8][GETVIDEOBYID]", err)
 			return Tube8SingleVideo{}
 		}
-		JTCache.Put("tube8-video-"+ID, b, tube8CacheDuration)
+		JTCache.Put(context.Background(), "tube8-video-"+ID, b, tube8CacheDuration)
 	} else {
 		json.Unmarshal(Cached.([]uint8), &result)
 	}
@@ -136,7 +137,7 @@ func tube8GetVideoByID(ID string) Tube8SingleVideo {
 }
 
 func tube8GetVideoEmbedCode(ID string) string {
-	Cached := JTCache.Get("tube8-embed-" + ID)
+	Cached, _ := JTCache.Get(context.Background(), "tube8-embed-" + ID)
 	if Cached == nil {
 		timeout := time.Duration(tube8APITimeout * time.Second)
 		client := http.Client{
@@ -148,8 +149,8 @@ func tube8GetVideoEmbedCode(ID string) string {
 			return ""
 		}
 		b, _ := ioutil.ReadAll(resp.Body)
-		result := fmt.Sprintf("%s", b)
-		JTCache.Put("tube8-embed-"+ID, b, tube8CacheDuration)
+		result := fmt.Sprint(b)
+		JTCache.Put(context.Background(), "tube8-embed-"+ID, b, tube8CacheDuration)
 		return result
 	}
 	var result string
@@ -201,7 +202,7 @@ func Tube8Search(search string) []JTVideo {
 }
 
 func tube8SearchVideos(search string) Tube8SearchResult {
-	Cached := JTCache.Get("tube8-search-" + search)
+	Cached, _ := JTCache.Get(context.Background(), "tube8-search-" + search)
 	if Cached == nil {
 		timeout := time.Duration(tube8APITimeout * time.Second)
 		client := http.Client{
@@ -219,7 +220,7 @@ func tube8SearchVideos(search string) Tube8SearchResult {
 			log.Println("[TUBE8][SEARCHVIDEOS]", err)
 			return Tube8SearchResult{}
 		}
-		JTCache.Put("tube8-search-"+search, b, tube8CacheDuration)
+		JTCache.Put(context.Background(), "tube8-search-"+search, b, tube8CacheDuration)
 		return result
 	}
 	var result Tube8SearchResult

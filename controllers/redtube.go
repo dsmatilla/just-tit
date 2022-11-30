@@ -1,10 +1,11 @@
 package controllers
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/astaxie/beego"
+	beego "github.com/beego/beego/v2/server/web"
 	"html"
 	"html/template"
 	"io/ioutil"
@@ -16,7 +17,7 @@ import (
 )
 
 const redtubeAPIURL = "https://api.redtube.com/"
-const redtubeAPITimeout = 3
+const redtubeAPITimeout = 10
 const redtubeCacheDuration = time.Minute * 5
 
 // RedtubeSearchResult type for redtube search result
@@ -115,7 +116,7 @@ func (c *RedtubeController) Get() {
 }
 
 func redtubeGetVideoByID(ID string) RedtubeSingleVideo {
-	Cached := JTCache.Get("redtube-video-" + ID)
+	Cached, _ := JTCache.Get(context.Background(), "redtube-video-" + ID)
 	var result RedtubeSingleVideo
 	if Cached == nil {
 		timeout := time.Duration(redtubeAPITimeout * time.Second)
@@ -133,7 +134,7 @@ func redtubeGetVideoByID(ID string) RedtubeSingleVideo {
 			log.Println("[REDTUBE][GETVIDEOBYID]", err)
 			return RedtubeSingleVideo{}
 		}
-		JTCache.Put("redtube-video-"+ID, b, redtubeCacheDuration)
+		JTCache.Put(context.Background(), "redtube-video-"+ID, b, redtubeCacheDuration)
 	} else {
 		json.Unmarshal(Cached.([]uint8), &result)
 	}
@@ -142,7 +143,7 @@ func redtubeGetVideoByID(ID string) RedtubeSingleVideo {
 }
 
 func redtubeGetVideoEmbedCode(ID string) RedtubeEmbedCode {
-	Cached := JTCache.Get("redtube-embed-" + ID)
+	Cached, _ := JTCache.Get(context.Background(), "redtube-embed-" + ID)
 	if Cached == nil {
 		timeout := time.Duration(redtubeAPITimeout * time.Second)
 		client := http.Client{
@@ -160,7 +161,7 @@ func redtubeGetVideoEmbedCode(ID string) RedtubeEmbedCode {
 			log.Println("[REDTUBE][GETVIDEOEMBEDCODE]", err)
 			return RedtubeEmbedCode{}
 		}
-		JTCache.Put("redtube-embed-"+ID, b, redtubeCacheDuration)
+		JTCache.Put(context.Background(), "redtube-embed-"+ID, b, redtubeCacheDuration)
 		return result
 	}
 	var result RedtubeEmbedCode
@@ -210,7 +211,7 @@ func RedtubeSearch(search string) []JTVideo {
 }
 
 func redtubeSearchVideos(search string) RedtubeSearchResult {
-	Cached := JTCache.Get("redtube-search-" + search)
+	Cached, _ := JTCache.Get(context.Background(), "redtube-search-" + search)
 	if Cached == nil {
 		timeout := time.Duration(redtubeAPITimeout * time.Second)
 		client := http.Client{
@@ -228,7 +229,7 @@ func redtubeSearchVideos(search string) RedtubeSearchResult {
 			log.Println("[REDTUBE][SEARCHVIDEOS]", err)
 			return RedtubeSearchResult{}
 		}
-		JTCache.Put("redtube-search-"+search, b, redtubeCacheDuration)
+		JTCache.Put(context.Background(), "redtube-search-"+search, b, redtubeCacheDuration)
 		return result
 	}
 	var result RedtubeSearchResult

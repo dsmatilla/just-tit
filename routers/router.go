@@ -1,9 +1,9 @@
 package routers
 
 import (
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/cache"
-	_ "github.com/astaxie/beego/cache/redis"
+	beego "github.com/beego/beego/v2/server/web"
+	"github.com/beego/beego/v2/client/cache"
+	_ "github.com/beego/beego/v2/client/cache/redis"
 	"just-tit/controllers"
 	"os"
 )

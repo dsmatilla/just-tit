@@ -1,9 +1,10 @@
 package controllers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/astaxie/beego"
+	beego "github.com/beego/beego/v2/server/web"
 	"html"
 	"html/template"
 	"io/ioutil"
@@ -15,7 +16,7 @@ import (
 )
 
 const youpornAPIURL = "http://www.youporn.com/api/webmasters/"
-const youpornAPITimeout = 3
+const youpornAPITimeout = 10
 const youpornCacheDuration = time.Minute * 5
 
 // YoupornSearchResult type for youporn search result
@@ -112,7 +113,7 @@ func (c *YoupornController) Get() {
 }
 
 func youpornGetVideoByID(ID string) YoupornSingleVideo {
-	Cached := JTCache.Get("youporn-video-" + ID)
+	Cached, _ := JTCache.Get(context.Background(), "youporn-video-" + ID)
 	var result YoupornSingleVideo
 	if Cached == nil {
 		timeout := time.Duration(youpornAPITimeout * time.Second)
@@ -130,7 +131,7 @@ func youpornGetVideoByID(ID string) YoupornSingleVideo {
 			log.Println("[YOUPORN][GETVIDEOBYID]", err)
 			return YoupornSingleVideo{}
 		}
-		JTCache.Put("youporn-video-"+ID, b, youpornCacheDuration)
+		JTCache.Put(context.Background(), "youporn-video-"+ID, b, youpornCacheDuration)
 	} else {
 		json.Unmarshal(Cached.([]uint8), &result)
 	}
@@ -139,7 +140,7 @@ func youpornGetVideoByID(ID string) YoupornSingleVideo {
 }
 
 func youpornGetVideoEmbedCode(ID string) YoupornEmbedCode {
-	Cached := JTCache.Get("youporn-embed-" + ID)
+	Cached, _ := JTCache.Get(context.Background(), "youporn-embed-" + ID)
 	if Cached == nil {
 		timeout := time.Duration(youpornAPITimeout * time.Second)
 		client := http.Client{
@@ -157,7 +158,7 @@ func youpornGetVideoEmbedCode(ID string) YoupornEmbedCode {
 			log.Println("[YOUPORN][GETVIDEOEMBEDCODE]", err)
 			return YoupornEmbedCode{}
 		}
-		JTCache.Put("youporn-embed-"+ID, b, youpornCacheDuration)
+		JTCache.Put(context.Background(), "youporn-embed-"+ID, b, youpornCacheDuration)
 		return result
 	}
 	var result YoupornEmbedCode
@@ -208,7 +209,7 @@ func YoupornSearch(search string) []JTVideo {
 }
 
 func youpornSearchVideos(search string) YoupornSearchResult {
-	Cached := JTCache.Get("youporn-search-" + search)
+	Cached, _ := JTCache.Get(context.Background(), "youporn-search-" + search)
 	if Cached == nil {
 		timeout := time.Duration(youpornAPITimeout * time.Second)
 		client := http.Client{
@@ -226,7 +227,7 @@ func youpornSearchVideos(search string) YoupornSearchResult {
 			log.Println("[YOUPORN][SEARCHVIDEOS]", err)
 			return YoupornSearchResult{}
 		}
-		JTCache.Put("youporn-search-"+search, b, youpornCacheDuration)
+		JTCache.Put(context.Background(), "youporn-search-"+search, b, youpornCacheDuration)
 		return result
 	}
 	var result YoupornSearchResult

@@ -1,10 +1,10 @@
 package controllers
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/astaxie/beego"
 	"html"
 	"html/template"
 	"io/ioutil"
@@ -14,10 +14,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	beego "github.com/beego/beego/v2/server/web"
 )
 
 const extremetubeAPIURL = "https://www.extremetube.com/api/HubTrafficApiCall"
-const extremetubeAPITimeout = 3
+const extremetubeAPITimeout = 10
 const extremetubeCacheDuration = time.Minute * 5
 
 // ExtremetubeSearchResult type for extremetube api search result
@@ -116,7 +118,7 @@ func (c *ExtremetubeController) Get() {
 }
 
 func extremetubeGetVideoByID(ID string) ExtremetubeSingleVideo {
-	Cached := JTCache.Get("extremetube-video-" + ID)
+	Cached, _ := JTCache.Get(context.Background(), "extremetube-video-" + ID)
 	var result ExtremetubeSingleVideo
 	if Cached == nil {
 		timeout := time.Duration(extremetubeAPITimeout * time.Second)
@@ -130,7 +132,7 @@ func extremetubeGetVideoByID(ID string) ExtremetubeSingleVideo {
 			log.Println("[EXTREMETUBE][GETVIDEOBYID]", err)
 			return ExtremetubeSingleVideo{}
 		}
-		JTCache.Put("extremetube-video-"+ID, b, extremetubeCacheDuration)
+		JTCache.Put(context.Background(), "extremetube-video-"+ID, b, extremetubeCacheDuration)
 	} else {
 		json.Unmarshal(Cached.([]uint8), &result)
 	}
@@ -138,7 +140,7 @@ func extremetubeGetVideoByID(ID string) ExtremetubeSingleVideo {
 }
 
 func extremetubeGetVideoEmbedCode(ID string) ExtremetubeEmbedCode {
-	Cached := JTCache.Get("extremetube-embed-" + ID)
+	Cached, _ := JTCache.Get(context.Background(), "extremetube-embed-" + ID)
 	if Cached == nil {
 		timeout := time.Duration(extremetubeAPITimeout * time.Second)
 		client := http.Client{
@@ -206,7 +208,7 @@ func ExtremetubeSearch(search string) []JTVideo {
 }
 
 func extremetubeSearchVideos(search string) ExtremetubeSearchResult {
-	Cached := JTCache.Get("extremetube-search-" + search)
+	Cached, _ := JTCache.Get(context.Background(), "extremetube-search-" + search)
 	if Cached == nil {
 		timeout := time.Duration(extremetubeAPITimeout * time.Second)
 		client := http.Client{
@@ -224,7 +226,7 @@ func extremetubeSearchVideos(search string) ExtremetubeSearchResult {
 			log.Println("[EXTREMETUBE][SEARCHVIDEOS]", err)
 			return ExtremetubeSearchResult{}
 		}
-		JTCache.Put("extremetube-search-"+search, b, extremetubeCacheDuration)
+		JTCache.Put(context.Background(), "extremetube-search-"+search, b, extremetubeCacheDuration)
 		return result
 	}
 	var result ExtremetubeSearchResult

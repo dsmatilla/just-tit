@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/cache"
+	beego "github.com/beego/beego/v2/server/web"
+	"github.com/beego/beego/v2/client/cache"
 	"html/template"
 )
 

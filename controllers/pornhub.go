@@ -1,9 +1,10 @@
 package controllers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/astaxie/beego"
+	beego "github.com/beego/beego/v2/server/web"
 	"html"
 	"html/template"
 	"io/ioutil"
@@ -15,7 +16,7 @@ import (
 )
 
 const pornhubAPIURL = "http://www.pornhub.com/webmasters/"
-const pornhubAPITimeout = 3
+const pornhubAPITimeout = 10
 const pornhubCacheDuration = time.Minute * 5
 
 // PornhubSearchResult type for pornhub api search result
@@ -118,7 +119,7 @@ func (c *PornhubController) Get() {
 }
 
 func pornhubGetVideoByID(ID string) PornhubSingleVideo {
-	Cached := JTCache.Get("pornhub-video-" + ID)
+	Cached, _ := JTCache.Get(context.Background(), "pornhub-video-" + ID)
 	var result PornhubSingleVideo
 	if Cached == nil {
 		timeout := time.Duration(pornhubAPITimeout * time.Second)
@@ -137,7 +138,7 @@ func pornhubGetVideoByID(ID string) PornhubSingleVideo {
 			log.Println("[PORNHUB][GETVIDEOBYID]", err)
 			return PornhubSingleVideo{}
 		}
-		JTCache.Put("pornhub-video-"+ID, b, pornhubCacheDuration)
+		JTCache.Put(context.Background(), "pornhub-video-"+ID, b, pornhubCacheDuration)
 	} else {
 		json.Unmarshal(Cached.([]uint8), &result)
 	}
@@ -145,7 +146,7 @@ func pornhubGetVideoByID(ID string) PornhubSingleVideo {
 }
 
 func pornhubGetVideoEmbedCode(ID string) PornhubEmbedCode {
-	Cached := JTCache.Get("pornhub-embed-" + ID)
+	Cached, _ := JTCache.Get(context.Background(), "pornhub-embed-" + ID)
 	if Cached == nil {
 		timeout := time.Duration(pornhubAPITimeout * time.Second)
 		client := http.Client{
@@ -163,7 +164,7 @@ func pornhubGetVideoEmbedCode(ID string) PornhubEmbedCode {
 			log.Println("[PORNHUB][GETVIDEOEMBEDCODE]", err)
 			return PornhubEmbedCode{}
 		}
-		JTCache.Put("pornhub-embed-"+ID, b, pornhubCacheDuration)
+		JTCache.Put(context.Background(), "pornhub-embed-"+ID, b, pornhubCacheDuration)
 		return result
 	}
 	var result PornhubEmbedCode
@@ -178,7 +179,7 @@ func PornhubSearch(search string) []JTVideo {
 	if videos["videos"] != nil {
 		for _, data := range videos["videos"].([]interface{}) {
 			// Construct video object
-			v := data.(interface{})
+			v := data
 			video := JTVideo{}
 			video.ID = fmt.Sprintf("%s", v.(map[string]interface{})["video_id"])
 			video.Provider = "pornhub"
@@ -219,7 +220,7 @@ func PornhubSearch(search string) []JTVideo {
 }
 
 func pornhubSearchVideos(search string) PornhubSearchResult {
-	Cached := JTCache.Get("pornhub-search-" + search)
+	Cached, _ := JTCache.Get(context.Background(), "pornhub-search-" + search)
 	if Cached == nil {
 		timeout := time.Duration(pornhubAPITimeout * time.Second)
 		client := http.Client{
@@ -237,7 +238,7 @@ func pornhubSearchVideos(search string) PornhubSearchResult {
 			log.Println("[PORNHUB][SEARCHVIDEOS]", err)
 			return PornhubSearchResult{}
 		}
-		JTCache.Put("pornhub-search-"+search, b, pornhubCacheDuration)
+		JTCache.Put(context.Background(), "pornhub-search-"+search, b, pornhubCacheDuration)
 		return result
 	}
 	var result PornhubSearchResult

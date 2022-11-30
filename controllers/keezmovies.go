@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -13,11 +14,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/astaxie/beego"
+	beego "github.com/beego/beego/v2/server/web"
 )
 
 const keezmoviesAPIURL = "http://www.keezmovies.com/wapi/"
-const keezmoviesAPITimeout = 3
+const keezmoviesAPITimeout = 10
 const keezmoviesCacheDuration = time.Minute * 5
 
 // KeezmoviesSearchResult type for keezmovies api search result
@@ -135,7 +136,7 @@ func (c *KeezmoviesController) Get() {
 }
 
 func keezmoviesGetVideoByID(ID string) KeezmoviesSingleVideo {
-	Cached := JTCache.Get("keezmovies-video-" + ID)
+	Cached, _ := JTCache.Get(context.Background(), "keezmovies-video-" + ID)
 	var result KeezmoviesSingleVideo
 	if Cached == nil {
 		timeout := time.Duration(keezmoviesAPITimeout * time.Second)
@@ -153,7 +154,7 @@ func keezmoviesGetVideoByID(ID string) KeezmoviesSingleVideo {
 			log.Println("[KEEZMOVIES][GETVIDEOBYID]", err)
 			return KeezmoviesSingleVideo{}
 		}
-		JTCache.Put("keezmovies-video-"+ID, b, keezmoviesCacheDuration)
+		JTCache.Put(context.Background(), "keezmovies-video-"+ID, b, keezmoviesCacheDuration)
 	} else {
 		json.Unmarshal(Cached.([]uint8), &result)
 	}
@@ -161,7 +162,7 @@ func keezmoviesGetVideoByID(ID string) KeezmoviesSingleVideo {
 }
 
 func keezmoviesGetVideoEmbedCode(ID string) KeezmoviesEmbedCode {
-	Cached := JTCache.Get("keezmovies-embed-" + ID)
+	Cached, _ := JTCache.Get(context.Background(), "keezmovies-embed-" + ID)
 	if Cached == nil {
 		timeout := time.Duration(keezmoviesAPITimeout * time.Second)
 		client := http.Client{
@@ -179,7 +180,7 @@ func keezmoviesGetVideoEmbedCode(ID string) KeezmoviesEmbedCode {
 			log.Println("[KEEZMOVIES][GETVIDEOEMBEDCODE]", err)
 			return KeezmoviesEmbedCode{}
 		}
-		JTCache.Put("keezmovies-embed-"+ID, b, keezmoviesCacheDuration)
+		JTCache.Put(context.Background(), "keezmovies-embed-"+ID, b, keezmoviesCacheDuration)
 		return result
 	}
 	var result KeezmoviesEmbedCode
@@ -196,7 +197,7 @@ func KeezmoviesSearch(search string) []JTVideo {
 		aux2 := aux.(map[string]interface{})["videos"]
 		for _, data := range aux2.(map[string]interface{}) {
 			// Construct video object
-			v := data.(interface{})
+			v := data
 			video := JTVideo{}
 			video.ID = fmt.Sprintf("%.0f", v.(map[string]interface{})["id"])
 			video.Provider = "keezmovies"
@@ -246,7 +247,7 @@ func KeezmoviesSearch(search string) []JTVideo {
 }
 
 func keezmoviesSearchVideos(search string) KeezmoviesSearchResult {
-	Cached := JTCache.Get("keezmovies-search-" + search)
+	Cached, _ := JTCache.Get(context.Background(), "keezmovies-search-" + search)
 	if Cached == nil {
 		timeout := time.Duration(keezmoviesAPITimeout * time.Second)
 		client := http.Client{
@@ -265,7 +266,7 @@ func keezmoviesSearchVideos(search string) KeezmoviesSearchResult {
 			log.Println("[KEEZMOVIES][SEARCHVIDEOS]", err)
 			return KeezmoviesSearchResult{}
 		}
-		JTCache.Put("keezmovies-search-"+search, b, keezmoviesCacheDuration)
+		JTCache.Put(context.Background(), "keezmovies-search-"+search, b, keezmoviesCacheDuration)
 		return result
 	}
 	var result KeezmoviesSearchResult

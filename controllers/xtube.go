@@ -1,9 +1,10 @@
 package controllers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/astaxie/beego"
+	beego "github.com/beego/beego/v2/server/web"
 	"html"
 	"html/template"
 	"io/ioutil"
@@ -15,7 +16,7 @@ import (
 )
 
 const xtubeAPIURL = "http://www.xtube.com/webmaster/api.php"
-const xtubeAPITimeout = 3
+const xtubeAPITimeout = 10
 const xtubeCacheDuration = time.Minute * 5
 
 // XtubeSingleVideo type for xtube api video
@@ -102,7 +103,7 @@ func (c *XtubeController) Get() {
 }
 
 func xtubeGetVideoByID(ID string) XtubeSingleVideo {
-	Cached := JTCache.Get("xtube-video-" + ID)
+	Cached, _ := JTCache.Get(context.Background(), "xtube-video-" + ID)
 	var result XtubeSingleVideo
 	if Cached == nil {
 		timeout := time.Duration(xtubeAPITimeout * time.Second)
@@ -119,7 +120,7 @@ func xtubeGetVideoByID(ID string) XtubeSingleVideo {
 		if err != nil {
 			log.Println("[XTUBE][GETVIDEOBYID]", err)
 		}
-		JTCache.Put("xtube-video-"+ID, b, xtubeCacheDuration)
+		JTCache.Put(context.Background(), "xtube-video-"+ID, b, xtubeCacheDuration)
 	} else {
 		json.Unmarshal(Cached.([]uint8), &result)
 	}
@@ -130,45 +131,43 @@ func xtubeGetVideoByID(ID string) XtubeSingleVideo {
 func XtubeSearch(search string) []JTVideo {
 	videos := xtubeSearchVideos(search)
 	result := []JTVideo{}
-	if videos != nil {
-		for _, data := range videos {
-			// Construct video object
-			v := data
-			video := JTVideo{}
-			video.ID = fmt.Sprintf("%s", v.(map[string]interface{})["video_id"])
-			video.Provider = "xtube"
-			video.Title = fmt.Sprintf("%s", v.(map[string]interface{})["title"])
-			video.Description = fmt.Sprintf("%s", v.(map[string]interface{})["title"])
-			video.Thumb = fmt.Sprintf("%s", v.(map[string]interface{})["thumb"])
-			video.Width = fmt.Sprintf("%s", v.(map[string]interface{})["width"])
-			video.Height = fmt.Sprintf("%s", v.(map[string]interface{})["height"])
-			video.Duration = fmt.Sprintf("%s", v.(map[string]interface{})["duration"])
-			video.Views = fmt.Sprintf("%.0f", v.(map[string]interface{})["views"])
-			video.Rating = fmt.Sprintf("%s", v.(map[string]interface{})["rating"])
-			video.Ratings = fmt.Sprintf("%.0f", v.(map[string]interface{})["ratings"])
-			video.Segment = fmt.Sprintf("%s", v.(map[string]interface{})["segment"])
-			video.PublishDate = fmt.Sprintf("%s", v.(map[string]interface{})["publish_date"])
-			video.ExternalID = fmt.Sprintf("%s", v.(map[string]interface{})["video_id"])
-			video.ExternalURL = fmt.Sprintf("%s", v.(map[string]interface{})["url"])
-			video.Type = "search"
-			tags := v.(map[string]interface{})["tags"]
-			for _, tag := range tags.(map[string]interface{}) {
-				video.Tags = append(video.Tags, fmt.Sprintf("%s", tag))
-			}
-
-			thumbs := v.(map[string]interface{})["thumbs"]
-			for _, thumb := range thumbs.([]interface{}) {
-				video.Thumbs = append(video.Thumbs, fmt.Sprintf("%s", thumb.(map[string]interface{})["src"]))
-			}
-
-			result = append(result, video)
+	for _, data := range videos {
+		// Construct video object
+		v := data
+		video := JTVideo{}
+		video.ID = fmt.Sprintf("%s", v.(map[string]interface{})["video_id"])
+		video.Provider = "xtube"
+		video.Title = fmt.Sprintf("%s", v.(map[string]interface{})["title"])
+		video.Description = fmt.Sprintf("%s", v.(map[string]interface{})["title"])
+		video.Thumb = fmt.Sprintf("%s", v.(map[string]interface{})["thumb"])
+		video.Width = fmt.Sprintf("%s", v.(map[string]interface{})["width"])
+		video.Height = fmt.Sprintf("%s", v.(map[string]interface{})["height"])
+		video.Duration = fmt.Sprintf("%s", v.(map[string]interface{})["duration"])
+		video.Views = fmt.Sprintf("%.0f", v.(map[string]interface{})["views"])
+		video.Rating = fmt.Sprintf("%s", v.(map[string]interface{})["rating"])
+		video.Ratings = fmt.Sprintf("%.0f", v.(map[string]interface{})["ratings"])
+		video.Segment = fmt.Sprintf("%s", v.(map[string]interface{})["segment"])
+		video.PublishDate = fmt.Sprintf("%s", v.(map[string]interface{})["publish_date"])
+		video.ExternalID = fmt.Sprintf("%s", v.(map[string]interface{})["video_id"])
+		video.ExternalURL = fmt.Sprintf("%s", v.(map[string]interface{})["url"])
+		video.Type = "search"
+		tags := v.(map[string]interface{})["tags"]
+		for _, tag := range tags.(map[string]interface{}) {
+			video.Tags = append(video.Tags, fmt.Sprintf("%s", tag))
 		}
+
+		thumbs := v.(map[string]interface{})["thumbs"]
+		for _, thumb := range thumbs.([]interface{}) {
+			video.Thumbs = append(video.Thumbs, fmt.Sprintf("%s", thumb.(map[string]interface{})["src"]))
+		}
+
+		result = append(result, video)
 	}
 	return result
 }
 
 func xtubeSearchVideos(search string) XtubeSearchResult {
-	Cached := JTCache.Get("xtube-search-" + search)
+	Cached, _ := JTCache.Get(context.Background(), "xtube-search-" + search)
 	if Cached == nil {
 		timeout := time.Duration(xtubeAPITimeout * time.Second)
 		client := http.Client{
@@ -186,7 +185,7 @@ func xtubeSearchVideos(search string) XtubeSearchResult {
 			log.Println("[XTUBE][SEARCHVIDEOS]", err)
 			return XtubeSearchResult{}
 		}
-		JTCache.Put("xtube-search-"+search, b, xtubeCacheDuration)
+		JTCache.Put(context.Background(), "xtube-search-"+search, b, xtubeCacheDuration)
 		return result
 	}
 	var result XtubeSearchResult

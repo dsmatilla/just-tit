@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/base64"
-	"fmt"
 	beego "github.com/beego/beego/v2/server/web"
 	"io/ioutil"
 	"net/http"
@@ -19,7 +18,7 @@ func (c *ImageController) Get() {
 	image := strings.Replace(c.Ctx.Request.URL.Path, "/images/", "", -1)
 	aux := strings.Split(image, ".")
 	str, _ := base64.StdEncoding.DecodeString(aux[0])
-	response, _ := http.Get(fmt.Sprint(str))
+	response, _ := http.Get(string(str))
 	raw, _ := ioutil.ReadAll(response.Body)
 	ct := http.DetectContentType(raw)
 	c.Ctx.Output.Header("Cache-Control", "max-age=31536000")

@@ -1,4 +1,4 @@
-FROM golang:1.17-alpine as build
+FROM golang:1.18-alpine as build
 
 WORKDIR /go/src/just-tit
 ADD go.mod .
